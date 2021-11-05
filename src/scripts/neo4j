@@ -1,0 +1,3 @@
+#!/bin/zsh
+# start docker image for enterprise neo4j... 
+docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/Users/bhaines/Development/data/neo4j --env=NEO4J_ACCEPT_LICENSE_AGREEMENT=yes neo4j:4.1.9-enterprise

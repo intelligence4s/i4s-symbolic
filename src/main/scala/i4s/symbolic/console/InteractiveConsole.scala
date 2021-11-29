@@ -4,14 +4,8 @@ import scala.util.matching.Regex
 
 case class CommandConfig(matcher: Regex, response: List[String] => Unit, help: String)
 
-class InteractiveConsole(prompt: String) {
+class InteractiveConsole(prompt: String, config: List[CommandConfig]) {
   val quitRe: Regex = "quit".r
-
-  val config: List[CommandConfig] = {
-    CommandConfig("quit".r, _ => stdInSource.close(), "quit") ::
-    CommandConfig("^(.*$)".r, values => processSentence(values.head), "<sentence>") ::
-    Nil
-  }
 
   private val stdInSource = io.Source.stdin
   def start(): Unit = {
@@ -19,7 +13,7 @@ class InteractiveConsole(prompt: String) {
 
     try {
       for (line <- stdInSource.getLines) {
-        config
+        (CommandConfig("quit".r, _ => stdInSource.close(), "quit") :: config)
           .flatMap(cc => cc.matcher.findFirstMatchIn(line).map(m => (m,cc.response)))
           .headOption
           .map { case (m, response) => response(m.subgroups) }

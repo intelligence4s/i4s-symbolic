@@ -14,6 +14,8 @@ object Dependencies {
     )
   }
 
+  lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.7.0"
+
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
 
   lazy val neo4jDependencies = Seq(

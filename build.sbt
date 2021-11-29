@@ -20,6 +20,7 @@ lazy val root = (project in file("."))
       neo4jDependencies ++
       nlpDependencies ++
       Seq(
+        enumeratum,
         logback,
         scalaTest
       ),

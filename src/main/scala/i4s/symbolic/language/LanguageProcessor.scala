@@ -1,11 +1,14 @@
 package i4s.symbolic.language
 
+import i4s.symbolic.language.pos.PartOfSpeechTag
 import org.clulab.processors.clu.CluProcessor
 import org.clulab.processors.corenlp.CoreNLPProcessor
 import org.clulab.processors.fastnlp.FastNLPProcessor
 import org.clulab.processors.shallownlp.ShallowNLPProcessor
 import org.clulab.processors.{Document, Processor}
 import org.clulab.struct.DirectedGraphEdgeIterator
+
+import scala.collection.mutable
 
 class LanguageProcessor {
 
@@ -26,10 +29,27 @@ class LanguageProcessor {
     val doc = proc.annotate(statement)
 
     // you are basically done. the rest of this code simply prints out the annotations
-
     // let's print the sentence-level annotations
     var sentenceCount = 0
     for (sentence <- doc.sentences) {
+      val tokenMap = mutable.HashMap[String,Token]()
+
+      val tokenData = (sentence.words.toList ::
+       sentence.tags.getOrElse(Array.fill(sentence.words.length)("")).toList ::
+       sentence.lemmas.getOrElse(Array.fill(sentence.words.length)("")).toList ::
+       sentence.chunks.getOrElse(Array.fill(sentence.words.length)("")).toList ::
+       sentence.entities.getOrElse(Array.fill(sentence.words.length)("")).toList ::
+       sentence.norms.getOrElse(Array.fill(sentence.words.length)("")).toList ::
+       Nil).transpose
+
+      println(tokenData.head)
+      tokenData.foreach {
+        case word :: tag :: lemma :: chunk :: entity :: norm :: Nil =>
+          PartOfSpeechTag.withNameOption(tag).foreach { pos =>
+            tokenMap += (word -> Token(pos,word,lemma,chunk,entity,norm))
+          }
+      }
+
       println("Sentence #" + sentenceCount + ":")
       println("Tokens: " + sentence.words.mkString(" "))
       println("Start character offsets: " + sentence.startOffsets.mkString(" "))
@@ -41,6 +61,9 @@ class LanguageProcessor {
       sentence.chunks.foreach(chunks => println(s"Chunks: ${chunks.mkString(" ")}"))
       sentence.entities.foreach(entities => println(s"Named entities: ${entities.mkString(" ")}"))
       sentence.norms.foreach(norms => println(s"Normalized entities: ${norms.mkString(" ")}"))
+
+      println(s"Dependency graphs: ${sentence.graphs}")
+
       sentence.dependencies.foreach(dependencies => {
         println("Syntactic dependencies:")
         val iterator = new DirectedGraphEdgeIterator[String](dependencies)
@@ -56,7 +79,7 @@ class LanguageProcessor {
         // on syntactic trees, including access to head phrases/words
 
         println(tree.describe())
-        tree.grammar().foreach(println)
+        tree.grammar(tokenMap.toMap).foreach(println)
       })
 
       println(s"OpenIE relations: ${sentence.relations}")

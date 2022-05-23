@@ -13,3 +13,4 @@ object ClauseTag extends Enum[ClauseTag] {
   case object Inverted extends ClauseTag("SINV")
   case object InvertedYesNo extends ClauseTag("SQ")
 }
+

@@ -36,10 +36,10 @@ object CustomSort {
     val firstHalf = halves.next()
     val secondHalf = halves.next()
 
-    sortIntsMerge(sort(firstHalf), sort(secondHalf))(ord)
+    sortMerge(sort(firstHalf), sort(secondHalf))(ord)
   }
 
-  def sortIntsMerge[T](firstHalf: List[T], secondHalf: List[T])(implicit ord: Ordering[T]): List[T] = {
+  def sortMerge[T](firstHalf: List[T], secondHalf: List[T])(implicit ord: Ordering[T]): List[T] = {
     var first = firstHalf
     var second = secondHalf
 

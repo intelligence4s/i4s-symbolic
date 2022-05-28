@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Intelligence4s"
 ThisBuild / versionScheme := Some("early-semver")
 
 lazy val root = (project in file("."))
-  .aggregate(web, common)
+  .aggregate(web, server)
   .settings(
     name := "i4s-symbolic",
     licenses := Seq("MIT" -> url("https://www.mit.edu/~amini/LICENSE.md")),
@@ -44,6 +44,43 @@ lazy val common = (project in file("common"))
       )
   )
 
+lazy val server = (project in file("server"))
+  .enablePlugins(RevolverPlugin, BuildInfoPlugin, SbtWeb)
+  .dependsOn(common % "compile->compile;test->test")
+  .settings(
+    name := "i4s-symbolic-server",
+    fork := true,
+    libraryDependencies ++=
+      zioDependencies ++
+      zHttpDependencies,
+    Compile / scalacOptions ++= Seq(
+      "-deprecation",
+      "-feature",
+      "-unchecked",
+      "-Xlog-reflective-calls",
+      "-Xlint"
+    ),
+    Compile / javacOptions ++= Seq(
+      "-Xlint:unchecked",
+      "-Xlint:deprecation",
+    ),
+    buildInfoKeys := Seq[BuildInfoKey](
+      name, version, scalaVersion, sbtVersion,
+      libraryDependencies
+    ),
+    scalaJSProjects := Seq(web),
+    Assets / pipelineStages := Seq(scalaJSPipeline),
+    // triggers scalaJSPipeline when using compile or continuous compilation
+    Compile / compile := ((Compile / compile) dependsOn scalaJSPipeline).value,
+    libraryDependencies ++= Seq(
+      "com.vmunier" %% "scalajs-scripts" % "1.2.0"
+    ),
+    Assets / WebKeys.packagePrefix := "public/",
+    Runtime / managedClasspath += (Assets / packageBin).value,
+
+    buildInfoOptions += BuildInfoOption.BuildTime,
+    buildInfoPackage := "transparency.aletheia.server",
+  )
 
 lazy val slinkyVersion = "0.7.2"
 
@@ -91,10 +128,8 @@ lazy val web = (project in file("web"))
     ),
 
     scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
-
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
     Compile / scalacOptions ++= Seq(
-      "-Ymacro-annotations",
-      "-target:11",
       "-deprecation",
       "-feature",
       "-unchecked",
@@ -104,7 +139,7 @@ lazy val web = (project in file("web"))
 
     // The `file("Aletheia.graphql")` is a path suffix for some file in `src/main/graphql`
     Compile / caliban / calibanSettings += calibanSetting(file("Aletheia.graphql"))(cs =>
-      cs.packageName("transparency.web.graphql")
+      cs.packageName("i4s.web.graphql")
         .scalarMapping(
           "Uuid" -> "java.util.UUID"
         )
@@ -114,7 +149,7 @@ lazy val web = (project in file("web"))
     startWebpackDevServer / version := "3.11.2",
 
     webpackResources := baseDirectory.value / "webpack" * "*",
-    webpackDevServerPort := 8000,
+    webpackDevServerPort := 9000,
 
     fastOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-fastopt.config.js"),
     fullOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-opt.config.js"),
@@ -128,7 +163,7 @@ lazy val web = (project in file("web"))
     addCommandAlias("build", "fullOptJS::webpack"),
 
     scalaJSUseMainModuleInitializer := true,
-    Compile / mainClass := Some("transparency.web.Main"),
+    Compile / mainClass := Some("i4s.web.Main"),
 
     buildInfoKeys := Seq[BuildInfoKey](
       name, version, scalaVersion, sbtVersion,

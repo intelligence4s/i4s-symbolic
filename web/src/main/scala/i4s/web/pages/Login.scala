@@ -1,12 +1,11 @@
-package transparency.web.pages
+package i4s.web.pages
 
+import i4s.web.components.Banner
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.web.html._
-
-import transparency.web.components.Banner
 
 @react object Login {
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue  

@@ -2,15 +2,25 @@ import sbt._
 
 object Dependencies {
 
-  lazy val akkaDependencies = {
-    val akkaVersion = "2.6.17"
-    val akkaHttpVersion = "10.2.7"
+  lazy val zHttpDependencies = {
+    val zHttpVersion = "1.0.0.0-RC27"
 
     Seq(
-      "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test
+      "io.d11" %% "zhttp" % zHttpVersion,
+      "io.d11" %% "zhttp-test" % zHttpVersion % Test,
+    )
+  }
+
+  lazy val zioDependencies = {
+    val zioVersion = "1.0.13"
+    val zioConfigVersion = "2.0.4"
+
+    Seq(
+      "dev.zio" %% "zio" % zioVersion,
+      "dev.zio" %% "zio-config" % zioConfigVersion,
+//      "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
+      "dev.zio" %% "zio-test" % zioVersion % Test,
+      "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
     )
   }
 

@@ -1,4 +1,4 @@
-package transparency.web
+package i4s.web
 
 import org.scalajs.dom
 import slinky.core.BuildingComponent
@@ -9,7 +9,7 @@ import slinky.web.ReactDOM
 
 import scala.scalajs.js.annotation.{JSExportTopLevel, JSImport}
 import scala.scalajs.{LinkingInfo, js}
-import transparency.web.pages.{CompanyTable, _}
+import i4s.web.pages._
 
 @JSImport("resources/App.css", JSImport.Default)
 @js.native
@@ -29,7 +29,6 @@ object Main {
     val routes: BuildingComponent[_, js.Object] = Switch(
       Route.apply("/", Login.component, exact = true),
       Route.apply("/login", Login.component),
-//      Route.apply(s"/companies/:field/:value", CompanyTable.component),
 //      Route.apply(s"/companies", CompanyTable.component),
 //      Route.apply(s"/company/:field/:value", CompanyDetail.component),
       Route.apply("*", NotFound.component)

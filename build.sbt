@@ -95,6 +95,9 @@ lazy val web = (project in file("web"))
   .enablePlugins(BuildInfoPlugin, CalibanPlugin, ScalaJSBundlerPlugin, ScalaJSWeb, ScalaJSPlugin)
   .settings(
     name := "i4s-symbolic-web",
+    resolvers ++= Seq(
+      "jitpack" at "https://jitpack.io"
+    ),
     Compile / npmDependencies ++= Seq(
       "history" -> "4.10.1",
       "react" -> "16.13.1",
@@ -131,6 +134,7 @@ lazy val web = (project in file("web"))
       "com.github.ghostdogpr" %%% "caliban-client" % "1.4.0",
       "com.softwaremill.sttp.client3" %%% "core" % "3.5.2",
       "com.softwaremill.sttp.client3" %%% "monix" % "3.5.2",
+      "com.github.fdietze.scala-js-d3v4" % "scala-js-d3v4_sjs1_2.12" % "095d265",
       "org.scalatest" %%% "scalatest" % "3.2.9" % Test
     ),
 
@@ -170,7 +174,7 @@ lazy val web = (project in file("web"))
     addCommandAlias("build", "fullOptJS::webpack"),
 
     scalaJSUseMainModuleInitializer := true,
-    Compile / mainClass := Some("i4s.web.Main"),
+    Compile / mainClass := Some("i4s.symbolic.web.Main"),
 
     buildInfoKeys := Seq[BuildInfoKey](
       name, version, scalaVersion, sbtVersion,

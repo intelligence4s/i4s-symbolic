@@ -1,6 +1,6 @@
-package i4s.web.pages
+package i4s.symbolic.web.pages
 
-import i4s.web.components.Banner
+import i4s.symbolic.web.components.Banner
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.web.html._

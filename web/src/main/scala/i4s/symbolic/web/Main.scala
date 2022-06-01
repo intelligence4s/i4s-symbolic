@@ -1,5 +1,6 @@
-package i4s.web
+package i4s.symbolic.web
 
+import i4s.symbolic.web.pages.{Login, NotFound}
 import org.scalajs.dom
 import slinky.core.BuildingComponent
 import slinky.history.History
@@ -9,7 +10,7 @@ import slinky.web.ReactDOM
 
 import scala.scalajs.js.annotation.{JSExportTopLevel, JSImport}
 import scala.scalajs.{LinkingInfo, js}
-import i4s.web.pages._
+import i4s.symbolic.web.pages._
 
 @JSImport("resources/App.css", JSImport.Default)
 @js.native

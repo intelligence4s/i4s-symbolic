@@ -1,4 +1,4 @@
-package i4s.web.components
+package i4s.symbolic.web.components
 
 import slinky.core.facade.ReactElement
 import slinky.web.svg.{className => svgClass, d, fill, path, stroke, strokeLinecap, strokeLinejoin, strokeWidth, svg, viewBox}

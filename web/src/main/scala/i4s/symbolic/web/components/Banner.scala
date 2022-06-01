@@ -1,4 +1,4 @@
-package i4s.web.components
+package i4s.symbolic.web.components
 
 import slinky.core.StatelessComponent
 import slinky.core.annotations.react

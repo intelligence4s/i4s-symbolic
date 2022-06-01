@@ -1,6 +1,7 @@
-package i4s.server.http
+package i4s.symbolic.server.http
 
 import cats.effect.IO
+import i4s.symbolic.server.http.{HelloWorld, RestRoutes}
 import org.http4s._
 import org.http4s.implicits._
 import munit.CatsEffectSuite

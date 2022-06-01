@@ -1,4 +1,4 @@
-package i4s.server.http
+package i4s.symbolic.server.http
 
 import cats.effect.Concurrent
 import cats.implicits._

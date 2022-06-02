@@ -19,10 +19,10 @@ object CustomSort {
     var sorted = List[Int]()
     while(first.nonEmpty && second.nonEmpty) {
       if (first.head < second.head) {
-        sorted = sorted :+ first.head
+        sorted :+= first.head
         first = first.tail
       } else {
-        sorted = sorted :+ second.head
+        sorted :+= second.head
         second = second.tail
       }
     }
@@ -36,7 +36,7 @@ object CustomSort {
     val firstHalf = halves.next()
     val secondHalf = halves.next()
 
-    sortMerge(sort(firstHalf), sort(secondHalf))(ord)
+    sortMerge(sort(firstHalf), sort(secondHalf))
   }
 
   def sortMerge[T](firstHalf: List[T], secondHalf: List[T])(implicit ord: Ordering[T]): List[T] = {
@@ -46,10 +46,10 @@ object CustomSort {
     var sorted = List[T]()
     while(first.nonEmpty && second.nonEmpty) {
       if (ord.lt(first.head, second.head)) {
-        sorted = sorted :+ first.head
+        sorted :+= first.head
         first = first.tail
       } else {
-        sorted = sorted :+ second.head
+        sorted :+= second.head
         second = second.tail
       }
     }

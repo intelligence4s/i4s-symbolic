@@ -6,8 +6,6 @@ import slinky.web.html._
 
 import scala.scalajs.js
 
-import scala.scalajs.js.annotation.JSImport
-
 package object icons {
   def SearchIcon(classText: String): ReactElement = {
     svg(svgClass := s"$classText", fill := "none", viewBox:= "0 0 24 24", stroke := "currentColor", strokeWidth := "2")(

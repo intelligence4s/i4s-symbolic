@@ -134,7 +134,7 @@ lazy val web = (project in file("web"))
       "com.github.ghostdogpr" %%% "caliban-client" % "1.4.0",
       "com.softwaremill.sttp.client3" %%% "core" % "3.5.2",
       "com.softwaremill.sttp.client3" %%% "monix" % "3.5.2",
-      "com.github.fdietze.scala-js-d3v4" % "scala-js-d3v4_sjs1_2.12" % "095d265",
+      "com.github.fdietze.scala-js-d3v4" % "scala-js-d3v4_sjs1_2.12" % "master-SNAPSHOT",
       "org.scalatest" %%% "scalatest" % "3.2.9" % Test
     ),
 

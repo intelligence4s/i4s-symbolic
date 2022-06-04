@@ -26,3 +26,19 @@ At this point, change you make to scala.js code in the web application will auto
 `http://localhost:9000`.
 
 **Note** - at this time, the web project does not rely on data from the server project. So work on web does not yet need server to run.
+
+## Development
+We use standard PRs and require reviews to contribute. For easing the ramp for beginners, the process is outlined here. In the following 
+example we will create a branch, push it to origin and commit. Pushes to dev (the main branch) are not allowed.
+
+```
+$ git checkout -b <initials>-a-descriptive-name 
+$ git push -u origin HEAD
+
+# make your changes
+
+$ git add . 
+$ git commit -m "Meaningful commit message"
+
+# go to github and create a pull request (PR)  
+```

@@ -39,6 +39,7 @@ $ git push -u origin HEAD
 
 $ git add . 
 $ git commit -m "Meaningful commit message"
+$ git push
 
-# go to github and create a pull request (PR)  
+# go to github and create a pull request (PR), be descriptive, add a reviewer from the contributors list  
 ```

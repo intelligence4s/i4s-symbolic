@@ -9,5 +9,5 @@ case class TokenNode(token: String, edges: List[TokenEdge]) {
 }
 
 // @ScalaJSDefined
-class JSTokenNode(val token: String, edges: js.Array[JSTokenEdge]) extends js.Object
+class JSTokenNode(val token: String, val edges: js.Array[JSTokenEdge]) extends js.Object
 

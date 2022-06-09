@@ -7,5 +7,5 @@ case class TokenEdge(relationship: String, target: TokenNode) {
 }
 
 // @ScalaJSDefined
-class JSTokenEdge(val relationship: String, target: JSTokenNode) extends js.Object
+class JSTokenEdge(val relationship: String, val target: JSTokenNode) extends js.Object
 

@@ -21,11 +21,30 @@ class DependencyViewerSpec extends AnyWordSpec with Matchers {
     Edge(4, 6, "acl:relcl"),
     Edge(6, 5, "nsubj")), Some(8))
 
+  val testWords = Array("How", "much", "wood", "could", "a", "woodchuck", "chuck", "if", "a", "woodchuck", "could",
+    "chuck", "wood", "?")
+  val testGraph = DirectedGraph[String](List(
+    Edge(1, 0, "advmod"),
+    Edge(2, 1, "amod"),
+    Edge(5, 4, "det"),
+    Edge(6, 2, "obj"),
+    Edge(6, 3, "aux"),
+    Edge(6, 5, "nsubj"),
+    Edge(6, 11, "advcl_if"),
+    Edge(9, 8, "det"),
+    Edge(11, 7, "mark"),
+    Edge(11, 9, "nsubj"),
+    Edge(11, 10, "aux"),
+    Edge(11, 12, "obj")),
+    Some(14))
+
   "DependencyViewer" should {
     "print formatted dependency graphs" in {
       var viewer = new DependencyViewer(sansa, words)
       println(viewer.layout)
       viewer = new DependencyViewer(test, words2)
+      println(viewer.layout)
+      viewer = new DependencyViewer(testGraph, testWords)
       println(viewer.layout)
     }
   }

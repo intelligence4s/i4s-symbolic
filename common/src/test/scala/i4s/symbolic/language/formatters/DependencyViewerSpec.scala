@@ -45,7 +45,7 @@ class DependencyViewerSpec extends AnyWordSpec with Matchers{
       viewer.getGraph should be <= target
     }
     "create a string visual graph of woodchuck sentence" in {
-      val testWords = Array("How", "much", "wood", "could", "a", "woodchuck", "chuck", "if", "a", "woodchuck", "could",
+      val testWords = Array("How", "much", "wood", "would", "a", "woodchuck", "chuck", "if", "a", "woodchuck", "could",
         "chuck", "wood", "?")
       val testGraph = DirectedGraph[String](List(
         Edge(1, 0, "advmod"),
@@ -72,7 +72,7 @@ class DependencyViewerSpec extends AnyWordSpec with Matchers{
         "(wood)<obj---------------+\n" +
         "                         |\n" +
         "                         |\n" +
-        "(could)<aux------------+ |\n" +
+        "(would)<aux------------+ |\n" +
         "                       | |\n" +
         "                       | |\n" +
         "(a)<det------------+   | |\n" +

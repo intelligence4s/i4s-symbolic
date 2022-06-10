@@ -9,5 +9,5 @@ case class TokenGraph(tokens: List[TokenNode]) {
 }
 
 // @ScalaJSDefined
-class JSTokenGraph(tokens: js.Array[JSTokenNode]) extends js.Object
+class JSTokenGraph(val tokens: js.Array[JSTokenNode]) extends js.Object
 

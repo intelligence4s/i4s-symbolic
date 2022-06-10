@@ -35,6 +35,8 @@ class CustomSortSpec extends AnyWordSpec with Matchers {
       val users = (1 until 50).map(_ => User(randomString(8),randomString(12),randomizer.nextInt,randomizer.nextDouble))
       implicit val ord: Ordering[User] = Ordering.by[User, Int](user => user.age)
 
+      // implement the sort
+      val sortedR = CustomSort.sortR(users.toList)
       val sorted: List[User] = CustomSort.sort(users.toList)
 
       sorted.zip(sorted.tail).foreach { case (first,next) => first.age should be <= next.age }
@@ -44,6 +46,8 @@ class CustomSortSpec extends AnyWordSpec with Matchers {
       val users = (1 until 50).map(_ => User(randomString(8),randomString(12),randomizer.nextInt,randomizer.nextDouble))
       implicit val ord: Ordering[User] = Ordering.by[User, String](user => user.last)
 
+      // implement the sort
+      val sortedR = CustomSort.sortR(users.toList)
       val sorted: List[User] = CustomSort.sort(users.toList)
 
       sorted.zip(sorted.tail).foreach { case (first,next) => first.last should be <= next.last }

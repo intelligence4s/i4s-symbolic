@@ -1,6 +1,23 @@
 package i4s.playground
 
 object CustomSort {
+  def sortIntsR(ints: List[Int]): List[Int] = {
+    var sorted = List[Int]()
+    for(i <- 0 until ints.length){
+      val (less, greater) = sorted.span(_ < ints(i))
+      sorted = less ::: (ints(i) :: greater)
+    }
+    sorted
+  }
+
+  def sortR[T](values: List[T])(implicit ord: Ordering[T]): List[T] = {
+    var sorted = List[T]()
+    for (i <- 0 until values.length) {
+      val (less, greater) = sorted.span(ord.lt(_, values(i)))
+      sorted = less ::: (values(i) :: greater)
+    }
+    sorted
+  }
 
   def sortInts(ints: List[Int]): List[Int] = {
     if (ints.length == 1) return ints
@@ -55,5 +72,4 @@ object CustomSort {
     }
     sorted ++ first ++ second
   }
-
 }

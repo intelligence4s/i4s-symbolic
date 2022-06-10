@@ -1,161 +1,96 @@
 package i4s.symbolic.language.formatters
 
-import org.clulab.struct.DirectedGraph
+import org.clulab.struct.{DirectedGraph, Edge}
 
+class DependencyViewer(val graph: DirectedGraph[String], val words: Array[String]) {
+  private var graphString = ""
 
+  private val lineCount = graph.size * 3
+  private val lines = Array.fill[String](lineCount)("")
 
-class DependencyViewer(graph: DirectedGraph[String], words: Array[String]){
+  // gets line number from node index
+  private def nodeLine(nodeIdx: Int):Int = nodeIdx*3 + 1
 
-  def layout: String = {
-    var layoutList = new Array[Array[String]](0)
-    for(i <- 0 until graph.size){
-      layoutList = layoutList :+ nodeLines(i)
+  // creates an array of strings where each index represents 1 line of the ASCII graph
+  private def generateStringArray(): Unit = {
+
+    // print out node names, create map of which nodes have incoming and outgoing edges
+    var nodeNum = 0
+    val inOutCount = new Array[(Int, Int)](graph.size)
+    for (lineNum <- 1 to lineCount by 3) {
+      lines(lineNum) = "(" + words(nodeNum) + ")"
+      inOutCount(nodeNum) = (graph.getIncomingEdges(nodeNum).length, graph.getOutgoingEdges(nodeNum).length)
+      nodeNum += 1
     }
-    //val outputList = layoutList.map(_.mkString)
-    val lineList = stylize(layoutList).mkString("\n\n").split("\n")
-    createVerticals(lineList).mkString("\n")
+
+    // set of ungraphed edges
+    var edgeSet = graph.edges.toSet
+    var priorityMap = Map[Int, scala.collection.mutable.Set[Edge[String]]]()
+
+    // create priority ordering map for the edges
+    nodeNum = 0
+    for(edge <- edgeSet) {
+      var priorityNum = 0
+      if(edge.source < edge.destination) {
+        priorityNum += inOutCount(edge.source)._1 + inOutCount(edge.destination)._2
+        for(node <- edge.source + 1 until edge.destination) {
+          priorityNum += inOutCount(node)._1 + inOutCount(node)._2
+        }
+      } else {
+        for(node <- edge.source - 1 until edge.destination by -1) {
+          priorityNum += inOutCount(node)._1 + inOutCount(node)._2
+        }
+      }
+
+      if(priorityMap contains priorityNum) priorityMap(priorityNum) += edge
+      else priorityMap += (priorityNum -> scala.collection.mutable.Set(edge))
+    }
+
+    val prioVal = priorityMap.keys.toList.sorted
+
+    // add first edge arrow to each node
+    for(priority <- prioVal) {
+      for(edge <- priorityMap(priority)) {
+        if(lines(nodeLine(edge.destination)) == "(" + words(edge.destination) + ")")
+          lines(nodeLine(edge.destination)) += "<" + edge.relation + "-"
+        edgeSet -= edge
+      }
+    }
+
+    // add edges to string in order of priority
+    for(priority <- prioVal) {
+      for(edge <- priorityMap(priority)) {
+
+        if(lines(nodeLine(edge.source) - 1).isEmpty) lines(nodeLine(edge.source) - 1) += "  /"
+        if(edgeSet contains edge) lines(nodeLine(edge.destination)) += "<" + edge.relation + "-"
+
+        var longestLength = 0
+        val lineRange = (math.min(nodeLine(edge.source), nodeLine(edge.destination)),
+          math.max(nodeLine(edge.source), nodeLine(edge.destination)))
+
+        for(lineIdx <- lineRange._1 - 1 to lineRange._2) {
+          if (lines(lineIdx).length > longestLength) longestLength = lines(lineIdx).length
+        }
+
+        longestLength += 1
+
+        lines(nodeLine(edge.source) - 1) += "-" * (longestLength - lines(nodeLine(edge.source) - 1).length) + "+"
+        lines(nodeLine(edge.source) - 1) =
+          "  " + lines(nodeLine(edge.source) - 1).trim.replace(" ", "-")
+        lines(nodeLine(edge.destination)) += "-" * (longestLength - lines(nodeLine(edge.destination)).length) + "+"
+        lines(nodeLine(edge.destination)) = lines(nodeLine(edge.destination)).trim.replace(" ", "-")
+
+        for(lineIdx <- lineRange._1 until lineRange._2) {
+          while(lines(lineIdx).length < longestLength) lines(lineIdx) += " "
+          if (lines(lineIdx).length < longestLength + 1) lines(lineIdx) += "|"
+        }
+        edgeSet -= edge
+      }
+    }
   }
 
-  def nodeLines(node: Int): Array[String] = {
-    val incomingEdges = graph.edges.filter(_.destination == node)
-    val outgoingEdges = graph.edges.filter(_.source == node)
-    val edges = outgoingEdges ++ incomingEdges
-    val formattedList = Array.fill[String](edges.length)("")
-    for(i <- 0 until edges.length -1){
-      var j = i
-      while(j <= words(node).length){
-        formattedList(i) += " "
-        j = j + 1
-      }
-      if(edges(i).source == node){
-        formattedList(i) += "/"
-        formattedList(i) += "-----"*(node - edges(i).destination).abs
-        }
-      else{
-        formattedList(i) += "<"
-        formattedList(i) += "-----"*(node - edges(i).source).abs
-      }
-      //formattedList(i) += "\n"
-    }
-    if(formattedList.length == 0){
-      return Array.fill[String](1)(words(node)/* + "\n"*/)
-    }
-    formattedList(formattedList.length-1) += words(node) + " "
-    if(edges.last.destination == node){
-      formattedList(formattedList.length-1) += "<"
-      formattedList(formattedList.length-1) += "-----"*(node - edges.last.source).abs
-      formattedList(formattedList.length-1) = formattedList.last.substring(0, formattedList.last.length-1)
-    }
-    else
-      formattedList(formattedList.length-1) += "-----"*(node - edges.last.destination).abs
-    //formattedList(formattedList.length-1) += "\n"
-    formattedList
-  }
+  generateStringArray()
+  for(line <- lines) graphString ++= line + "\n"
 
-  def stylize(skeleton: Array[Array[String]]): Array[String] = {
-    for(currentNode <- 0 until graph.size){
-      val incomingEdges = graph.edges.filter(_.destination == currentNode)
-      val outgoingEdges = graph.edges.filter(_.source == currentNode)
-      val edges = outgoingEdges ++ incomingEdges
-      for(currentEdge <- edges.indices){
-        val destination = edges(currentEdge).destination
-        val source = edges(currentEdge).source
-        var indexAtOtherEnd = 0
-        if(destination != currentNode) {
-          val destinationEdges = graph.edges.filter(_.source == destination) ++ graph.edges.filter(_.destination == destination)
-          for(i <- destinationEdges.indices){
-            if(destinationEdges(i).source == currentNode){
-              indexAtOtherEnd = i
-            }
-          }
-          if(skeleton(currentNode)(currentEdge).length < skeleton(edges(currentEdge).destination)(indexAtOtherEnd).length){
-            skeleton(currentNode)(currentEdge) += "-"*(skeleton(edges(currentEdge).destination)(indexAtOtherEnd).length - skeleton(currentNode)(currentEdge).length)
-          }
-        }
-        else{
-          val sourceEdges = graph.edges.filter(_.source == source) ++ graph.edges.filter(_.destination == source)
-          for(i <- sourceEdges.indices){
-            if(sourceEdges(i).destination == currentNode){
-              indexAtOtherEnd = i
-            }
-          }
-          if(skeleton(currentNode)(currentEdge).length < skeleton(edges(currentEdge).source)(indexAtOtherEnd).length){
-            skeleton(currentNode)(currentEdge) += "-"*(skeleton(edges(currentEdge).source)(indexAtOtherEnd).length - skeleton(currentNode)(currentEdge).length)
-          }
-        }
-      }
-    }
-    skeleton.map(_.mkString("\n"))
-  }
-
-  def createVerticals(lines: Array[String]) : Array[String] = {
-    var indexes = new Array[Int](0)
-    for(i <- lines.indices){
-      if(lines(i).matches("[A-Za-z,.?!;:]+ *[</-]*")){
-        indexes  = indexes :+ i
-      }
-    }
-    for(currentNode <- 0 until graph.size){
-      val edges = graph.edges.filter(_.source == currentNode)
-      var edgeVerticals = new Array[Int](0)
-      for(currentEdge <- edges.indices){
-        val destination = edges(currentEdge).destination
-        var source = 0
-        if(!graph.edges.exists(_.destination == currentNode)){
-          source = indexes(currentNode) - (edges.length - 1) + currentEdge
-        }
-        else
-          source = indexes(currentNode) - edges.length + currentEdge
-        var index = 0
-        for(i <- graph.edges.filter(_.destination == destination).indices){
-          if(graph.edges.filter(_.destination == destination)(i).source == currentNode){
-            index = indexes(destination) + i
-          }
-        }
-        var currIndex = source
-        val indexOfVertical = lines(source).lastIndexOf("-")
-        edgeVerticals = edgeVerticals :+ indexOfVertical
-        for(i <- 0 to (index - source).abs){
-          if(index < source){
-            if(lines(currIndex).length < lines(source).length){
-              for(j <- 0 until lines(source).length - lines(currIndex).length){
-                lines(currIndex) += " "
-              }
-            }
-            lines(currIndex) = lines(currIndex).substring(0, indexOfVertical) + "|" + lines(currIndex).substring(indexOfVertical + 1)
-            currIndex -= 1
-          }
-          else {
-            if(lines(currIndex).length < lines(source).length){
-              for(j <- 0 until lines(source).length - lines(currIndex).length){
-                lines(currIndex) += " "
-              }
-            }
-            lines(currIndex) = lines(currIndex).substring(0, indexOfVertical) + "|" + lines(currIndex).substring(indexOfVertical + 1)
-            currIndex += 1
-          }
-        }
-      }
-      for(currentEdge <- edges.indices){
-        val destination = edges(currentEdge).destination
-        var source = 0
-        if(!graph.edges.exists(_.destination == currentNode)){
-          source = indexes(currentNode) - (edges.length - 1) + currentEdge
-        }
-        else
-          source = indexes(currentNode) - edges.length + currentEdge
-        var index = 0
-        for(i <- graph.edges.filter(_.destination == destination).indices){
-          if(graph.edges.filter(_.destination == destination)(i).source == currentNode){
-            index = indexes(destination) + i
-          }
-        }
-        if(lines(source).length < (lines(source).substring(0, edgeVerticals(currentEdge) + 1) + edges(currentEdge).relation).length)
-          lines(source) = lines(source).substring(0, edgeVerticals(currentEdge) + 1) + edges(currentEdge).relation
-        else
-          lines(source) = lines(source).substring(0, edgeVerticals(currentEdge) + 1) + edges(currentEdge).relation + lines(source).substring(edgeVerticals(currentEdge) + 1 + edges(currentEdge).relation.length)
-      }
-    }
-    lines
-  }
+  def getGraph: String = graphString
 }

@@ -1,7 +1,7 @@
 package i4s.symbolic.web.pages
 
 import i4s.symbolic.web.components.{Banner, SentenceGraph}
-import i4s.symbolic.web.model.{DataRecord, TokenGraph, TokenNode}
+import i4s.symbolic.web.model.{DataRecord, TokenEdge, TokenGraph, TokenNode}
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -21,6 +21,15 @@ import slinky.web.svg.{g, svg, className => svgClass}
     TokenNode(",", List.empty),
     TokenNode("Sansa", List.empty),
     TokenNode(".", List.empty),
+  )
+  tokenList(1).edges = List(
+    TokenEdge("nsubj", tokenList(0)),
+    TokenEdge("obj", tokenList(4)),
+    TokenEdge("obj", tokenList(6))
+  )
+  tokenList(4).edges = List(
+    TokenEdge("amod", tokenList(3)),
+    TokenEdge("nmod:poss", tokenList(2)),
   )
 
   val graph = TokenGraph(tokenList)

@@ -2,7 +2,7 @@ package i4s.symbolic.web.model
 
 import scala.scalajs.js
 
-case class TokenNode(token: String, edges: List[TokenEdge]) {
+case class TokenNode(token: String, var edges: List[TokenEdge]) {
   import js.JSConverters._
 
   def asJSTokenNode(): JSTokenNode = new JSTokenNode(token, edges.map(_.asJSTokenEdge()).toJSArray)

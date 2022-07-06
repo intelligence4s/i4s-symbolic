@@ -51,9 +51,7 @@ lazy val server = (project in file("server"))
     name := "i4s-symbolic-server",
     fork := true,
     libraryDependencies ++=
-      http4sDependencies ++
-      munitDependencies ++
-      zioDependencies ++
+      akkaDependencies ++
       Seq(
         circe,
         enumeratum,

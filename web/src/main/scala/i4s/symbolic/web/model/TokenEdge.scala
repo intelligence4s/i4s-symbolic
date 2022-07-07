@@ -7,5 +7,14 @@ case class TokenEdge(relationship: String, target: TokenNode) {
 }
 
 // @ScalaJSDefined
-class JSTokenEdge(val relationship: String, val target: JSTokenNode) extends js.Object
+class JSTokenEdge(val relationship: String, val target: JSTokenNode) extends js.Object {
+  var source : JSTokenNode = null
+  var targetRef : JSTokenNode = null
+  var distance: Int = -1
+  var layer: Int = 0
+  var offSet: Double = -1
+  var width: Double = -1
+
+  def asTokenEdge(): TokenEdge = TokenEdge(relationship, target.asTokenNode())
+}
 

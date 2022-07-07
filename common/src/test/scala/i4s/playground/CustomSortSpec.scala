@@ -1,5 +1,6 @@
 package i4s.playground
 
+import i4s.symbolic.language.playground.CustomSort
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

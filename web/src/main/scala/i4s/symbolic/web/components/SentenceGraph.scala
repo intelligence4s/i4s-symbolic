@@ -1,9 +1,9 @@
 package i4s.symbolic.web.components
 
 import d3v4._
-import i4s.symbolic.web.model.{DataRecord, JSDataRecord, JSTokenGraph, JSTokenNode, TokenGraph}
+import i4s.symbolic.web.model.{DataRecord, JSDataRecord, JSTokenEdge, JSTokenGraph, JSTokenNode, TokenGraph}
 import org.scalajs.dom
-import org.scalajs.dom.SVGTextElement
+import org.scalajs.dom.{SVGGElement, SVGTextElement}
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks.useEffect
@@ -12,6 +12,7 @@ import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClassName}
 
 import scala.scalajs.js
+import js.JSConverters._
 
 @react object SentenceGraph {
 
@@ -68,26 +69,185 @@ import scala.scalajs.js
       val selection = svg
         .select(".graph-area")
         .selectAll(".token")
-        .data(graph.tokens).enter()
+        .data(graph.tokens)
+        .enter()
         .append("g")
-        .attr("transform", (d: JSTokenNode, i: Int) => s"translate(${d.offSet},5)")
+        .attr("transform", (d: JSTokenNode, i: Int) => s"translate(${d.offSet},2)")
 
-        selection
-          .append("rect")
-          .attr("rx", 6)
-          .attr("ry", 6)
-          .attr("width", (d: JSTokenNode) => d.width)
-          .attr("height", 20)
-          .style("fill", "white")
-          .style("stroke", "gray")
-        selection
-          .append("text")
-          .text((d: JSTokenNode) => d.token)
-          .attr("x", (d: JSTokenNode) => d.width/2)
-          .attr("y", 10)
-          .attr("dy", ".35em")
-          .attr("text-anchor", "middle")
-          .style("fill", "black")
+      selection
+        .append("rect")
+        .attr("rx", 6)
+        .attr("ry", 6)
+        .attr("width", (d: JSTokenNode) => d.width)
+        .attr("height", 20)
+        .style("fill", "white")
+        .style("stroke", "gray")
+      selection
+        .append("text")
+        .text((d: JSTokenNode) => d.token)
+        .attr("x", (d: JSTokenNode) => d.width/2)
+        .attr("y", 10)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .style("fill", "black")
+
+//      val tokens = graph.tokens
+//      for(currentNode <- tokens)
+//        for(currentEdge <- currentNode.edges){
+//
+//        }
+//      selection
+//        .each { (g: SVGGElement, d: JSTokenNode) =>
+//          svg.select(".graph-area")
+//            .selectAll("g")
+//            .each{ (gDestination: SVGGElement, dDestination: JSTokenNode) =>
+//              val target = d.edges.map(_.target).filter(_.token == dDestination.token)
+//              target.foreach(f => println(f.token))
+//              svg.select(".graph-area")
+//                .selectAll(".relationship")
+//                .data(target)
+//                .enter()
+//                .append("rect")
+//                .attr("x", (d.offSet + dDestination.offSet)/2)
+//                .attr("y", 25)
+//                .attr("rx", 6)
+//                .attr("ry", 6)
+//                .attr("width", 20)
+//                .attr("height", 20)
+//                .style("fill", "white")
+//                .style("stroke", "gray")
+//            }
+//        }
+//      val coordinates = List(
+//        (10d, 10d),
+//        (10d, 70d),
+//        (20d, 80d),
+//        (100d, 80d)
+//      )
+//      val lineGenerator = d3.line().curve(d3.curveBundle.beta(1))
+//      val pathData: String = lineGenerator.apply(coordinates.map(js.Tuple2.fromScalaTuple2).toJSArray)
+//
+//      svg.select(".graph-area")
+//        .append("path")
+//        .attr("d", pathData)
+//        .style("fill", "none")
+//        .style("stroke", "black")
+      var edges = List[JSTokenEdge]()
+
+      for(currToken <- graph.tokens){
+        for(currTokenEdge <- currToken.edges){
+          currTokenEdge.source = currToken
+          currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(currTokenEdge.target.token)).abs
+          edges = edges :+ currTokenEdge
+        }
+      }
+      edges = edges.sortBy(_.distance)
+      edges.foreach(e => println(e.source.token + " " + e.target.token + " " + e.distance))
+
+      for(i <- edges.indices){
+        var indices = (graph.tokens.indexWhere(p => p.token.equals(edges(i).source.token)), graph.tokens.indexWhere(p => p.token.equals(edges(i).target.token)))
+        if(indices._1 > indices._2)
+          indices = indices.swap
+        for(j <- 0 until i){
+          val otherIndices = (graph.tokens.indexWhere(p => p.token.equals(edges(j).source.token)), graph.tokens.indexWhere(p => p.token.equals(edges(j).target.token)))
+          if((otherIndices._1 > indices._1 && otherIndices._1 < indices._2) || (otherIndices._2 > indices._1 && otherIndices._2 < indices._2)){
+            if(edges(i).layer <= edges(j).layer){
+              edges(i).layer = edges(j).layer + 1
+            }
+          }
+        }
+      }
+
+      edges.foreach(e => println(e.layer + " " + e.source.token + " " + e.target.token)) //debug
+
+//      for(edge <- edges.indices){
+//        selection
+//          .each { (g: SVGGElement, d: JSTokenNode) =>
+//            if(edges(edge).source == d){
+////              val coordinates = List(
+////                (10d, 10d),
+////                (10d, 70d),
+////                (20d, 80d),
+////                (100d, 80d)
+////              )
+////              val lineGenerator = d3.line().curve(d3.curveBundle.beta(1))
+////              val pathData: String = lineGenerator.apply(coordinates.map(js.Tuple2.fromScalaTuple2).toJSArray)
+////
+////              svg.select(".graph-area")
+////                .append("path")
+////                .attr("d", pathData)
+////                .style("fill", "none")
+////                .style("stroke", "black")
+//              println(edges(edge).target.token)
+//              println(d.offSet + " " + edges(edge).target.offSet)
+//              svg.select(".graph-area")
+//                .selectAll(".relationship")
+//                .data(Array(edges(edge)).toJSArray)
+//                .enter()
+//                .append("rect")
+//                .attr("x", (d.offSet + graph.tokens.filter(_.token.equals(edges(edge).target.token))(0).offSet)/2)
+//                .attr("y", (edges(edge).layer + 1) * 25)
+//                .attr("width", 20)
+//                .attr("height", 20)
+//                .attr("rx", 6)
+//                .attr("ry", 6)
+//                .style("fill", "white")
+//                .style("stroke", "gray")
+//            }
+//          }
+//      }
+      accumulatedY = 0d
+      svg.select(".graph-area")
+        .selectAll(".text-size")
+        .data(edges.toJSArray)
+        .enter
+        .append("text")
+        .text((d: JSTokenEdge) => d.relationship)
+        .each{ (g: SVGTextElement, d: JSTokenEdge) =>
+          d.width = g.getComputedTextLength() + padding
+          d.targetRef = graph.tokens(graph.tokens.indexWhere(p => p.token.equals(d.target.token)))
+          d.offSet = (d.source.offSet + d.source.width/2 + d.targetRef.offSet + d.targetRef.width/2)/2 - d.width/2
+          g.remove
+        }
+
+
+      val relationships = svg.select(".graph-area")
+        .selectAll(".relationship")
+        .data(edges.toJSArray)
+        .enter()
+        .append("g")
+        .attr("transform", (d: JSTokenEdge) => s"translate(${d.offSet},${(d.layer + 1) * 25})")
+
+      relationships
+        .append("path")
+        .attr("d", (d: JSTokenEdge) => d3.line().curve(d3.curveBasis).apply(List(
+          (d.width/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d),
+          (d.width/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
+          (d.width/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
+          (d.width/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d))
+          .map(js.Tuple2.fromScalaTuple2(_)).toJSArray))
+        .style("fill", "none")
+        .style("stroke", "black")
+
+      relationships
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", (d: JSTokenEdge) => d.width)
+        .attr("height", 20)
+        .attr("rx", 6)
+        .attr("ry", 6)
+        .style("fill", "white")
+        .style("stroke", "gray")
+
+      relationships
+        .append("text")
+        .text((d: JSTokenEdge) => d.relationship)
+        .attr("x", (d: JSTokenEdge) => d.width/2)
+        .attr("y", 10)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .style("fill", "black")
 
     }
 

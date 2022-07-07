@@ -1,4 +1,4 @@
-package i4s.playground
+package i4s.symbolic.language.playground
 
 object CustomSort {
   def sortIntsR(ints: List[Int]): List[Int] = {

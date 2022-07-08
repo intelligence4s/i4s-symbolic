@@ -17,6 +17,17 @@ object Dependencies {
     )
   }
 
+  lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
+
+  lazy val calibanDependencies = {
+    val calibanVersion = "1.4.1"
+
+    Seq(
+      "com.github.ghostdogpr" %% "caliban" % calibanVersion,
+      "com.github.ghostdogpr" %% "caliban-akka-http"  % calibanVersion
+    )
+  }
+
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
 
   lazy val neo4jDependencies = Seq(

@@ -7,7 +7,7 @@ object Dependencies {
   lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.7.0"
 
   lazy val akkaDependencies = {
-    val akkaVersion = "2.6.8"
+    val akkaVersion = "2.6.18"
     val akkaHttpVersion = "10.2.9"
 
     Seq(
@@ -19,14 +19,7 @@ object Dependencies {
 
   lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
 
-  lazy val calibanDependencies = {
-    val calibanVersion = "1.4.1"
-
-    Seq(
-      "com.github.ghostdogpr" %% "caliban" % calibanVersion,
-      "com.github.ghostdogpr" %% "caliban-akka-http"  % calibanVersion
-    )
-  }
+  lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
 
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
 
@@ -43,6 +36,19 @@ object Dependencies {
     "org.clulab" %% "processors-corenlp" % procVer,
     "edu.stanford.nlp" % "stanford-corenlp" % "4.3.1",
     "edu.stanford.nlp" % "stanford-corenlp" % "4.3.1" classifier "models"
+    )
+  }
+
+  lazy val sangriaDependencies = {
+    val sangriaAkkaHttpVersion = "0.0.2"
+
+    Seq(
+      "org.sangria-graphql" %% "sangria" % "2.1.3",
+      "org.sangria-graphql" %% "sangria-slowlog" % "2.0.2",
+      "org.sangria-graphql" %% "sangria-circe" % "1.3.2",
+
+      "org.sangria-graphql" %% "sangria-akka-http-core" % sangriaAkkaHttpVersion,
+      "org.sangria-graphql" %% "sangria-akka-http-circe" % sangriaAkkaHttpVersion,
     )
   }
 

@@ -15,14 +15,14 @@ import slinky.web.svg.{g, svg, className => svgClass}
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
   val tokenList = List(
-    TokenNode("I", List.empty),
-    TokenNode("like", List.empty),
-    TokenNode("my", List.empty),
-    TokenNode("black", List.empty),
-    TokenNode("cat", List.empty),
-    TokenNode(",", List.empty),
-    TokenNode("Sansa", List.empty),
-    TokenNode(".", List.empty),
+    TokenNode("I", 0, List.empty),
+    TokenNode("like", 1, List.empty),
+    TokenNode("my", 2, List.empty),
+    TokenNode("black", 3, List.empty),
+    TokenNode("cat", 4, List.empty),
+    TokenNode(",", 5, List.empty),
+    TokenNode("Sansa", 6, List.empty),
+    TokenNode(".", 7, List.empty),
   )
 
   val graph = TokenGraph(tokenList)

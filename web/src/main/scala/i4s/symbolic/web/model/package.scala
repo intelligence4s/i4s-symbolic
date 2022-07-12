@@ -8,11 +8,11 @@ package object model {
     implicit class JsTokenGraphConversion(tokenGraph: TokenGraph) {
 
       def tokenEdgeToJsTokenEdge(tokenEdge: TokenEdge): JSTokenEdge =
-        new JSTokenEdge(tokenEdge.relationship, tokenGraph.tokens.indexOf(tokenEdge.target))
+        new JSTokenEdge(tokenEdge.relationship, tokenEdge.target)
 
-      def toJs(): JSTokenGraph = {
+      def toJs: JSTokenGraph = {
         val jsTokens = tokenGraph.tokens.map { token =>
-          new JSTokenNode(token.token,token.edges.map(tokenEdgeToJsTokenEdge).toJSArray)
+          new JSTokenNode(token.token, token.position, token.edges.map(tokenEdgeToJsTokenEdge).toJSArray)
         }
 
         new JSTokenGraph(jsTokens.toJSArray)

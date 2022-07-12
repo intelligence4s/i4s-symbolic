@@ -1,3 +1,3 @@
 package i4s.symbolic.language.grammar
 
-case class TokenEdge(relationship: String, target: TokenNode)
+case class TokenEdge(relationship: String, target: Int)

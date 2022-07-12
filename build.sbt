@@ -46,18 +46,19 @@ lazy val common = (project in file("common"))
 
 lazy val server = (project in file("server"))
   .enablePlugins(RevolverPlugin, BuildInfoPlugin, SbtWeb)
-//  .dependsOn(common % "compile->compile;test->test")
+  .dependsOn(common % "compile->compile;test->test")
   .settings(
     name := "i4s-symbolic-server",
     fork := true,
     libraryDependencies ++=
       akkaDependencies ++
-      calibanDependencies ++
+      sangriaDependencies ++
       Seq(
         akkaHttpJson,
         circe,
         enumeratum,
         logback,
+        pureconfig,
         scalaTest
       ),
     Compile / scalacOptions ++= scalacConfig ,
@@ -182,7 +183,7 @@ lazy val web = (project in file("web"))
       libraryDependencies
     ),
     buildInfoOptions += BuildInfoOption.BuildTime,
-    buildInfoPackage := "transparency.aletheia.web"
+    buildInfoPackage := "i4s.symbolic"
   )
 
   val scalacConfig = Seq(

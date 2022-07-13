@@ -1,7 +1,10 @@
 package i4s.symbolic.web.pages
 
+import i4s.symbolic.language.grammar.{TokenGraph, TokenNode, TokenEdge}
 import i4s.symbolic.web.components.{Banner, SentenceGraph}
-import i4s.symbolic.web.model.{DataRecord, TokenEdge, TokenGraph, TokenNode}
+
+
+
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -10,27 +13,28 @@ import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClass}
 
 @react object Grammar {
+  import i4s.symbolic.web.model.syntax._
+
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
   val tokenList = List(
-    TokenNode("I", List.empty),
-    TokenNode("like", List.empty),
-    TokenNode("my", List.empty),
-    TokenNode("black", List.empty),
-    TokenNode("cat", List.empty),
-    TokenNode(",", List.empty),
-    TokenNode("Sansa", List.empty),
-    TokenNode(".", List.empty),
+    TokenNode("I", Some("I"), Some("PRP"), 0, List.empty),
+    TokenNode("like", Some("like"), Some("VBP"), 1, List(
+      TokenEdge("nsubj", 0),
+      TokenEdge("obj", 4),
+      TokenEdge("obj", 6)
+    )),
+    TokenNode("my", Some("my"), Some("PRP$"), 2, List.empty),
+    TokenNode("black", Some("black"), Some("JJ"), 3, List.empty),
+    TokenNode("cat", Some("cat"), Some("NN"), 4, List(
+      TokenEdge("amod", 3),
+      TokenEdge("nmod:poss", 3),
+    )),
+    TokenNode(",", Some(","), Some(","), 5, List.empty),
+    TokenNode("Sansa", Some("Sansa"), Some("NNP"), 6, List.empty),
+    TokenNode(".", Some("."), Some("."), 7, List.empty),
   )
-  tokenList(1).edges = List(
-    TokenEdge("nsubj", tokenList(0)),
-    TokenEdge("obj", tokenList(4)),
-    TokenEdge("obj", tokenList(6))
-  )
-  tokenList(4).edges = List(
-    TokenEdge("amod", tokenList(3)),
-    TokenEdge("nmod:poss", tokenList(2)),
-  )
+
 
   val graph = TokenGraph(tokenList)
 
@@ -39,13 +43,15 @@ import slinky.web.svg.{g, svg, className => svgClass}
     val (sentence, setSentence) = useState[Option[String]](None)
     val (dependencyGraph, setDependencyGraph) = useState[List[String]](Nil)
 
+    val jsTokenGraph = graph.toJs
+
     def dependencyPresentation: ReactElement =
       svg(svgClass := "h-96 w-full")(g(svgClass := "plot-area"),g(svgClass := "x-axis"),g(svgClass := "y-axis"))
 
     div(
       className := "h-screen flex flex-col",
       Banner(),
-      SentenceGraph(graph = graph)
+      SentenceGraph(graph = jsTokenGraph)
     )
   }
 }

@@ -1,7 +1,8 @@
 package i4s.symbolic.web.components
 
 import d3v4._
-import i4s.symbolic.web.model.{DataRecord, JSDataRecord, JSTokenEdge, JSTokenGraph, JSTokenNode, TokenGraph}
+
+import i4s.symbolic.web.model.{JSTokenGraph, JSTokenNode, JSTokenEdge}
 import org.scalajs.dom
 import org.scalajs.dom.{SVGGElement, SVGTextElement}
 import slinky.core.FunctionalComponent
@@ -11,12 +12,14 @@ import slinky.core.facade.React
 import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClassName}
 
+
 import scala.scalajs.js
 import js.JSConverters._
 
+
 @react object SentenceGraph {
 
-  case class Props(graph: TokenGraph)
+  case class Props(graph: JSTokenGraph)
   case class Margins(top: Int, right: Int, bottom: Int, left: Int)
 
   val component = FunctionalComponent[Props] { props =>
@@ -26,7 +29,7 @@ import js.JSConverters._
     )
 
     useEffect(() => {
-      graphData(containerRef.current,props.graph.asJSTokenGraph())
+      graphData(containerRef.current,props.graph)
     },Seq(props.graph))
 
     def graphData(svgRef: svg.tag.RefType, graph: JSTokenGraph): Unit = {
@@ -137,12 +140,12 @@ import js.JSConverters._
       for(currToken <- graph.tokens){
         for(currTokenEdge <- currToken.edges){
           currTokenEdge.source = currToken
-          currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(currTokenEdge.target.token)).abs
+          currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(graph.tokens(currTokenEdge.target).token)).abs
           edges = edges :+ currTokenEdge
         }
       }
       edges = edges.sortBy(_.distance)
-      edges.foreach(e => println(e.source.token + " " + e.target.token + " " + e.distance))
+      edges.foreach(e => println(e.source.token + " " + graph.tokens(e.target).token + " " + e.distance))
 
       for(i <- edges.indices){
         var indices = (graph.tokens.indexWhere(p => p.token.equals(edges(i).source.token)), graph.tokens.indexWhere(p => p.token.equals(edges(i).target.token)))

@@ -2,7 +2,7 @@ package i4s.symbolic.language.formatters
 
 import org.clulab.struct.{DirectedGraph, Edge}
 
-class DependencyViewer(val graph: DirectedGraph[String], val words: Array[String]) {
+class DependencyViewer2(val graph: DirectedGraph[String], val words: Array[String]) {
   private var graphString = ""
 
   private val lineCount = graph.size * 3

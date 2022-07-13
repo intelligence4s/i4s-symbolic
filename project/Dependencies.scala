@@ -6,28 +6,22 @@ object Dependencies {
 
   lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.7.0"
 
-  lazy val http4sDependencies = {
-    val http4sVersion = "0.23.12"
+  lazy val akkaDependencies = {
+    val akkaVersion = "2.6.18"
+    val akkaHttpVersion = "10.2.9"
+
     Seq(
-      "org.http4s"      %% "http4s-ember-server" % http4sVersion,
-      "org.http4s"      %% "http4s-ember-client" % http4sVersion,
-      "org.http4s"      %% "http4s-circe"        % http4sVersion,
-      "org.http4s"      %% "http4s-dsl"          % http4sVersion
+      "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     )
   }
+
+  lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
+
+  lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
 
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
-
-  lazy val munitDependencies = {
-    val munitVersion = "0.7.29"
-    val munitCatsEffectVersion = "1.0.7"
-
-    Seq(
-    "org.scalameta" %% "munit" % munitVersion % Test,
-    "org.typelevel" %% "munit-cats-effect-3" % munitCatsEffectVersion % Test,
-    )
-  }
-
 
   lazy val neo4jDependencies = Seq(
   "org.neo4j.driver" % "neo4j-java-driver" % "4.3.4",
@@ -45,19 +39,19 @@ object Dependencies {
     )
   }
 
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.9" % Test
-
-  lazy val zioDependencies = {
-    val zioVersion = "1.0.13"
-    val zioConfigVersion = "2.0.4"
+  lazy val sangriaDependencies = {
+    val sangriaAkkaHttpVersion = "0.0.2"
 
     Seq(
-      "dev.zio" %% "zio" % zioVersion,
-      "dev.zio" %% "zio-config" % zioConfigVersion,
-      //      "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
-      "dev.zio" %% "zio-test" % zioVersion % Test,
-      "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
+      "org.sangria-graphql" %% "sangria" % "2.1.3",
+      "org.sangria-graphql" %% "sangria-slowlog" % "2.0.2",
+      "org.sangria-graphql" %% "sangria-circe" % "1.3.2",
+
+      "org.sangria-graphql" %% "sangria-akka-http-core" % sangriaAkkaHttpVersion,
+      "org.sangria-graphql" %% "sangria-akka-http-circe" % sangriaAkkaHttpVersion,
     )
   }
+
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.9" % Test
 
 }

@@ -1,7 +1,7 @@
 package i4s.symbolic.web.components
 
 import d3v4._
-import i4s.symbolic.web.model.{DataRecord, JSDataRecord, JSTokenGraph, JSTokenNode, TokenGraph}
+import i4s.symbolic.web.model.{JSTokenGraph, JSTokenNode}
 import org.scalajs.dom
 import org.scalajs.dom.SVGTextElement
 import slinky.core.FunctionalComponent
@@ -11,11 +11,9 @@ import slinky.core.facade.React
 import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClassName}
 
-import scala.scalajs.js
-
 @react object SentenceGraph {
 
-  case class Props(graph: TokenGraph)
+  case class Props(graph: JSTokenGraph)
   case class Margins(top: Int, right: Int, bottom: Int, left: Int)
 
   val component = FunctionalComponent[Props] { props =>
@@ -25,7 +23,7 @@ import scala.scalajs.js
     )
 
     useEffect(() => {
-      graphData(containerRef.current,props.graph.asJSTokenGraph())
+      graphData(containerRef.current,props.graph)
     },Seq(props.graph))
 
     def graphData(svgRef: svg.tag.RefType, graph: JSTokenGraph): Unit = {

@@ -1,6 +1,5 @@
 package i4s.symbolic.web
 
-import i4s.symbolic.language.grammar.{TokenEdge, TokenGraph}
 import scala.scalajs.js.JSConverters._
 
 package object model {

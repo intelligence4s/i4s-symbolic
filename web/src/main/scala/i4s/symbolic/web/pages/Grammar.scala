@@ -1,19 +1,17 @@
 package i4s.symbolic.web.pages
 
-import i4s.symbolic.language.grammar.{TokenGraph, TokenNode, TokenEdge}
-import i4s.symbolic.web.components.{Banner, SentenceGraph}
-
-
-
+import i4s.symbolic.web.components.SentenceGraph
+import i4s.symbolic.web.model.syntax.JsTokenGraphConversion
+import i4s.symbolic.web.model.{TokenEdge, TokenGraph, TokenNode}
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClass}
+import i4s.symbolic.web.components.Banner
 
 @react object Grammar {
-  import i4s.symbolic.web.model.syntax._
 
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
@@ -28,7 +26,7 @@ import slinky.web.svg.{g, svg, className => svgClass}
     TokenNode("black", Some("black"), Some("JJ"), 3, List.empty),
     TokenNode("cat", Some("cat"), Some("NN"), 4, List(
       TokenEdge("amod", 3),
-      TokenEdge("nmod:poss", 3),
+      TokenEdge("nmod:poss", 2),
     )),
     TokenNode(",", Some(","), Some(","), 5, List.empty),
     TokenNode("Sansa", Some("Sansa"), Some("NNP"), 6, List.empty),

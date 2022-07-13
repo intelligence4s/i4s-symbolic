@@ -147,21 +147,9 @@ import js.JSConverters._
       edges = edges.sortBy(_.distance)
       edges.foreach(e => println(e.source.token + " " + graph.tokens(e.target).token + " " + e.distance))
 
-      for(i <- edges.indices){
-        var indices = (graph.tokens.indexWhere(p => p.token.equals(edges(i).source.token)), graph.tokens.indexWhere(p => p.token.equals(edges(i).target.token)))
-        if(indices._1 > indices._2)
-          indices = indices.swap
-        for(j <- 0 until i){
-          val otherIndices = (graph.tokens.indexWhere(p => p.token.equals(edges(j).source.token)), graph.tokens.indexWhere(p => p.token.equals(edges(j).target.token)))
-          if((otherIndices._1 > indices._1 && otherIndices._1 < indices._2) || (otherIndices._2 > indices._1 && otherIndices._2 < indices._2)){
-            if(edges(i).layer <= edges(j).layer){
-              edges(i).layer = edges(j).layer + 1
-            }
-          }
-        }
-      }
 
-      edges.foreach(e => println(e.layer + " " + e.source.token + " " + e.target.token)) //debug
+
+      edges.foreach(e => println(e.layer + " " + e.source.token + " " + graph.tokens(e.target).token)) //debug
 
 //      for(edge <- edges.indices){
 //        selection
@@ -208,10 +196,25 @@ import js.JSConverters._
         .text((d: JSTokenEdge) => d.relationship)
         .each{ (g: SVGTextElement, d: JSTokenEdge) =>
           d.width = g.getComputedTextLength() + padding
-          d.targetRef = graph.tokens(graph.tokens.indexWhere(p => p.token.equals(d.target.token)))
+          d.targetRef = graph.tokens(d.target)
           d.offSet = (d.source.offSet + d.source.width/2 + d.targetRef.offSet + d.targetRef.width/2)/2 - d.width/2
           g.remove
         }
+
+      for(i <- edges.indices){
+        var indices = (graph.tokens(edges(i).source.position).position, graph.tokens(edges(i).targetRef.position).position)
+        if(indices._1 > indices._2)
+          indices = indices.swap
+        for(j <- 0 until i){
+          val otherIndices = (graph.tokens(edges(j).source.position).position, graph.tokens(edges(j).targetRef.position).position)
+          if((otherIndices._1 > indices._1 && otherIndices._1 < indices._2) || (otherIndices._2 > indices._1 && otherIndices._2 < indices._2)){
+            if(edges(i).layer <= edges(j).layer){
+              edges(i).layer = edges(j).layer + 1
+            }
+          }
+        }
+      }
+
 
 
       val relationships = svg.select(".graph-area")
@@ -219,15 +222,15 @@ import js.JSConverters._
         .data(edges.toJSArray)
         .enter()
         .append("g")
-        .attr("transform", (d: JSTokenEdge) => s"translate(${d.offSet},${(d.layer + 1) * 25})")
+        .attr("transform", (d: JSTokenEdge) => s"translate(${d.offSet - 5},${(d.layer + 1) * 25})")
 
       relationships
         .append("path")
         .attr("d", (d: JSTokenEdge) => d3.line().curve(d3.curveBasis).apply(List(
-          (d.width/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d),
-          (d.width/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
-          (d.width/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
-          (d.width/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d))
+          ((d.width + 10)/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d),
+          ((d.width + 10)/2 - ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
+          ((d.width + 10)/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, 12.5d),
+          ((d.width + 10)/2 + ((d.targetRef.offSet + d.targetRef.width/2) - (d.source.offSet + d.source.width/2)).abs/2, -25d * (d.layer + 1) + 22d))
           .map(js.Tuple2.fromScalaTuple2(_)).toJSArray))
         .style("fill", "none")
         .style("stroke", "black")
@@ -236,7 +239,7 @@ import js.JSConverters._
         .append("rect")
         .attr("x", 0)
         .attr("y", 0)
-        .attr("width", (d: JSTokenEdge) => d.width)
+        .attr("width", (d: JSTokenEdge) => d.width + 10)
         .attr("height", 20)
         .attr("rx", 6)
         .attr("ry", 6)
@@ -245,8 +248,13 @@ import js.JSConverters._
 
       relationships
         .append("text")
-        .text((d: JSTokenEdge) => d.relationship)
-        .attr("x", (d: JSTokenEdge) => d.width/2)
+        .text((d: JSTokenEdge) => {
+          if(d.targetRef.position < d.source.position)
+            "<" + d.relationship
+          else
+            d.relationship + ">"
+        })
+        .attr("x", (d: JSTokenEdge) => (d.width + 10)/2)
         .attr("y", 10)
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")

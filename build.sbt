@@ -94,7 +94,6 @@ lazy val slinkyVersion = "0.7.2"
 
 lazy val web = (project in file("web"))
   .enablePlugins(BuildInfoPlugin, CalibanPlugin, ScalaJSBundlerPlugin, ScalaJSWeb, ScalaJSPlugin)
-  .dependsOn(common)
   .settings(
     name := "i4s-symbolic-web",
     resolvers ++= Seq(

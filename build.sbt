@@ -158,9 +158,9 @@ lazy val web = (project in file("web"))
       "-Xlint"
     ),
 
-    // The `file("Aletheia.graphql")` is a path suffix for some file in `src/main/graphql`
-    Compile / caliban / calibanSettings += calibanSetting(file("Aletheia.graphql"))(cs =>
-      cs.packageName("i4s.web.graphql")
+    // The `file("Symbolic.graphql")` is a path suffix for some file in `src/main/graphql`
+    Compile / caliban / calibanSettings += calibanSetting(file("Symbolic.graphql"))(cs =>
+      cs.packageName("i4s.symbolic.web.graphql")
         .scalarMapping(
           "Uuid" -> "java.util.UUID"
         )

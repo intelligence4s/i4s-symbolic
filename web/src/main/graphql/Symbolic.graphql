@@ -1,0 +1,24 @@
+type Query {
+  # Returns a grammar graph from the given statement.
+  grammar(statement: String!): [TokenGraph!]!
+}
+
+# Token node representing a token in a grammar.
+type TokenEdge {
+  relationship: String!
+  target: Int!
+}
+
+# Token graph representing parts of speech and dependencies for a sentence.
+type TokenGraph {
+  tokens: [TokenNode!]!
+}
+
+# Token node representing a token in a grammar.
+type TokenNode {
+  token: String!
+  lemma: String
+  posTag: String
+  position: Int!
+  edges: [TokenEdge!]!
+}

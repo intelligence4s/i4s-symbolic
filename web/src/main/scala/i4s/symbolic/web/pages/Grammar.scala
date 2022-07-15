@@ -1,6 +1,6 @@
 package i4s.symbolic.web.pages
 
-import i4s.symbolic.language.grammar.{TokenGraph, TokenNode}
+import i4s.symbolic.language.grammar.{TokenEdge, TokenGraph, TokenNode}
 import i4s.symbolic.web.components.{Banner, SentenceGraph}
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
@@ -15,14 +15,21 @@ import slinky.web.svg.{g, svg, className => svgClass}
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
   val tokenList = List(
-    TokenNode("I", 0, List.empty),
-    TokenNode("like", 1, List.empty),
-    TokenNode("my", 2, List.empty),
-    TokenNode("black", 3, List.empty),
-    TokenNode("cat", 4, List.empty),
-    TokenNode(",", 5, List.empty),
-    TokenNode("Sansa", 6, List.empty),
-    TokenNode(".", 7, List.empty),
+    TokenNode("I", Some("I"), Some("PRP"), 0, List.empty),
+    TokenNode("like", Some("like"), Some("VBP"), 1, List(
+      TokenEdge("nsubj", 0),
+      TokenEdge("obj", 4),
+      TokenEdge("obj", 6)
+    )),
+    TokenNode("my", Some("my"), Some("PRP$"), 2, List.empty),
+    TokenNode("black", Some("black"), Some("JJ"), 3, List.empty),
+    TokenNode("cat", Some("cat"), Some("NN"), 4, List(
+      TokenEdge("nmod:poss", 2),
+      TokenEdge("amod", 3)
+    )),
+    TokenNode(",", Some(","), Some(","), 5, List.empty),
+    TokenNode("Sansa", Some("Sansa"), Some("NNP"), 6, List.empty),
+    TokenNode(".", Some("."), Some("."), 7, List.empty),
   )
 
   val graph = TokenGraph(tokenList)
@@ -32,7 +39,7 @@ import slinky.web.svg.{g, svg, className => svgClass}
     val (sentence, setSentence) = useState[Option[String]](None)
     val (dependencyGraph, setDependencyGraph) = useState[List[String]](Nil)
 
-    val jsTokenGraph = graph.toJs()
+    val jsTokenGraph = graph.toJs
 
     def dependencyPresentation: ReactElement =
       svg(svgClass := "h-96 w-full")(g(svgClass := "plot-area"),g(svgClass := "x-axis"),g(svgClass := "y-axis"))

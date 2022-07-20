@@ -30,6 +30,7 @@ object Main {
     val routes: BuildingComponent[_, js.Object] = Switch(
       Route.apply("/", Login.component, exact = true),
       Route.apply("/login", Login.component),
+      Route.apply("/language", Language.component),
       Route.apply("/sales", SalesChart.component),
       Route.apply("/grammar", Grammar.component),
       Route.apply("*", NotFound.component)

@@ -2,9 +2,10 @@
 A symbolic representation of logic from facts
 
 ## Overview
-This repo contains 3 subprojects - 
-* common - common nlp, analysis and persistence tools for processing english language statements into grammar graphs and tokens
-* server - a lightweight https server implementation designed to produce access to grammer & nlp processing logic for the frontend
+This repo contains 3 subprojects -
+* common - common code cross built for jvm and scala.js
+* nlp - tools for nlp
+* server - an akka-http server that expresses a graphql interface for language and concept services
 * web - a `scala.js` implementation of a react web application (via [Slinky](https://slinky.dev/)) that is set up to provide web-based access to symbolic processing.
 
 ## Getting Started
@@ -23,7 +24,7 @@ sbt:i4s-symbolic-web> dev #
 [info]    Press <enter> to interrupt or '?' for more options.
 ```
 At this point, change you make to scala.js code in the web application will automatically get built and deployed in the local broswer at 
-`http://localhost:9000`.
+`http://localhost:9000/language`.
 
 **Note** - at this time, the web project does not rely on data from the server project. So work on web does not yet need server to run.
 

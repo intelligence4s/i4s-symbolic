@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Intelligence4s"
 ThisBuild / versionScheme := Some("early-semver")
 
 lazy val root = (project in file("."))
-  .aggregate(web, server)
+  .aggregate(web, server, nlp)
   .settings(
     name := "i4s-symbolic",
     licenses := Seq("MIT" -> url("https://www.mit.edu/~amini/LICENSE.md")),
@@ -27,26 +27,35 @@ lazy val root = (project in file("."))
     publishMavenStyle := true
   )
 
-lazy val common = (project in file("common"))
+lazy val common = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("common"))
   .settings(
-    name := "i4s-symbolic-common",
+    name := "i4s-symbolic-common"
+  )
+  .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided")
+  .jsSettings()
+
+lazy val nlp = (project in file("nlp"))
+  .dependsOn(common.jvm)
+  .settings(
+    name := "i4s-symbolic-nlp",
     resolvers ++= Seq(
       "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
       ("Artifactory" at "http://artifactory.cs.arizona.edu:8081/artifactory/sbt-release").withAllowInsecureProtocol(true)
     ),
     libraryDependencies ++=
       neo4jDependencies ++
-      nlpDependencies ++
-      Seq(
-        enumeratum,
-        logback,
-        scalaTest
-      )
+        nlpDependencies ++
+        Seq(
+          logback,
+          scalaTest
+        )
   )
 
 lazy val server = (project in file("server"))
   .enablePlugins(RevolverPlugin, BuildInfoPlugin, SbtWeb)
-  .dependsOn(common % "compile->compile;test->test")
+  .dependsOn(common.jvm, nlp % "compile->compile;test->test")
   .settings(
     name := "i4s-symbolic-server",
     fork := true,
@@ -56,7 +65,6 @@ lazy val server = (project in file("server"))
       Seq(
         akkaHttpJson,
         circe,
-        enumeratum,
         logback,
         pureconfig,
         scalaTest
@@ -64,7 +72,7 @@ lazy val server = (project in file("server"))
     Compile / scalacOptions ++= scalacConfig ,
     Compile / javacOptions ++= Seq(
       "-Xlint:unchecked",
-      "-Xlint:deprecation",
+      "-Xlint:deprecation"
     ),
     buildInfoKeys := Seq[BuildInfoKey](
       name, version, scalaVersion, sbtVersion,
@@ -87,14 +95,14 @@ lazy val server = (project in file("server"))
 
 */
     buildInfoOptions += BuildInfoOption.BuildTime,
-    buildInfoPackage := "i4s.symbolic.server",
+    buildInfoPackage := "i4s.symbolic.server"
   )
 
 lazy val slinkyVersion = "0.7.2"
 
 lazy val web = (project in file("web"))
   .enablePlugins(BuildInfoPlugin, CalibanPlugin, ScalaJSBundlerPlugin, ScalaJSWeb, ScalaJSPlugin)
-  .dependsOn(common)
+  .dependsOn(common.js)
   .settings(
     name := "i4s-symbolic-web",
     resolvers ++= Seq(
@@ -108,7 +116,7 @@ lazy val web = (project in file("web"))
       "react-router-dom" -> "5.2.0",
       "tw-elements" -> "1.0.0-alpha12",
       "@popperjs/core" -> "2.9.1",
-      "aws-sdk" -> "2.892.0",
+      "aws-sdk" -> "2.892.0"
     ),
 
     Compile / npmDevDependencies ++= Seq(
@@ -123,7 +131,7 @@ lazy val web = (project in file("web"))
       "autoprefixer" -> "10.4.7",
       "postcss-loader" -> "4.2.0",
       "tw-elements" -> "1.0.0-alpha12",
-      "@popperjs/core" -> "2.9.1",
+      "@popperjs/core" -> "2.9.1"
     ),
 
     libraryDependencies ++= Seq(
@@ -150,9 +158,9 @@ lazy val web = (project in file("web"))
       "-Xlint"
     ),
 
-    // The `file("Aletheia.graphql")` is a path suffix for some file in `src/main/graphql`
-    Compile / caliban / calibanSettings += calibanSetting(file("Aletheia.graphql"))(cs =>
-      cs.packageName("i4s.web.graphql")
+    // The `file("Symbolic.graphql")` is a path suffix for some file in `src/main/graphql`
+    Compile / caliban / calibanSettings += calibanSetting(file("Symbolic.graphql"))(cs =>
+      cs.packageName("i4s.symbolic.web.graphql")
         .scalarMapping(
           "Uuid" -> "java.util.UUID"
         )
@@ -232,5 +240,5 @@ lazy val web = (project in file("web"))
     "-Ywarn-unused:patvars",             // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",            // Warn if a private member is unused.
     "-Ywarn-value-discard",               // Warn when non-Unit expression results are unused.
-    "-Xlog-reflective-calls",
+    "-Xlog-reflective-calls"
   )

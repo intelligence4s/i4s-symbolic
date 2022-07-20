@@ -4,8 +4,6 @@ object Dependencies {
 
   lazy val circe = "io.circe" %% "circe-generic" % "0.14.2"
 
-  lazy val enumeratum = "com.beachape" %% "enumeratum" % "1.7.0"
-
   lazy val akkaDependencies = {
     val akkaVersion = "2.6.18"
     val akkaHttpVersion = "10.2.9"

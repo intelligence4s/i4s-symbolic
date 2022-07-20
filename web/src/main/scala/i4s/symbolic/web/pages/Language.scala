@@ -3,12 +3,11 @@ package i4s.symbolic.web.pages
 import i4s.symbolic.language.grammar.TokenGraph
 import i4s.symbolic.web.components.{Banner, SentenceGraph, icons}
 import i4s.symbolic.web.graphql.SymbolicQueries
-import i4s.symbolic.web.model.JSTokenGraph
 import org.scalajs.dom.{Event, KeyboardEvent, html}
-import slinky.core.{FunctionalComponent, SyntheticEvent}
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks.{useEffect, useState}
 import slinky.core.facade.ReactElement
+import slinky.core.{FunctionalComponent, SyntheticEvent}
 import slinky.web.html._
 
 @react object Language {

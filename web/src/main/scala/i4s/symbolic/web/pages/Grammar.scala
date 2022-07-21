@@ -1,7 +1,6 @@
 package i4s.symbolic.web.pages
 
 import i4s.symbolic.web.components.SentenceGraph
-import i4s.symbolic.web.model.{TokenEdge, TokenGraph, TokenNode}
 import i4s.symbolic.language.grammar.{TokenEdge, TokenGraph, TokenNode}
 import i4s.symbolic.web.components.Banner
 import slinky.core.FunctionalComponent
@@ -13,6 +12,7 @@ import slinky.web.svg.{g, svg, className => svgClass}
 import i4s.symbolic.web.components.Banner
 
 @react object Grammar {
+  import i4s.symbolic.web.model.syntax._
 
   implicit def executionContext = scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 

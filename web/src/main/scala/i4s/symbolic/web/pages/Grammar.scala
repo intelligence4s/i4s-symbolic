@@ -1,8 +1,9 @@
 package i4s.symbolic.web.pages
 
 import i4s.symbolic.web.components.SentenceGraph
-import i4s.symbolic.web.model.syntax.JsTokenGraphConversion
 import i4s.symbolic.web.model.{TokenEdge, TokenGraph, TokenNode}
+import i4s.symbolic.language.grammar.{TokenEdge, TokenGraph, TokenNode}
+import i4s.symbolic.web.components.Banner
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -25,8 +26,8 @@ import i4s.symbolic.web.components.Banner
     TokenNode("my", Some("my"), Some("PRP$"), 2, List.empty),
     TokenNode("black", Some("black"), Some("JJ"), 3, List.empty),
     TokenNode("cat", Some("cat"), Some("NN"), 4, List(
-      TokenEdge("amod", 3),
       TokenEdge("nmod:poss", 2),
+      TokenEdge("amod", 3)
     )),
     TokenNode(",", Some(","), Some(","), 5, List.empty),
     TokenNode("Sansa", Some("Sansa"), Some("NNP"), 6, List.empty),

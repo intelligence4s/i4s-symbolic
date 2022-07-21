@@ -55,6 +55,30 @@ import js.JSConverters._
       val margin = 40
       val padding = 10
 
+      var edges = List[JSTokenEdge]()
+
+      for(currToken <- graph.tokens){
+        for(currTokenEdge <- currToken.edges){
+          currTokenEdge.source = currToken
+          currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(graph.tokens(currTokenEdge.target).token)).abs
+          edges = edges :+ currTokenEdge
+        }
+      }
+      edges = edges.sortBy(_.distance)
+
+      svg.select(".graph-area")
+        .selectAll(".text-size")
+        .data(edges.toJSArray)
+        .enter
+        .append("text")
+        .text((d: JSTokenEdge) => d.relationship)
+        .each{ (g: SVGTextElement, d: JSTokenEdge) =>
+          d.width = g.getComputedTextLength() + padding
+          d.targetRef = graph.tokens(d.target)
+          d.offSet = (d.source.offSet + d.source.width/2 + d.targetRef.offSet + d.targetRef.width/2)/2 - d.width/2
+          g.remove
+        }
+
       val textSizing = svg
         .select(".graph-area")
         .selectAll(".text-size")
@@ -65,9 +89,18 @@ import js.JSConverters._
         .each { (t: SVGTextElement, d: JSTokenNode) =>
           d.width = t.getComputedTextLength() + padding
           d.offSet = accumulatedY
-          accumulatedY += d.width + margin
+          for(i <- d.edges.indices){
+            if(d.edges(i).target < d.position){
+              d.offSet = Math.max(d.offSet, graph.tokens(d.edges(i).target).offSet + d.edges(i).width)
+            }
+          }
+          accumulatedY = d.offSet + d.width + margin
           t.remove()
         }
+
+      for(edge <- edges){
+        edge.offSet = (edge.source.offSet + edge.source.width/2 + edge.targetRef.offSet + edge.targetRef.width/2)/2 - edge.width/2
+      }
 
       val selection = svg
         .select(".graph-area")
@@ -85,6 +118,7 @@ import js.JSConverters._
         .attr("height", 20)
         .style("fill", "white")
         .style("stroke", "gray")
+
       selection
         .append("text")
         .text((d: JSTokenNode) => d.token)
@@ -94,119 +128,12 @@ import js.JSConverters._
         .attr("text-anchor", "middle")
         .style("fill", "black")
 
-//      val tokens = graph.tokens
-//      for(currentNode <- tokens)
-//        for(currentEdge <- currentNode.edges){
-//
-//        }
-//      selection
-//        .each { (g: SVGGElement, d: JSTokenNode) =>
-//          svg.select(".graph-area")
-//            .selectAll("g")
-//            .each{ (gDestination: SVGGElement, dDestination: JSTokenNode) =>
-//              val target = d.edges.map(_.target).filter(_.token == dDestination.token)
-//              target.foreach(f => println(f.token))
-//              svg.select(".graph-area")
-//                .selectAll(".relationship")
-//                .data(target)
-//                .enter()
-//                .append("rect")
-//                .attr("x", (d.offSet + dDestination.offSet)/2)
-//                .attr("y", 25)
-//                .attr("rx", 6)
-//                .attr("ry", 6)
-//                .attr("width", 20)
-//                .attr("height", 20)
-//                .style("fill", "white")
-//                .style("stroke", "gray")
-//            }
-//        }
-//      val coordinates = List(
-//        (10d, 10d),
-//        (10d, 70d),
-//        (20d, 80d),
-//        (100d, 80d)
-//      )
-//      val lineGenerator = d3.line().curve(d3.curveBundle.beta(1))
-//      val pathData: String = lineGenerator.apply(coordinates.map(js.Tuple2.fromScalaTuple2).toJSArray)
-//
-//      svg.select(".graph-area")
-//        .append("path")
-//        .attr("d", pathData)
-//        .style("fill", "none")
-//        .style("stroke", "black")
-      var edges = List[JSTokenEdge]()
-
-      for(currToken <- graph.tokens){
-        for(currTokenEdge <- currToken.edges){
-          currTokenEdge.source = currToken
-          currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(graph.tokens(currTokenEdge.target).token)).abs
-          edges = edges :+ currTokenEdge
-        }
-      }
-      edges = edges.sortBy(_.distance)
-      edges.foreach(e => println(e.source.token + " " + graph.tokens(e.target).token + " " + e.distance))
-
-
-
-      edges.foreach(e => println(e.layer + " " + e.source.token + " " + graph.tokens(e.target).token)) //debug
-
-//      for(edge <- edges.indices){
-//        selection
-//          .each { (g: SVGGElement, d: JSTokenNode) =>
-//            if(edges(edge).source == d){
-////              val coordinates = List(
-////                (10d, 10d),
-////                (10d, 70d),
-////                (20d, 80d),
-////                (100d, 80d)
-////              )
-////              val lineGenerator = d3.line().curve(d3.curveBundle.beta(1))
-////              val pathData: String = lineGenerator.apply(coordinates.map(js.Tuple2.fromScalaTuple2).toJSArray)
-////
-////              svg.select(".graph-area")
-////                .append("path")
-////                .attr("d", pathData)
-////                .style("fill", "none")
-////                .style("stroke", "black")
-//              println(edges(edge).target.token)
-//              println(d.offSet + " " + edges(edge).target.offSet)
-//              svg.select(".graph-area")
-//                .selectAll(".relationship")
-//                .data(Array(edges(edge)).toJSArray)
-//                .enter()
-//                .append("rect")
-//                .attr("x", (d.offSet + graph.tokens.filter(_.token.equals(edges(edge).target.token))(0).offSet)/2)
-//                .attr("y", (edges(edge).layer + 1) * 25)
-//                .attr("width", 20)
-//                .attr("height", 20)
-//                .attr("rx", 6)
-//                .attr("ry", 6)
-//                .style("fill", "white")
-//                .style("stroke", "gray")
-//            }
-//          }
-//      }
-      accumulatedY = 0d
-      svg.select(".graph-area")
-        .selectAll(".text-size")
-        .data(edges.toJSArray)
-        .enter
-        .append("text")
-        .text((d: JSTokenEdge) => d.relationship)
-        .each{ (g: SVGTextElement, d: JSTokenEdge) =>
-          d.width = g.getComputedTextLength() + padding
-          d.targetRef = graph.tokens(d.target)
-          d.offSet = (d.source.offSet + d.source.width/2 + d.targetRef.offSet + d.targetRef.width/2)/2 - d.width/2
-          g.remove
-        }
-
       for(i <- edges.indices){
-        var indices = (graph.tokens(edges(i).source.position).position, graph.tokens(edges(i).targetRef.position).position)
+        var indices = (edges(i).source.position, edges(i).target)
         if(indices._1 > indices._2)
           indices = indices.swap
         for(j <- 0 until i){
-          val otherIndices = (graph.tokens(edges(j).source.position).position, graph.tokens(edges(j).targetRef.position).position)
+          val otherIndices = (edges(j).source.position, edges(j).target)
           if((otherIndices._1 > indices._1 && otherIndices._1 < indices._2) || (otherIndices._2 > indices._1 && otherIndices._2 < indices._2)){
             if(edges(i).layer <= edges(j).layer){
               edges(i).layer = edges(j).layer + 1
@@ -214,8 +141,6 @@ import js.JSConverters._
           }
         }
       }
-
-
 
       val relationships = svg.select(".graph-area")
         .selectAll(".relationship")

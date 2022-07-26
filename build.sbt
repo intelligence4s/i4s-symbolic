@@ -160,7 +160,8 @@ lazy val web = (project in file("web"))
 
     // The `file("Symbolic.graphql")` is a path suffix for some file in `src/main/graphql`
     Compile / caliban / calibanSettings += calibanSetting(file("Symbolic.graphql"))(cs =>
-      cs.packageName("i4s.symbolic.web.graphql")
+      cs.clientName("Symbolic")
+        .packageName("i4s.symbolic.web.graphql")
         .scalarMapping(
           "Uuid" -> "java.util.UUID"
         )

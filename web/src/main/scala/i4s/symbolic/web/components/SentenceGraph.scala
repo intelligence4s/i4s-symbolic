@@ -51,19 +51,21 @@ import js.JSConverters._
         .attr("width","100%")
         .attr("height", s"${height}px")
 
+      svg.selectAll(".graph-area").selectAll("*").remove()
+
       var accumulatedY = 0d
       val margin = 40
       val padding = 10
 
       var edges = List[JSTokenEdge]()
 
-      for(currToken <- graph.tokens){
-        for(currTokenEdge <- currToken.edges){
+      graph.tokens.foreach(currToken =>
+        currToken.edges.foreach(currTokenEdge => {
           currTokenEdge.source = currToken
           currTokenEdge.distance = (graph.tokens.indexOf(currToken) - graph.tokens.map(_.token).indexOf(graph.tokens(currTokenEdge.target).token)).abs
           edges = edges :+ currTokenEdge
-        }
-      }
+        })
+      )
       edges = edges.sortBy(_.distance)
 
       svg.select(".graph-area")
@@ -89,18 +91,18 @@ import js.JSConverters._
         .each { (t: SVGTextElement, d: JSTokenNode) =>
           d.width = t.getComputedTextLength() + padding
           d.offSet = accumulatedY
-          for(i <- d.edges.indices){
+          d.edges.indices.foreach(i =>
             if(d.edges(i).target < d.position){
               d.offSet = Math.max(d.offSet, graph.tokens(d.edges(i).target).offSet + d.edges(i).width)
             }
-          }
+          )
           accumulatedY = d.offSet + d.width + margin
           t.remove()
         }
 
-      for(edge <- edges){
+      edges.foreach(edge =>
         edge.offSet = (edge.source.offSet + edge.source.width/2 + edge.targetRef.offSet + edge.targetRef.width/2)/2 - edge.width/2
-      }
+      )
 
       val selection = svg
         .select(".graph-area")
@@ -128,7 +130,7 @@ import js.JSConverters._
         .attr("text-anchor", "middle")
         .style("fill", "black")
 
-      for(i <- edges.indices){
+      edges.indices.foreach(i => {
         var indices = (edges(i).source.position, edges(i).target)
         if(indices._1 > indices._2)
           indices = indices.swap
@@ -140,7 +142,7 @@ import js.JSConverters._
             }
           }
         }
-      }
+      })
 
       val relationships = svg.select(".graph-area")
         .selectAll(".relationship")

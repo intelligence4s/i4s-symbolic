@@ -8,7 +8,7 @@ ThisBuild / organizationName := "Intelligence4s"
 ThisBuild / versionScheme := Some("early-semver")
 
 lazy val root = (project in file("."))
-  .aggregate(web, server, nlp)
+  .aggregate(web, server, nlp, visual)
   .settings(
     name := "i4s-symbolic",
     licenses := Seq("MIT" -> url("https://www.mit.edu/~amini/LICENSE.md")),
@@ -34,6 +34,9 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   )
   .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided")
   .jsSettings()
+
+lazy val visual = (project in file("visual"))
+  .dependsOn(common.jvm)
 
 lazy val nlp = (project in file("nlp"))
   .dependsOn(common.jvm)

@@ -23,16 +23,20 @@ lazy val root = (project in file("."))
         url = url("https://github.com/intelligence4s")
       )
     ),
-    publishMavenStyle := true
+    publishMavenStyle := true,
+    javaCppPlatform := Seq() // Indicate to javaCPP plugin that we do not need any cpp presets
   )
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("common"))
   .settings(
-    name := "i4s-symbolic-common"
+    name := "i4s-symbolic-common",
+    javaCppPlatform := Seq() // Indicate to javaCPP plugin that we do not need any cpp presets
   )
-  .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided")
+  .jvmSettings(
+    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided"
+  )
   .jsSettings()
 
 lazy val visual = (project in file("visual"))

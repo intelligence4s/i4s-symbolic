@@ -3,6 +3,10 @@ package i4s.symbolic.console
 import scala.util.matching.Regex
 import scala.util.control.Breaks._
 
+trait HasCommandConfigs {
+  def configs(): List[CommandConfig]
+}
+
 case class CommandConfig(matcher: Regex, response: List[String] => Boolean, help: String)
 
 class InteractiveConsole(prompt: String, config: List[CommandConfig]) {

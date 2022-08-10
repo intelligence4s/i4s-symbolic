@@ -2,6 +2,9 @@ import Dependencies._
 
 name := "i4s-symbolic-server"
 
+// Indicate to javaCPP plugin that we do not need any cpp presets
+javaCppPlatform := Seq()
+
 fork := true
 
 libraryDependencies ++=

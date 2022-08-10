@@ -17,7 +17,7 @@ object Dependencies {
 
   lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
 
-  lazy val javaCV = "org.bytedeco" % "javacv-platform" % "1.5.7"
+//  lazy val javaCV = "org.bytedeco" % "javacv-platform" % "1.5.7"
 
   lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
 

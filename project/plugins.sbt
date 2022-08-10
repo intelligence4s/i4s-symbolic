@@ -12,3 +12,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
 
 // Caliban client code generation...
 addSbtPlugin("com.github.ghostdogpr" % "caliban-codegen-sbt" % "1.4.1")
+
+// javaCV plugin
+addSbtPlugin("org.bytedeco" % "sbt-javacpp" % "1.17")

@@ -2,6 +2,9 @@ import Dependencies._
 
 name := "i4s-symbolic-web"
 
+// Indicate to javaCPP plugin that we do not need any cpp presets
+javaCppPlatform := Seq()
+
 resolvers ++= Seq(
   "jitpack" at "https://jitpack.io"
 )

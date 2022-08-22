@@ -1,10 +1,12 @@
-package i4s.scalacv.image
+package i4s.scalacv.image.constants
 
 object ImageWriteFlags extends Enumeration {
   protected case class FlagVal(flag: Int) extends super.Val
+
   type ImageWriteFlags = Value
 
   import scala.language.implicitConversions
+
   implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
 
   /** For JPEG, it can be a quality from 0 to 100 (the higher is the better). Default value is 95. */

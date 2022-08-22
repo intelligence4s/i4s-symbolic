@@ -1,10 +1,12 @@
-package i4s.scalacv.image
+package i4s.scalacv.image.constants
 
 object ImageReadFlags extends Enumeration {
   protected case class FlagVal(flag: Int) extends super.Val
+
   type ImageReadFlags = Value
 
   import scala.language.implicitConversions
+
   implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
 
   /** If set, return the loaded image as is (with alpha channel, otherwise it gets cropped). Ignore EXIF orientation. */

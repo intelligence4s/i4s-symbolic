@@ -1,11 +1,11 @@
 package i4s.scalacv.image
 
-import ImageReadFlags.ImageReadFlags
+import i4s.scalacv.image.constants.ImageReadFlags
+import i4s.scalacv.image.constants.ImageReadFlags.ImageReadFlags
 import org.bytedeco.opencv.opencv_core.{Mat, MatVector}
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 
 import java.io.File
-
 
 object Codecs {
 

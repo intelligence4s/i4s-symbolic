@@ -1,10 +1,12 @@
-package i4s.scalacv.image
+package i4s.scalacv.image.constants
 
 object ImageWriteExrTypeFlags extends Enumeration {
   protected case class FlagVal(flag: Int) extends super.Val
+
   type ImageReadFlags = Value
 
   import scala.language.implicitConversions
+
   implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
 
   /** no compression */
@@ -28,12 +30,12 @@ object ImageWriteExrTypeFlags extends Enumeration {
   val B44: FlagVal = FlagVal(6)
 
   /** lossy 4-by-4 pixel block compression, flat fields are compressed more */
-  val B44a:FlagVal = FlagVal(7)
+  val B44a: FlagVal = FlagVal(7)
 
   /** lossy DCT based compression, in blocks of 32 scanlines. More efficient for partial buffer access. Supported since OpenEXR 2.2.0. */
   val Dwaa: FlagVal = FlagVal(8)
 
   /** lossy DCT based compression, in blocks of 256 scanlines. More efficient space wise and faster to decode full frames than DWAA_COMPRESSION. Supported since OpenEXR 2.2.0. */
-  val Dwab:FlagVal = FlagVal(9)
+  val Dwab: FlagVal = FlagVal(9)
 
 }

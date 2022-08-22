@@ -1,4 +1,4 @@
-package i4s.scalacv.image
+package i4s.scalacv.image.constants
 
 /** Imwrite PNG specific flags used to tune the compression algorithm.
  * These flags will be modify the way of PNG image compression and will be passed to the underlying zlib processing stage.
@@ -10,10 +10,12 @@ package i4s.scalacv.image
  */
 object ImageWritePngFlags extends Enumeration {
   protected case class FlagVal(flag: Int) extends super.Val
+
   type ImageReadFlags = Value
 
- import scala.language.implicitConversions
- implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
+  import scala.language.implicitConversions
+
+  implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
 
   /** Use this value for normal data. */
   val Default: FlagVal = FlagVal(0)

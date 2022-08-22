@@ -1,10 +1,12 @@
-package i4s.scalacv.image
+package i4s.scalacv.image.constants
 
 object ImageWritePamFlags extends Enumeration {
   protected case class FlagVal(flag: Int) extends super.Val
+
   type ImageReadFlags = Value
 
   import scala.language.implicitConversions
+
   implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
 
   val NullFormat: FlagVal = FlagVal(0)

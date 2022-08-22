@@ -5,7 +5,9 @@ import i4s.scalacv.image.constants.ColorMaps.ColorMap
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.{GpuMat, Mat, UMat}
 
-object Colors {
+object Colors extends Colors
+
+trait Colors {
 
   implicit class ImageColor(image: Mat) {
 

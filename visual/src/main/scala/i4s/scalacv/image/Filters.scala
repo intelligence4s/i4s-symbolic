@@ -39,7 +39,9 @@ import org.bytedeco.opencv.opencv_core._
  * <p>
  * \note when <pre>ddepth=[[CvUndefined]]</pre>, the output image will have the same depth as the source.*/
 
-object Filters {
+object Filters extends Filters
+
+trait Filters {
   /**
    * Returns Gaussian filter coefficients.
    * <p>

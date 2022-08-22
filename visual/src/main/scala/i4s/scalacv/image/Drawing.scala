@@ -8,7 +8,9 @@ import org.bytedeco.javacpp.Pointer
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core._
 
-object Drawing {
+object Drawing extends Drawing
+
+trait Drawing {
   import i4s.scalacv.TypeConverters._
 
   /** Calculates the width and height of a text string.

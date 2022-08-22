@@ -16,7 +16,9 @@ import org.bytedeco.opencv.opencv_imgproc.{GeneralizedHoughBallard, GeneralizedH
 
 import java.nio.{DoubleBuffer, FloatBuffer}
 
-object Shapes {
+object Shapes extends Shapes
+
+trait Shapes {
 
   /** Calculates all of the moments up to the third order of a polygon or rasterized shape.
    * <p>

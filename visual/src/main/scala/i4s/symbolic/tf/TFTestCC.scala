@@ -6,7 +6,7 @@ import org.tensorflow.ndarray.Shape
 import org.tensorflow.types.TFloat32
 
 object TFTestCC extends HasCommandConfigs {
-  override def configs(): List[CommandConfig] = List(CommandConfig("^(testtf)$".r, values => runTensorTest(), "test"))
+  override def configs(): List[CommandConfig] = List(CommandConfig("^(testtf)$".r, values => runTensorTest(), "testtf"))
 
   private def makeTensor(): Unit = {
     val shape = Shape.of(1, 2)

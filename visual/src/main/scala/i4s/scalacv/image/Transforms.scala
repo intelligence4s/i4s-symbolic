@@ -15,7 +15,9 @@ import i4s.scalacv.image.constants.{DistanceLabelTypes, InterpolationFlags}
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.{GpuMat, Mat, Point, Point2f, Rect, Scalar, Size, UMat}
 
-object Transforms {
+object Transforms extends Transforms
+
+trait Transforms {
 
   /** Converts image transformation maps from one representation to another.
    * <p>

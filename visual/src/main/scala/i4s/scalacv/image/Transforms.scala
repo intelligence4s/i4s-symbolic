@@ -1,11 +1,11 @@
 package i4s.scalacv.image
 
-import i4s.scalacv.core.constants.{BorderTypes, DecompositionMethods}
 import i4s.scalacv.core.constants.BorderTypes.BorderType
-import i4s.scalacv.core.types.FlowTypes.FlowType
+import i4s.scalacv.core.constants.DecompositionMethods.DecompositionMethod
+import i4s.scalacv.core.constants.{BorderTypes, DecompositionMethods}
+import i4s.scalacv.core.types.MatTypes.MatType
 import i4s.scalacv.core.types.Types
 import i4s.scalacv.core.types.Types.Type
-import i4s.scalacv.core.constants.DecompositionMethods.DecompositionMethod
 import i4s.scalacv.image.constants.DistanceLabelTypes.DistanceLabelType
 import i4s.scalacv.image.constants.DistanceTypes.DistanceType
 import i4s.scalacv.image.constants.InterpolationFlags.InterpolationFlag
@@ -13,7 +13,7 @@ import i4s.scalacv.image.constants.ThresholdMethods.ThresholdMethod
 import i4s.scalacv.image.constants.ThresholdTypes.ThresholdType
 import i4s.scalacv.image.constants.{DistanceLabelTypes, InterpolationFlags}
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.{GpuMat, Mat, Point, Point2f, Rect, Scalar, Size, UMat}
+import org.bytedeco.opencv.opencv_core._
 
 object Transforms extends Transforms
 
@@ -50,10 +50,10 @@ trait Transforms {
    *                        <p>
    * @see remap, undistort, initUndistortRectifyMap
    */
-  def convertMaps(map1: Mat, map2: Mat, dstmap1: Mat, dstmap2: Mat, dstmap1type: FlowType, nninterpolation: Boolean): Unit =
+  def convertMaps(map1: UMat, map2: UMat, dstmap1: UMat, dstmap2: UMat, dstmap1type: MatType, nninterpolation: Boolean): Unit =
     opencv_imgproc.convertMaps(map1,map2,dstmap1,dstmap2,dstmap1type.flag,nninterpolation)
 
-  def convertMaps(map1: Mat, map2: Mat, dstmap1: Mat, dstmap2: Mat, dstmap1type: FlowType): Unit =
+  def convertMaps(map1: UMat, map2: UMat, dstmap1: UMat, dstmap2: UMat, dstmap1type: MatType): Unit =
     convertMaps(map1,map2,dstmap1,dstmap2,dstmap1type,nninterpolation = true)
 
   /** \brief Calculates an affine matrix of 2D rotation.
@@ -113,8 +113,8 @@ trait Transforms {
    * @param affine        Original affine transformation.
    * @param reverseAffine Output reverse affine transformation.
    */
-  def invertAffineTransform(affine: Mat): Mat = {
-    val reverseAffine = new Mat()
+  def invertAffineTransform(affine: UMat): UMat = {
+    val reverseAffine = new UMat()
     opencv_imgproc.invertAffineTransform(affine,reverseAffine)
     reverseAffine
   }
@@ -137,10 +137,10 @@ trait Transforms {
    * @see findHomography, warpPerspective, perspectiveTransform
    */
 
-  def getPerspectiveTransform(src: Mat, dst: Mat, solveMethod: DecompositionMethod): Mat =
+  def getPerspectiveTransform(src: UMat, dst: UMat, solveMethod: DecompositionMethod): Mat =
     opencv_imgproc.getPerspectiveTransform(src, dst, solveMethod.flag)
 
-  def getPerspectiveTransform(src: Mat, dst: Mat): Mat =
+  def getPerspectiveTransform(src: UMat, dst: UMat): Mat =
     getPerspectiveTransform(src, dst, DecompositionMethods.Lu)
 
   /** \overload */
@@ -150,11 +150,10 @@ trait Transforms {
   def getPerspectiveTransform(src: Point2f, dst: Point2f): Mat =
     getPerspectiveTransform(src, dst, DecompositionMethods.Lu)
 
-  def getAffineTransform(src: Mat, dst: Mat): Mat =
+  def getAffineTransform(src: UMat, dst: UMat): Mat =
     opencv_imgproc.getAffineTransform(src, dst)
 
-  implicit class ImageTransforms(image: Mat) {
-
+  implicit class ImageTransforms(image: Image) {
     /** \brief Resizes an image.
      * <p>
      * The function resize resizes the image src down to or up to the specified size. Note that the
@@ -190,8 +189,8 @@ trait Transforms {
      * @see warpAffine, warpPerspective, remap
      *
      */
-    def resize(dsize: Size, fx: Double, fy: Double, interpolation: InterpolationFlag): Mat = {
-      val dst = new Mat()
+    def resize(dsize: Size, fx: Double, fy: Double, interpolation: InterpolationFlag): Image = {
+      val dst = new Image()
       opencv_imgproc.resize(image,dst,dsize,fx,fy,interpolation.flag)
       dst
     }
@@ -222,14 +221,14 @@ trait Transforms {
      *                    <p>
      * @see warpPerspective, resize, remap, getRectSubPix, transform
      */
-    def warpAffine(matrix: Mat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Mat = {
+    def warpAffine(matrix: UMat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image = {
       val iflags = flags.foldLeft(0)(_ | _.flag)
-      val dst = new Mat()
+      val dst = new Image()
       opencv_imgproc.warpAffine(image,dst,matrix,dsize,iflags,borderMode.flag,borderValue)
       dst
     }
 
-    def warpAffine(matrix: Mat, dsize: Size): Mat =
+    def warpAffine(matrix: UMat, dsize: Size): Image =
       warpAffine(matrix,dsize,Set(InterpolationFlags.Linear),BorderTypes.Constant,new Scalar())
 
     /** \brief Applies a perspective transformation to an image.
@@ -254,15 +253,15 @@ trait Transforms {
      *                    <p>
      * @see warpAffine, resize, remap, getRectSubPix, perspectiveTransform
      */
-    def warpPerspective(matrix: Mat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Mat =
+    def warpPerspective(matrix: UMat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image =
     {
       val iflags = flags.foldLeft(0)(_ | _.flag)
-      val dst = new Mat()
+      val dst = new Image()
       opencv_imgproc.warpPerspective(image,dst,matrix,dsize,iflags,borderMode.flag,borderValue)
       dst
     }
 
-    def warpPerspective(matrix: Mat, dsize: Size): Mat =
+    def warpPerspective(matrix: UMat, dsize: Size): Image =
       warpPerspective(matrix,dsize,Set(InterpolationFlags.Linear),BorderTypes.Constant,new Scalar())
 
     /** \brief Applies a generic geometrical transformation to an image.
@@ -297,13 +296,13 @@ trait Transforms {
      *                      \note
      *                      Due to current implementation limitations the size of an input and output images should be less than 32767x32767.
      */
-    def remap(map1: Mat, map2: Mat, interpolation: InterpolationFlag, borderMode: BorderType /*=cv::BORDER_CONSTANT*/, borderValue: Scalar): Mat = {
-      val dst = new Mat()
+    def remap(map1: UMat, map2: UMat, interpolation: InterpolationFlag, borderMode: BorderType /*=cv::BORDER_CONSTANT*/, borderValue: Scalar): Image = {
+      val dst = new Image()
       opencv_imgproc.remap(image,dst,map1,map2,interpolation.flag,borderMode.flag,borderValue)
       dst
     }
 
-    def remap(map1: Mat, map2: Mat, interpolation: InterpolationFlag): Mat =
+    def remap(map1: UMat, map2: UMat, interpolation: InterpolationFlag): Image =
       remap(map1,map2,interpolation,BorderTypes.Constant,new Scalar())
 
     /** \brief Retrieves a pixel rectangle from an image with sub-pixel accuracy.
@@ -326,13 +325,13 @@ trait Transforms {
      *                  <p>
      * @see warpAffine, warpPerspective
      */
-    def rectSubPixels(patchSize: Size, center: Point2f, patchType: Type): Mat = {
-      val patch = new Mat()
+    def rectSubPixels(patchSize: Size, center: Point2f, patchType: Type): Image = {
+      val patch = new Image()
       opencv_imgproc.getRectSubPix(image,patchSize,center,patch,patchType.flag)
       patch
     }
 
-    def rectSubPixels(patchSize: Size, center: Point2f): Mat =
+    def rectSubPixels(patchSize: Size, center: Point2f): Image =
       rectSubPixels(patchSize,center,Types.CvUndefined)
 
     /** \example samples/cpp/polar_transforms.cpp
@@ -375,9 +374,9 @@ trait Transforms {
      *                  - To calculate magnitude and angle in degrees #cartToPolar is used internally thus angles are measured from 0 to 360 with accuracy about 0.3 degrees.
      *                  <p>
      */
-    def linearPolar(center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Mat = {
+    def linearPolar(center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
       val iflags = flags.foldLeft(0)(_ | _.flag)
-      val dst = new Mat()
+      val dst = new Image()
       opencv_imgproc.linearPolar(image,dst,center,maxRadius,iflags)
       dst
     }
@@ -467,8 +466,8 @@ trait Transforms {
      *                  <p>
      * @see cv::remap
      */
-    def warpPolar(dsize: Size, center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Mat = {
-      val dst = new Mat()
+    def warpPolar(dsize: Size, center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
+      val dst = new Image()
       val iflags = flags.foldLeft(0)(_ | _.flag)
       opencv_imgproc.warpPolar(image,dst,dsize,center,maxRadius,iflags)
       dst
@@ -508,32 +507,32 @@ trait Transforms {
      *                CV_64F.
      * @param sqdepth desired depth of the integral image of squared pixel values, CV_32F or CV_64F.
      */
-    def integral(sdepth: Int): Mat = {
-      val sum = new Mat()
+    def integral(sdepth: Int): Image = {
+      val sum = new Image()
       opencv_imgproc.integral(image, sum, sdepth)
       sum
     }
 
-    def integral(): Mat = integral(sdepth = -1)
+    def integral(): Image = integral(sdepth = -1)
 
-    def integral2(sdepth: Int, sqdepth: Int): (Mat,Mat) = {
-      val sum = new Mat()
-      val sqsum = new Mat()
+    def integral2(sdepth: Int, sqdepth: Int): (UMat,UMat) = {
+      val sum = new UMat()
+      val sqsum = new UMat()
       opencv_imgproc.integral2(image,sum,sqsum,sdepth,sqdepth)
       (sum,sqsum)
     }
 
-    def integral2(): (Mat,Mat) = integral2(sdepth = -1,sqdepth = -1)
+    def integral2(): (UMat,UMat) = integral2(sdepth = -1,sqdepth = -1)
 
-    def integral3(sdepth: Int, sqdepth: Int): (Mat,Mat,Mat) = {
-      val sum = new Mat()
-      val sqsum = new Mat()
-      val tilted = new Mat()
+    def integral3(sdepth: Int, sqdepth: Int): (UMat,UMat,UMat) = {
+      val sum = new UMat()
+      val sqsum = new UMat()
+      val tilted = new UMat()
       opencv_imgproc.integral3(image,sum,sqsum,tilted,sdepth,sqdepth)
       (sum,sqsum,tilted)
     }
 
-    def integral3(): (Mat,Mat,Mat) = integral3(sdepth = -1,sqdepth = -1)
+    def integral3(): (UMat,UMat,UMat) = integral3(sdepth = -1,sqdepth = -1)
 
     /** \brief Applies a fixed-level threshold to each array element.
      * <p>
@@ -559,9 +558,9 @@ trait Transforms {
      *         <p>
      * @see adaptiveThreshold, findContours, compare, min, max
      */
-    def threshold(thresh: Double, maxval: Double, thresholdType: Set[ThresholdType]): (Mat,Double) = {
+    def threshold(thresh: Double, maxval: Double, thresholdType: Set[ThresholdType]): (Image,Double) = {
       val tflag = thresholdType.foldLeft(0)(_ | _.flag)
-      val dst = new Mat()
+      val dst = new Image()
       val result = opencv_imgproc.threshold(image,dst,thresh,maxval,tflag)
       (dst,result)
     }
@@ -592,8 +591,8 @@ trait Transforms {
      *                       <p>
      * @see threshold, blur, GaussianBlur
      */
-    def adaptiveThreshold(maxValue: Double, adaptiveMethod: ThresholdMethod, thresholdType: ThresholdType, blockSize: Int, constant: Double): Mat = {
-      val dst = new Mat()
+    def adaptiveThreshold(maxValue: Double, adaptiveMethod: ThresholdMethod, thresholdType: ThresholdType, blockSize: Int, constant: Double): Image = {
+      val dst = new Image()
       opencv_imgproc.adaptiveThreshold(image,dst,maxValue,adaptiveMethod.flag,thresholdType.flag,blockSize,constant)
       dst
     }
@@ -651,13 +650,13 @@ trait Transforms {
      *                 or any larger aperture.
      * @param labelType    Type of the label array to build, see #DistanceTransformLabelTypes.
      */
-    def distanceTransformWithLabels(labels: Mat, distanceType: DistanceType, maskSize: Int, labelType: DistanceLabelType): Mat = {
-      val dst = new Mat()
+    def distanceTransformWithLabels(labels: Image, distanceType: DistanceType, maskSize: Int, labelType: DistanceLabelType): Image = {
+      val dst = new Image()
       opencv_imgproc.distanceTransformWithLabels(image,dst,labels,distanceType.flag,maskSize,labelType.flag)
       dst
     }
 
-    def distanceTransformWithLabels(labels: Mat, distanceType: DistanceType, maskSize: Int): Mat =
+    def distanceTransformWithLabels(labels: Image, distanceType: DistanceType, maskSize: Int): Image =
       distanceTransformWithLabels(labels,distanceType,maskSize,DistanceLabelTypes.ConnectedComponent)
 
     /** \overload
@@ -671,13 +670,13 @@ trait Transforms {
      * @param dstType      Type of output image. It can be CV_8U or CV_32F. Type CV_8U can be used only for
      *                     the first variant of the function and distanceType == #DIST_L1.
      */
-    def distanceTransform(distanceType: DistanceType, maskSize: Int, dstType: Type): Mat = {
-      val dst = new Mat()
+    def distanceTransform(distanceType: DistanceType, maskSize: Int, dstType: Type): Image = {
+      val dst = new Image()
       opencv_imgproc.distanceTransform(image,dst,distanceType.flag,maskSize,dstType.flag)
       dst
     }
 
-    def distanceTransform(distanceType: DistanceType, maskSize: Int): Mat =
+    def distanceTransform(distanceType: DistanceType, maskSize: Int): Image =
       distanceTransform(distanceType,maskSize,Types.Cv32F)
 
     /** \brief Fills a connected component with the given color.
@@ -751,13 +750,13 @@ trait Transforms {
      *              <p>
      * @see findContours
      */
-    def floodFill(mask: Mat, seedPoint: Point, newVal: Scalar, loDiff: Scalar, upDiff: Scalar, flags: Int): (Rect,Int) = {
+    def floodFill(mask: Image, seedPoint: Point, newVal: Scalar, loDiff: Scalar, upDiff: Scalar, flags: Int): (Rect,Int) = {
       val rect = new Rect(0)
       val result = opencv_imgproc.floodFill(image,mask,seedPoint,newVal,rect,loDiff,upDiff,flags)
       (rect,result)
     }
 
-    def floodFill(mask: Mat, seedPoint: Point, newVal: Scalar): (Rect,Int) =
+    def floodFill(mask: Image, seedPoint: Point, newVal: Scalar): (Rect,Int) =
       floodFill(mask,seedPoint,newVal,new Scalar(),new Scalar(),flags = 4)
 
     /** \example samples/cpp/ffilldemo.cpp
@@ -785,8 +784,8 @@ trait Transforms {
      * @param weights1 It has a type of CV_32FC1 and the same size with src1.
      * @param weights2 It has a type of CV_32FC1 and the same size with src1.
      * @param dst      It is created if it does not have the same size and type with src1. */
-    def blendLinear(src2: Mat, weights1: Mat, weights2: Mat): Mat = {
-      val dst = new Mat()
+    def blendLinear(src2: Image, weights1: UMat, weights2: UMat): Image = {
+      val dst = new Image()
       opencv_imgproc.blendLinear(image,src2,weights1,weights2,dst)
       dst
     }

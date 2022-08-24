@@ -6,7 +6,6 @@ object BorderTypes extends Enumeration {
   type BorderType = Value
 
   import scala.language.implicitConversions
-
   implicit def valueToBorderType(v: Value): TypeVal = v.asInstanceOf[TypeVal]
 
   /** <pre>iiiiii|abcdefgh|iiiiiii</pre>  with some specified <pre>i</pre> */

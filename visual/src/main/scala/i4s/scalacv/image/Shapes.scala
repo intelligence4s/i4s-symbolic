@@ -11,10 +11,10 @@ import i4s.scalacv.image.constants.RetrievalModes.RetrievalMode
 import i4s.scalacv.image.constants.ShapeMatchModes.ShapeMatchMode
 import org.bytedeco.javacpp.{DoublePointer, FloatPointer}
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.{GpuMat, GpuMatVector, Mat, MatVector, Moments, Point, Point2f, Rect, RotatedRect, UMat, UMatVector}
+import org.bytedeco.opencv.opencv_core._
 import org.bytedeco.opencv.opencv_imgproc.{GeneralizedHoughBallard, GeneralizedHoughGuil}
 
-import java.nio.{DoubleBuffer, FloatBuffer}
+import java.nio.DoubleBuffer
 
 object Shapes extends Shapes
 
@@ -38,10 +38,10 @@ trait Shapes {
    * @see contourArea, arcLength
    */
 
-  def moments(array: Mat, binaryImage: Boolean /*=false*/): Moments =
+  def moments(array: UMat, binaryImage: Boolean /*=false*/): Moments =
     opencv_imgproc.moments(array,binaryImage)
 
-  def moments(array: Mat): Moments = moments(array, binaryImage = false)
+  def moments(array: UMat): Moments = moments(array, binaryImage = false)
 
   /** \brief Calculates seven Hu invariants.
    * <p>
@@ -71,12 +71,10 @@ trait Shapes {
   def huMoments(moments: Moments, hu: Array[Double]): Unit =
     opencv_imgproc.HuMoments(moments,hu)
 
-  def huMoments(moments: Moments, hu: Mat): Unit =
+  def huMoments(moments: Moments, hu: UMat): Unit =
     opencv_imgproc.HuMoments(moments,hu)
 
-  implicit class ImageShapes(image: Mat) {
-
-
+  implicit class ImageShapes(image: Image) {
     /** \brief computes the connected components labeled image of boolean image
      * <p>
      * image with 4 or 8 way connectivity - returns N, the total number of labels [0, N-1] where 0
@@ -95,7 +93,7 @@ trait Shapes {
      * @param ltype        output image label type. Currently CV_32S and CV_16U are supported.
      * @param ccltype      connected components algorithm type (see the #ConnectedComponentsAlgorithmsTypes).
      */
-    def connectedComponentsWithAlgorithm(labels: Mat, connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): Int =
+    def connectedComponentsWithAlgorithm(labels: UMat, connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): Int =
       opencv_imgproc.connectedComponentsWithAlgorithm(image,labels,connectivity,ltype.flag,ccltype.flag)
 
     /** \overload
@@ -105,13 +103,13 @@ trait Shapes {
      * @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively
      * @param ltype        output image label type. Currently CV_32S and CV_16U are supported.
      */
-    def connectedComponents(connectivity: Int /*=8*/ , ltype: Type /*=CV_32S*/): (Mat,Int) = {
-      val labels = new Mat()
+    def connectedComponents(connectivity: Int /*=8*/ , ltype: Type /*=CV_32S*/): (Image,Int) = {
+      val labels = new Image()
       val result = opencv_imgproc.connectedComponents(image,labels,connectivity,ltype.flag)
       (labels,result)
     }
 
-    def connectedComponents(labels: Mat): (Mat,Int) =
+    def connectedComponents(labels: UMat): (UMat,Int) =
       connectedComponents(connectivity = 8,ltype = Types.Cv32S)
 
 
@@ -138,10 +136,10 @@ trait Shapes {
      * @param ltype        output image label type. Currently CV_32S and CV_16U are supported.
      * @param ccltype      connected components algorithm type (see #ConnectedComponentsAlgorithmsTypes).
      */
-    def connectedComponentsWithStatsWithAlgorithm(connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): (Mat,Mat,Mat,Int) = {
-      val labels = new Mat()
-      val stats = new Mat()
-      val centroids = new Mat()
+    def connectedComponentsWithStatsWithAlgorithm(connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): (Image,UMat,UMat,Int) = {
+      val labels = new Image()
+      val stats = new UMat()
+      val centroids = new UMat()
       val result = opencv_imgproc.connectedComponentsWithStatsWithAlgorithm(image,labels,stats,centroids,connectivity,ltype.flag,ccltype.flag)
       (labels,stats,centroids,result)
     }
@@ -157,15 +155,15 @@ trait Shapes {
      * @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively
      * @param ltype        output image label type. Currently CV_32S and CV_16U are supported.
      */
-    def connectedComponentsWithStats(connectivity: Int, ltype: Type): (Mat,Mat,Mat,Int) = {
-      val labels = new Mat()
-      val stats = new Mat()
-      val centroids = new Mat()
+    def connectedComponentsWithStats(connectivity: Int, ltype: Type): (Image,UMat,UMat,Int) = {
+      val labels = new Image()
+      val stats = new UMat()
+      val centroids = new UMat()
       val result = opencv_imgproc.connectedComponentsWithStats(image,labels,stats,centroids,connectivity,ltype.flag)
       (labels,stats,centroids,result)
     }
 
-    def connectedComponentsWithStats(): (Mat,Mat,Mat,Int) =
+    def connectedComponentsWithStats(): (UMat,UMat,UMat,Int) =
       connectedComponentsWithStats(connectivity = 8,ltype = Types.Cv32S)
 
     /** \brief Finds contours in a binary image.
@@ -195,13 +193,13 @@ trait Shapes {
      *                  contours are extracted from the image ROI and then they should be analyzed in the whole image
      *                  context.
      */
-    def findContours(hierarchy: Mat, mode: RetrievalMode, method: ContourApproximationMethod, offset: Point): MatVector = {
+    def findContours(hierarchy: UMat, mode: RetrievalMode, method: ContourApproximationMethod, offset: Point): MatVector = {
       val contours = new MatVector()
       opencv_imgproc.findContours(image, contours, hierarchy, mode.flag, method.flag, offset)
       contours
     }
 
-    def findContours(hierarchy: Mat, mode: RetrievalMode, method: ContourApproximationMethod): MatVector =
+    def findContours(hierarchy: UMat, mode: RetrievalMode, method: ContourApproximationMethod): MatVector =
       findContours(hierarchy,mode,method,offset = new Point())
 
     /** \overload */
@@ -233,14 +231,14 @@ trait Shapes {
    * Douglas-Peucker algorithm <http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm>
    * <p>
    *
-   * @param curve       Input vector of a 2D point stored in std::vector or Mat
+   * @param curve       Input vector of a 2D point stored in std::vector or UMat
    * @param approxCurve Result of the approximation. The type should match the type of the input curve.
    * @param epsilon     Parameter specifying the approximation accuracy. This is the maximum distance
    *                    between the original curve and its approximation.
    * @param closed      If true, the approximated curve is closed (its first and last vertices are
    *                    connected). Otherwise, it is not closed.
    */
-  def approxPolyDP(curve: Mat, approxCurve: Mat, epsilon: Double, closed: Boolean): Unit =
+  def approxPolyDP(curve: UMat, approxCurve: UMat, epsilon: Double, closed: Boolean): Unit =
     opencv_imgproc.approxPolyDP(curve, approxCurve, epsilon, closed)
 
   /** \brief Calculates a contour perimeter or a curve length.
@@ -248,10 +246,10 @@ trait Shapes {
    * The function computes a curve length or a closed contour perimeter.
    * <p>
    *
-   * @param curve  Input vector of 2D points, stored in std::vector or Mat.
+   * @param curve  Input vector of 2D points, stored in std::vector or UMat.
    * @param closed Flag indicating whether the curve is closed or not.
    */
-  def arcLength(curve: Mat, closed: Boolean): Double =
+  def arcLength(curve: UMat, closed: Boolean): Double =
     opencv_imgproc.arcLength(curve, closed)
 
   /** \brief Calculates the up-right bounding rectangle of a point set or non-zero pixels of gray-scale image.
@@ -260,9 +258,9 @@ trait Shapes {
    * non-zero pixels of gray-scale image.
    * <p>
    *
-   * @param array Input gray-scale image or 2D point set, stored in std::vector or Mat.
+   * @param array Input gray-scale image or 2D point set, stored in std::vector or UMat.
    */
-  def boundingRect(array: Mat): Rect =
+  def boundingRect(array: UMat): Rect =
     opencv_imgproc.boundingRect(array)
 
   /** \brief Calculates a contour area.
@@ -290,27 +288,27 @@ trait Shapes {
    * "approx poly vertices" << approx.size() << endl;
    * </pre>
    *
-   * @param contour  Input vector of 2D points (contour vertices), stored in std::vector or Mat.
+   * @param contour  Input vector of 2D points (contour vertices), stored in std::vector or UMat.
    * @param oriented Oriented area flag. If it is true, the function returns a signed area value,
    *                 depending on the contour orientation (clockwise or counter-clockwise). Using this feature you can
    *                 determine orientation of a contour by taking the sign of an area. By default, the parameter is
    *                 false, which means that the absolute value is returned.
    */
-  def contourArea(contour: Mat, oriented: Boolean): Double =
+  def contourArea(contour: UMat, oriented: Boolean): Double =
     opencv_imgproc.contourArea(contour, oriented)
 
-  def contourArea(contour: Mat): Double = contourArea(contour, oriented = false)
+  def contourArea(contour: UMat): Double = contourArea(contour, oriented = false)
 
   /** \brief Finds a rotated rectangle of the minimum area enclosing the input 2D point set.
    * <p>
    * The function calculates and returns the minimum-area bounding rectangle (possibly rotated) for a
    * specified point set. Developer should keep in mind that the returned RotatedRect can contain negative
-   * indices when data is close to the containing Mat element boundary.
+   * indices when data is close to the containing UMat element boundary.
    * <p>
    *
-   * @param points Input vector of 2D points, stored in std::vector\<\> or Mat
+   * @param points Input vector of 2D points, stored in std::vector\<\> or UMat
    */
-  def minAreaRect(points: Mat): RotatedRect =
+  def minAreaRect(points: UMat): RotatedRect =
     opencv_imgproc.minAreaRect(points)
 
   /** \brief Finds the four vertices of a rotated rect. Useful to draw the rotated rectangle.
@@ -323,8 +321,8 @@ trait Shapes {
    * @param box The input rotated rectangle. It may be the output of
    * @return The output array of four vertices of rectangles.
    */
-  def boxPoints(box: RotatedRect): Mat = {
-    val points = new Mat()
+  def boxPoints(box: RotatedRect): UMat = {
+    val points = new UMat()
     opencv_imgproc.boxPoints(box, points)
     points
   }
@@ -334,11 +332,11 @@ trait Shapes {
    * The function finds the minimal enclosing circle of a 2D point set using an iterative algorithm.
    * <p>
    *
-   * @param points Input vector of 2D points, stored in std::vector\<\> or Mat
+   * @param points Input vector of 2D points, stored in std::vector\<\> or UMat
    * @param center Output center of the circle.
    * @param radius Output radius of the circle.
    */
-  def minEnclosingCircle(points: Mat): (Point2f, Float) = {
+  def minEnclosingCircle(points: UMat): (Point2f, Float) = {
     val center = new Point2f()
     val radius = new FloatPointer()
     opencv_imgproc.minEnclosingCircle(points, center, radius)
@@ -364,12 +362,12 @@ trait Shapes {
    * than {@code \theta(n)}. Thus the overall complexity of the function is {@code O(n log(n))}.
    * <p>
    *
-   * @param points   Input vector of 2D points with depth CV_32S or CV_32F, stored in std::vector\<\> or Mat
+   * @param points   Input vector of 2D points with depth CV_32S or CV_32F, stored in std::vector\<\> or UMat
    * @param triangle Output vector of three 2D points defining the vertices of the triangle. The depth
    *                 of the OutputArray must be CV_32F.
    */
-  def minEnclosingTriangle(points: Mat): (Mat, Double) = {
-    val triangle = new Mat()
+  def minEnclosingTriangle(points: UMat): (UMat, Double) = {
+    val triangle = new UMat()
     val area = opencv_imgproc.minEnclosingTriangle(points, triangle)
     (triangle, area)
   }
@@ -384,7 +382,7 @@ trait Shapes {
    * @param method    Comparison method, see #ShapeMatchModes
    * @param parameter Method-specific parameter (not supported now).
    */
-  def matchShapes(contour1: Mat, contour2: Mat, method: ShapeMatchMode, parameter: Double): Double =
+  def matchShapes(contour1: UMat, contour2: UMat, method: ShapeMatchMode, parameter: Double): Double =
     opencv_imgproc.matchShapes(contour1, contour2, method.flag, parameter)
 
   /** \example samples/cpp/convexhull.cpp
@@ -397,7 +395,7 @@ trait Shapes {
    * that has *O(N logN)* complexity in the current implementation.
    * <p>
    *
-   * @param points       Input 2D point set, stored in std::vector or Mat.
+   * @param points       Input 2D point set, stored in std::vector or UMat.
    * @param hull         Output convex hull. It is either an integer vector of indices or vector of points. In
    *                     the first case, the hull elements are 0-based indices of the convex hull points in the original
    *                     array (since the set of convex hull points is a subset of the original point set). In the second
@@ -419,13 +417,13 @@ trait Shapes {
    *                     <p>
    *                     https://www.learnopencv.com/convex-hull-using-opencv-in-python-and-c/
    */
-  def convexHull(points: Mat, clockwise: Boolean, returnPoints: Boolean): Mat = {
-    val hull = new Mat()
+  def convexHull(points: UMat, clockwise: Boolean, returnPoints: Boolean): UMat = {
+    val hull = new UMat()
     opencv_imgproc.convexHull(points, hull, clockwise, returnPoints)
     hull
   }
 
-  def convexHull(points: Mat): Mat =
+  def convexHull(points: UMat): UMat =
     convexHull(points, clockwise = false, returnPoints = true)
 
   /** \brief Finds the convexity defects of a contour.
@@ -446,8 +444,8 @@ trait Shapes {
    *         farthest contour point and the hull. That is, to get the floating-point value of the depth will be
    *         fixpt_depth/256.0.
    */
-  def convexityDefects(contour: Mat, convexhull: Mat): Mat = {
-    val defects = new Mat
+  def convexityDefects(contour: UMat, convexhull: UMat): UMat = {
+    val defects = new UMat
     opencv_imgproc.convexityDefects(contour, convexhull, defects)
     defects
   }
@@ -458,9 +456,9 @@ trait Shapes {
    * without self-intersections. Otherwise, the function output is undefined.
    * <p>
    *
-   * @param contour Input vector of 2D points, stored in std::vector\<\> or Mat
+   * @param contour Input vector of 2D points, stored in std::vector\<\> or UMat
    */
-  def isContourConvex(contour: Mat): Boolean =
+  def isContourConvex(contour: UMat): Boolean =
     opencv_imgproc.isContourConvex(contour)
 
   /** \example samples/cpp/intersectExample.cpp
@@ -481,13 +479,13 @@ trait Shapes {
    *         <p>
    *         \note intersectConvexConvex doesn't confirm that both polygons are convex and will return invalid results if they aren't.
    */
-  def intersectConvexConvex(p1: Mat, p2: Mat, handleNested: Boolean): (Mat, Float) = {
-    val p12 = new Mat()
+  def intersectConvexConvex(p1: UMat, p2: UMat, handleNested: Boolean): (UMat, Float) = {
+    val p12 = new UMat()
     val area = opencv_imgproc.intersectConvexConvex(p1, p1, p12, handleNested)
     (p12, area)
   }
 
-  def intersectConvexConvex(p1: Mat, p2: Mat): (Mat, Float) =
+  def intersectConvexConvex(p1: UMat, p2: UMat): (UMat, Float) =
     intersectConvexConvex(p1, p2, handleNested = true)
 
   /** \example samples/cpp/fitellipse.cpp
@@ -500,12 +498,12 @@ trait Shapes {
    * all. It returns the rotated rectangle in which the ellipse is inscribed. The first algorithm described by \cite Fitzgibbon95
    * is used. Developer should keep in mind that it is possible that the returned
    * ellipse/rotatedRect data contains negative indices, due to the data points being close to the
-   * border of the containing Mat element.
+   * border of the containing UMat element.
    * <p>
    *
-   * @param points Input 2D point set, stored in std::vector\<\> or Mat
+   * @param points Input 2D point set, stored in std::vector\<\> or UMat
    */
-  def fitEllipse(points: Mat): RotatedRect =
+  def fitEllipse(points: UMat): RotatedRect =
     opencv_imgproc.fitEllipse(points)
 
   /** \brief Fits an ellipse around a set of 2D points.
@@ -542,9 +540,9 @@ trait Shapes {
    * \end{equation*}}</pre>
    * <p>
    *
-   * @param points Input 2D point set, stored in std::vector\<\> or Mat
+   * @param points Input 2D point set, stored in std::vector\<\> or UMat
    */
-  def fitEllipseAMS(points: Mat): RotatedRect =
+  def fitEllipseAMS(points: UMat): RotatedRect =
     opencv_imgproc.fitEllipseAMS(points)
 
   /** \brief Fits an ellipse around a set of 2D points.
@@ -588,9 +586,9 @@ trait Shapes {
    * The scaling factor guarantees that  <pre>A&#94;T C A &#61;1</pre>.
    * <p>
    *
-   * @param points Input 2D point set, stored in std::vector\<\> or Mat
+   * @param points Input 2D point set, stored in std::vector\<\> or UMat
    */
-  def fitEllipseDirect(points: Mat): RotatedRect =
+  def fitEllipseDirect(points: UMat): RotatedRect =
     opencv_imgproc.fitEllipseDirect(points)
 
   /** \brief Fits a line to a 2D or 3D point set.
@@ -615,7 +613,7 @@ trait Shapes {
    * that iteratively fits the line using the weighted least-squares algorithm. After each iteration the
    * weights {@code w_i} are adjusted to be inversely proportional to {@code \rho(r_i)} .
    * <p>
-   * @param points   Input vector of 2D or 3D points, stored in std::vector\<\> or Mat.
+   * @param points   Input vector of 2D or 3D points, stored in std::vector\<\> or UMat.
    * @param line     Output line parameters. In case of 2D fitting, it should be a vector of 4 elements
    *                 (like Vec4f) - (vx, vy, x0, y0), where (vx, vy) is a normalized vector collinear to the line and
    *                 (x0, y0) is a point on the line. In case of 3D fitting, it should be a vector of 6 elements (like
@@ -627,8 +625,8 @@ trait Shapes {
    * @param reps     Sufficient accuracy for the radius (distance between the coordinate origin and the line).
    * @param aeps     Sufficient accuracy for the angle. 0.01 would be a good default value for reps and aeps.
    */
-  def fitLine(points: Mat, distType: DistanceType, param: Double, reps: Double, aeps: Double): Mat = {
-    val line = new Mat()
+  def fitLine(points: UMat, distType: DistanceType, param: Double, reps: Double, aeps: Double): UMat = {
+    val line = new UMat()
     opencv_imgproc.fitLine(points, line, distType.flag, param, reps, aeps)
     line
   }
@@ -650,7 +648,7 @@ trait Shapes {
    * @param measureDist If true, the function estimates the signed distance from the point to the
    *                    nearest contour edge. Otherwise, the function only checks if the point is inside a contour or not.
    */
-  def pointPolygonTest(contour: Mat, pt: Point2f, measureDist: Boolean): Double =
+  def pointPolygonTest(contour: UMat, pt: Point2f, measureDist: Boolean): Double =
     opencv_imgproc.pointPolygonTest(contour, pt, measureDist)
 
   /** \brief Finds out if there is any intersection between two rotated rectangles.
@@ -666,11 +664,11 @@ trait Shapes {
    * @param rect1              First rectangle
    * @param rect2              Second rectangle
    * @return intersectingRegion The output array of the vertices of the intersecting region. It returns
-   *                           at most 8 vertices. Stored as std::vector\<cv::Point2f\> or cv::Mat as Mx1 of type CV_32FC2.
+   *                           at most 8 vertices. Stored as std::vector\<cv::Point2f\> or cv::UMat as Mx1 of type CV_32FC2.
    * @return One of #RectanglesIntersectTypes
    */
-  def rotatedRectangleIntersection(rect1: RotatedRect, rect2: RotatedRect): (RectanglesIntersectType, Mat) = {
-    val intersectingRegion = new Mat()
+  def rotatedRectangleIntersection(rect1: RotatedRect, rect2: RotatedRect): (RectanglesIntersectType, UMat) = {
+    val intersectingRegion = new UMat()
     val itypeFlag = opencv_imgproc.rotatedRectangleIntersection(rect1, rect2, intersectingRegion)
     val itype: RectanglesIntersectType = RectanglesIntersectTypes.values.find(_.flag == itypeFlag).get
     (itype, intersectingRegion)

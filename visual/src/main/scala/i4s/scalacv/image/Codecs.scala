@@ -8,18 +8,19 @@ import org.bytedeco.opencv.global.opencv_imgcodecs._
 import java.io.File
 
 object Codecs {
+  import Image._
 
-  def readImage(file: File): Option[Mat] = readImage(file,ImageReadFlags.AnyColor)
-  def readImage(file: File, readFlag: ImageReadFlags): Option[Mat] = readImage(file,Set(readFlag))
-  def readImage(file: File, readFlags: Set[ImageReadFlags]): Option[Mat] = {
+  def readImage(file: File): Option[Image] = readImage(file,ImageReadFlags.AnyColor)
+  def readImage(file: File, readFlag: ImageReadFlags): Option[Image] = readImage(file,Set(readFlag))
+  def readImage(file: File, readFlags: Set[ImageReadFlags]): Option[Image] = {
     val combined = readFlags.foldLeft(0)(_ | _.flag)
     val mat = imread(file.getAbsolutePath,combined)
     if (mat.empty()) None else Some(mat)
   }
 
-  def readImages(file: File): List[Mat] = readImages(file,ImageReadFlags.AnyColor)
-  def readImages(file: File, readFlag: ImageReadFlags): List[Mat] = readImages(file,Set(readFlag))
-  def readImages(file: File, readFlags: Set[ImageReadFlags]): List[Mat] = {
+  def readImages(file: File): List[Image] = readImages(file,ImageReadFlags.AnyColor)
+  def readImages(file: File, readFlag: ImageReadFlags): List[Image] = readImages(file,Set(readFlag))
+  def readImages(file: File, readFlags: Set[ImageReadFlags]): List[Image] = {
     val combined = readFlags.foldLeft(0)(_ | _.flag)
     val matVector = new MatVector()
     val result = imreadmulti(file.getAbsolutePath,matVector,combined)
@@ -27,9 +28,9 @@ object Codecs {
     else Nil
   }
 
-  def readImages(file: File, start: Int, count: Int): List[Mat] = readImages(file,start,count,ImageReadFlags.AnyColor)
-  def readImages(file: File, start: Int, count: Int, readFlag: ImageReadFlags): List[Mat] = readImages(file,start,count,Set(readFlag))
-  def readImages(file: File, start: Int, count: Int, readFlags: Set[ImageReadFlags]): List[Mat] = {
+  def readImages(file: File, start: Int, count: Int): List[Image] = readImages(file,start,count,ImageReadFlags.AnyColor)
+  def readImages(file: File, start: Int, count: Int, readFlag: ImageReadFlags): List[Image] = readImages(file,start,count,Set(readFlag))
+  def readImages(file: File, start: Int, count: Int, readFlags: Set[ImageReadFlags]): List[Image] = {
     val combined = readFlags.foldLeft(0)(_ | _.flag)
     val matVector = new MatVector()
     val result = imreadmulti(file.getAbsolutePath,matVector,start,count,combined)
@@ -46,6 +47,6 @@ object Codecs {
     if (result < 0) None else Some(result)
   }
 
-  private def matVectorToList(vector: MatVector): List[Mat] = vector.get().toList
+  private def matVectorToList(vector: MatVector): List[Image] = vector.get().toList.map(m => new Image(m))
 }
 

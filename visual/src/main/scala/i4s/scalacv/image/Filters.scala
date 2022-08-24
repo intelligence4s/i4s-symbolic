@@ -84,16 +84,16 @@ trait Filters {
    *                  compute derivatives of an 8-bit image, store the results in a 16-bit image, and wish to preserve
    *                  all the fractional bits, you may want to set normalize=false .
    * @param ktype     Type of filter coefficients. It can be CV_32f or CV_64F .
-   * @return          Type of the x and y [[Mat]] containing row and column filter coefficients, of the type passed in ktype
+   * @return          Type of the x and y [[UMat]] containing row and column filter coefficients, of the type passed in ktype
    *
    */
-  def getDerivKernels(dx: Int, dy: Int, ksize: Int, normalize: Boolean, ktype: Type): (Mat,Mat) = {
-    val kx, ky: Mat = new Mat()
+  def getDerivKernels(dx: Int, dy: Int, ksize: Int, normalize: Boolean, ktype: Type): (UMat,UMat) = {
+    val kx, ky: UMat = new UMat()
     opencv_imgproc.getDerivKernels(kx,ky,dx,dy,ksize,normalize,ktype.flag)
     (kx,ky)
   }
 
-  def getDerivKernels(dx: Int, dy: Int, ksize: Int): (Mat,Mat) =
+  def getDerivKernels(dx: Int, dy: Int, ksize: Int): (UMat,UMat) =
     getDerivKernels(dx,dy,ksize,normalize = false,Types.Cv32F)
 
 
@@ -144,7 +144,7 @@ trait Filters {
    * Check \ref tutorial_gausian_median_blur_bilateral_filter "the corresponding tutorial" for more details
    */
 
-  implicit class ImageFilters(image: Mat) {
+  implicit class ImageFilters(image: Image) {
 
     /** \example samples/cpp/tutorial_code/ImgProc/Smoothing/Smoothing.cpp
      * Sample code for simple filters
@@ -166,8 +166,8 @@ trait Filters {
      * @param ksize aperture linear size; it must be odd and greater than 1, for example: 3, 5, 7 ...
      * @see bilateralFilter, blur, boxFilter, GaussianBlur
      */
-   def medianBlur(ksize: Int): Mat = {
-     val dst = new Mat()
+   def medianBlur(ksize: Int): Image = {
+     val dst = new Image()
      opencv_imgproc.medianBlur(image,dst,ksize)
      dst
    }
@@ -192,13 +192,13 @@ trait Filters {
      *                   <p>
      * @see sepFilter2D, filter2D, blur, boxFilter, bilateralFilter, medianBlur
      */
-    def gaussianBlur(ksize: Size, sigmaX: Double, sigmaY: Double /*=0*/ , borderType: BorderType /*=cv::BORDER_DEFAULT*/): Mat = {
-      val dst = new Mat()
+    def gaussianBlur(ksize: Size, sigmaX: Double, sigmaY: Double /*=0*/ , borderType: BorderType /*=cv::BORDER_DEFAULT*/): Image = {
+      val dst = new Image()
       opencv_imgproc.GaussianBlur(image,dst,ksize,sigmaX,sigmaY,borderType.flag)
       dst
     }
 
-    def gaussianBlur(ksize: Size, sigmaX: Double): Mat =
+    def gaussianBlur(ksize: Size, sigmaX: Double): Image =
       gaussianBlur(ksize,sigmaX,sigmaY = -1,BorderTypes.Default)
 
     /** FtApplies the bilateral filter to an image.
@@ -229,13 +229,13 @@ trait Filters {
      *                   proportional to sigmaSpace.
      * @param borderType border mode used to extrapolate pixels outside of the image, see #BorderTypes
      */
-    def bilateralFilter(d: Int, sigmaColor: Double, sigmaSpace: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def bilateralFilter(d: Int, sigmaColor: Double, sigmaSpace: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.bilateralFilter(image,dst,d,sigmaColor,sigmaSpace,borderType.flag)
       dst
     }
 
-    def bilateralFilter(dst: Mat, d: Int, sigmaColor: Double, sigmaSpace: Double): Mat =
+    def bilateralFilter(dst: UMat, d: Int, sigmaColor: Double, sigmaSpace: Double): Image =
       bilateralFilter(d, sigmaColor, sigmaSpace, BorderTypes.Default)
 
     /** FtBlurs an image using the box filter.
@@ -262,13 +262,13 @@ trait Filters {
      * @param borderType border mode used to extrapolate pixels outside of the image, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see blur, bilateralFilter, GaussianBlur, medianBlur, integral
      */
-    def boxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def boxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.boxFilter(image,dst,ddepth.flag,ksize,anchor,normalize,borderType.flag)
       dst
     }
 
-    def boxFilter(ddepth: Type, ksize: Size): Mat =
+    def boxFilter(ddepth: Type, ksize: Size): Image =
       boxFilter(ddepth,ksize,new Point(-1,-1),normalize = true,BorderTypes.Default)
 
     /** FtCalculates the normalized sum of squares of the pixel values overlapping the filter.
@@ -289,13 +289,13 @@ trait Filters {
      * @param borderType border mode used to extrapolate pixels outside of the image, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see boxFilter
      */
-    def sqrBoxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def sqrBoxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.sqrBoxFilter(image,dst,ddepth.flag,ksize,anchor,normalize,borderType.flag)
       dst
     }
 
-    def sqrBoxFilter(dst: Mat, ddepth: Type, ksize: Size): Mat =
+    def sqrBoxFilter(dst: UMat, ddepth: Type, ksize: Size): Image =
       sqrBoxFilter(ddepth,ksize,new Point(-1,-1),normalize = true,BorderTypes.Default)
 
     /** FtBlurs an image using the normalized box filter.
@@ -315,13 +315,13 @@ trait Filters {
      * @param borderType border mode used to extrapolate pixels outside of the image, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see boxFilter, bilateralFilter, GaussianBlur, medianBlur
      */
-    def blur(ksize: Size, anchor: Point, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def blur(ksize: Size, anchor: Point, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.blur(image,dst,ksize,anchor,borderType.flag)
       dst
     }
 
-    def blur(ksize: Size): Mat = blur(ksize,new Point(-1,-1),BorderTypes.Default)
+    def blur(ksize: Size): Image = blur(ksize,new Point(-1,-1),BorderTypes.Default)
 
     /** FtConvolves an image with the kernel.
      * <p>
@@ -352,13 +352,13 @@ trait Filters {
      * @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see sepFilter2D, dft, matchTemplate
      */
-    def filter2D(ddepth: Type, kernel: Mat, anchor: Point, delta: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def filter2D(ddepth: Type, kernel: UMat, anchor: Point, delta: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.filter2D(image,dst,ddepth.flag,kernel,anchor,delta,borderType.flag)
       dst
     }
 
-    def filter2D(dst: Mat, ddepth: Type, kernel: Mat): Mat =
+    def filter2D(dst: UMat, ddepth: Type, kernel: UMat): Image =
       filter2D(ddepth,kernel,new Point(-1,-1),delta = 0,BorderTypes.Default)
 
     /** FtApplies a separable linear filter to an image.
@@ -378,13 +378,13 @@ trait Filters {
      * @param borderType Pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see filter2D, Sobel, GaussianBlur, boxFilter, blur
      */
-    def sepFilter2D(ddepth: Type, kernelX: Mat, kernelY: Mat, anchor: Point, delta: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def sepFilter2D(ddepth: Type, kernelX: UMat, kernelY: UMat, anchor: Point, delta: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.sepFilter2D(image,dst,ddepth.flag,kernelX,kernelY,anchor,delta,borderType.flag)
       dst
     }
 
-    def sepFilter2D(dst: Mat, ddepth: Type, kernelX: Mat, kernelY: Mat): Mat =
+    def sepFilter2D(dst: UMat, ddepth: Type, kernelX: UMat, kernelY: UMat): Image =
       sepFilter2D(ddepth,kernelX,kernelY,new Point(-1,-1),0,BorderTypes.Default)
 
     /** \example samples/cpp/tutorial_code/ImgTrans/Sobel_Demo.cpp
@@ -437,13 +437,13 @@ trait Filters {
      * @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see Scharr, Laplacian, sepFilter2D, filter2D, GaussianBlur, cartToPolar
      */
-    def sobel(ddepth: Type, dx: Int, dy: Int, ksize: Int /*=3*/ , scale: Double /*=1*/ , delta: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def sobel(ddepth: Type, dx: Int, dy: Int, ksize: Int /*=3*/ , scale: Double /*=1*/ , delta: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.Sobel(image,dst,ddepth.flag,dx,dy,ksize,scale,delta,borderType.flag)
       dst
     }
 
-    def sobel(ddepth: Type, dx: Int, dy: Int): Mat =
+    def sobel(ddepth: Type, dx: Int, dy: Int): Image =
       sobel(ddepth,dx,dy,ksize = 3,scale = 1,delta = 0,BorderTypes.Default)
 
     /** FtCalculates the first order image derivative in both x and y using a Sobel operator
@@ -464,14 +464,14 @@ trait Filters {
      * <p>
      * @see Sobel
      */
-    def spatialGradient(ksize: Int, borderType: BorderType): (Mat,Mat) = {
-      val dx: Mat = new Mat()
-      val dy: Mat = new Mat()
+    def spatialGradient(ksize: Int, borderType: BorderType): (Image,Image) = {
+      val dx: Image = new Image()
+      val dy: Image = new Image()
       opencv_imgproc.spatialGradient(image,dx,dy,ksize,borderType.flag)
       (dx,dy)
     }
 
-    def spatialGradient(): (Mat,Mat) =
+    def spatialGradient(): (Image,Image) =
       spatialGradient(ksize = 3,BorderTypes.Default)
 
     /** FtCalculates the first x- or y- image derivative using Scharr operator.
@@ -496,13 +496,13 @@ trait Filters {
      * @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see cartToPolar
      */
-    def scharr(ddepth: Type, dx: Int, dy: Int, scale: Double, delta: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def scharr(ddepth: Type, dx: Int, dy: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.Scharr(image,dst,ddepth.flag,dx,dy,scale,delta,borderType.flag)
       dst
     }
 
-    def scharr(dst: Mat, ddepth: Type, dx: Int, dy: Int): Mat =
+    def scharr(ddepth: Type, dx: Int, dy: Int): Image =
       scharr(ddepth,dx,dy,scale = 1,delta = 0,BorderTypes.Default)
 
     /** \example samples/cpp/laplace.cpp
@@ -532,13 +532,13 @@ trait Filters {
      * @param borderType Pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.
      * @see Sobel, Scharr
      */
-    def laplacian(ddepth: Type, ksize: Int, scale: Double, delta: Double, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def laplacian(ddepth: Type, ksize: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.Laplacian(image,dst,ddepth.flag,ksize,scale,delta,borderType.flag)
       dst
     }
 
-    def laplacian(ddepth: Type): Mat =
+    def laplacian(ddepth: Type): Image =
       laplacian(ddepth,ksize = 1,scale = 1,delta = 0,BorderTypes.Default)
 
     /** FtErodes an image by using a specific structuring element.
@@ -554,7 +554,7 @@ trait Filters {
      * @param src         input image; the number of channels can be arbitrary, but the depth should be one of
      *                    CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.
      * @param dst         output image of the same size and type as src.
-     * @param kernel      structuring element used for erosion; if <pre>element&#61;Mat()</pre>, a <pre>3 x 3</pre> rectangular
+     * @param kernel      structuring element used for erosion; if <pre>element&#61;Image()</pre>, a <pre>3 x 3</pre> rectangular
      *                    structuring element is used. Kernel can be created using #getStructuringElement.
      * @param anchor      position of the anchor within the element; default value (-1, -1) means that the
      *                    anchor is at the element center.
@@ -563,13 +563,13 @@ trait Filters {
      * @param borderValue border value in case of a constant border
      * @see dilate, morphologyEx, getStructuringElement
      */
-    def erode(kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Mat = {
-      val dst = new Mat()
+    def erode(kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
+      val dst = new Image()
       opencv_imgproc.erode(image,dst,kernel,anchor,iterations,borderType.flag,borderValue)
       dst
     }
 
-    def erode(dst: Mat, kernel: Mat): Mat =
+    def erode(kernel: UMat): Image =
       erode(kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     /** \example samples/cpp/tutorial_code/ImgProc/Morphology_1.cpp
@@ -590,7 +590,7 @@ trait Filters {
      * @param src         input image; the number of channels can be arbitrary, but the depth should be one of
      *                    CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.
      * @param dst         output image of the same size and type as src.
-     * @param kernel      structuring element used for dilation; if elemenat=Mat(), a 3 x 3 rectangular
+     * @param kernel      structuring element used for dilation; if elemenat=UMat(), a 3 x 3 rectangular
      *                    structuring element is used. Kernel can be created using #getStructuringElement
      * @param anchor      position of the anchor within the element; default value (-1, -1) means that the
      *                    anchor is at the element center.
@@ -599,11 +599,14 @@ trait Filters {
      * @param borderValue border value in case of a constant border
      * @see erode, morphologyEx, getStructuringElement
      */
-    def dilate(dst: Mat, kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Unit =
+    def dilate(kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
+      val dst = new Image()
       opencv_imgproc.dilate(image,dst,kernel,anchor,iterations,borderType.flag,borderValue)
+      dst
+    }
 
-    def dilate(dst: Mat, kernel: Mat): Unit =
-      dilate(dst,kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
+    def dilate(kernel: UMat): Image =
+      dilate(kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     /** FtPerforms advanced morphological transformations.
      * <p>
@@ -629,13 +632,13 @@ trait Filters {
      *      For instance, an opening operation (#MORPH_OPEN) with two iterations is equivalent to apply
      *      successively: erode -> erode -> dilate -> dilate (and not erode -> dilate -> erode -> dilate).
      */
-    def morphologyEx(op: Int, kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Mat = {
-      val dst = new Mat()
+    def morphologyEx(op: Int, kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
+      val dst = new Image()
       opencv_imgproc.morphologyEx(image,dst,op,kernel,anchor,iterations,borderType.flag,borderValue)
       dst
     }
 
-    def morphologyEx(op: Int, kernel: Mat): Mat =
+    def morphologyEx(op: Int, kernel: UMat): Image =
       morphologyEx(op,kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     /** FtBlurs an image and downsamples it.
@@ -658,13 +661,13 @@ trait Filters {
      * @param dstsize    size of the output image.
      * @param borderType Pixel extrapolation method, see #BorderTypes (#BORDER_CONSTANT isn't supported)
      */
-    def pyrDown(dstsize: Size, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def pyrDown(dstsize: Size, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.pyrDown(image,dst,dstsize,borderType.flag)
       dst
     }
 
-    def pyrDown(): Mat = pyrDown(new Size(),BorderTypes.Default)
+    def pyrDown(): Image = pyrDown(new Size(),BorderTypes.Default)
 
     /** FtUpsamples an image and then blurs it.
      * <p>
@@ -684,13 +687,13 @@ trait Filters {
      * @param dstsize    size of the output image.
      * @param borderType Pixel extrapolation method, see #BorderTypes (only #BORDER_DEFAULT is supported)
      */
-    def pyrUp(dstsize: Size, borderType: BorderType): Mat = {
-      val dst = new Mat()
+    def pyrUp(dstsize: Size, borderType: BorderType): Image = {
+      val dst = new Image()
       opencv_imgproc.pyrUp(image,dst,dstsize,borderType.flag)
       dst
     }
 
-    def pyrUp(): Mat = pyrUp(dstsize = new Size(),BorderTypes.Default)
+    def pyrUp(): Image = pyrUp(dstsize = new Size(),BorderTypes.Default)
 
     /** FtConstructs the Gaussian pyramid for an image.
      * <p>
@@ -744,13 +747,13 @@ trait Filters {
      * @param termcrit Termination criteria: when to stop meanshift iterations.
      */
 
-    def pyrMeanShiftFiltering(sp: Double, sr: Double, maxlevel: Int, termCriteria: TermCriteria): Mat = {
-      val dst = new Mat()
+    def pyrMeanShiftFiltering(sp: Double, sr: Double, maxlevel: Int, termCriteria: TermCriteria): Image = {
+      val dst = new Image()
       opencv_imgproc.pyrMeanShiftFiltering(image,dst,sp,sr,maxlevel,termCriteria)
       dst
     }
 
-    def pyrMeanShiftFiltering(sp: Double, sr: Double): Mat =
+    def pyrMeanShiftFiltering(sp: Double, sr: Double): Image =
       pyrMeanShiftFiltering(sp,sr,1,new TermCriteria(TermCriteria.MAX_ITER + TermCriteria.EPS,5,1))
   }
 }

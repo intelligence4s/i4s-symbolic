@@ -3,13 +3,13 @@ package i4s.scalacv.image
 import i4s.scalacv.image.constants.ColorConversionCodes.ColorConversionCode
 import i4s.scalacv.image.constants.ColorMaps.ColorMap
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.{GpuMat, Mat, UMat}
+import org.bytedeco.opencv.opencv_core.UMat
 
 object Colors extends Colors
 
 trait Colors {
 
-  implicit class ImageColor(image: Mat) {
+  implicit class ImageColor(image: Image) {
 
     /** \brief Converts an image from one color space to another.
      * <p>
@@ -53,13 +53,13 @@ trait Colors {
      * @see \ref imgproc_color_conversions
      */
 
-    def cvtColor(code: ColorConversionCode, dstCn: Int /*=0*/): Mat = {
-      val dst = new Mat()
+    def cvtColor(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
+      val dst = new Image()
       opencv_imgproc.cvtColor(image,dst,code.flag,dstCn)
       dst
     }
 
-    def cvtColor(code: ColorConversionCode): Mat =
+    def cvtColor(code: ColorConversionCode): Image =
       cvtColor(code, dstCn = 0)
 
     /** \brief Converts an image from one color space to another where the source image is
@@ -80,8 +80,8 @@ trait Colors {
      *             - #COLOR_YUV2BGRA_NV21
      *             - #COLOR_YUV2RGBA_NV21
      */
-    def cvtColorTwoPlane(src2: Mat, code: ColorConversionCode): Mat = {
-      val dst = new Mat()
+    def cvtColorTwoPlane(src2: Image, code: ColorConversionCode): Image = {
+      val dst = new Image()
       opencv_imgproc.cvtColorTwoPlane(image,src2,dst,code.flag)
       dst
     }
@@ -116,13 +116,13 @@ trait Colors {
      *              <p>
      * @see cvtColor
      */
-    def demosaicing(code: ColorConversionCode, dstCn: Int /*=0*/): Mat = {
-      val dst = new Mat()
+    def demosaicing(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
+      val dst = new Image()
       opencv_imgproc.demosaicing(image,dst,code.flag,dstCn)
       dst
     }
 
-    def demosaicing(dst: Mat, code: ColorConversionCode): Unit =
+    def demosaicing(code: ColorConversionCode): Image =
       demosaicing(code,dstCn = 0)
 
     /** \brief Applies a GNU Octave/MATLAB equivalent colormap on a given image.
@@ -131,8 +131,8 @@ trait Colors {
      * @param dst      The result is the colormapped source image. Note: Mat::create is called on dst.
      * @param colorMap The colormap to apply, see #ColormapTypes
      */
-    def applyColorMap(colorMap: ColorMap): Mat = {
-      val dst = new Mat()
+    def applyColorMap(colorMap: ColorMap): Image = {
+      val dst = new Image()
       opencv_imgproc.applyColorMap(image,dst,colorMap.flag)
       dst
     }
@@ -143,8 +143,8 @@ trait Colors {
      * @param dst       The result is the colormapped source image. Note: Mat::create is called on dst.
      * @param userColor The colormap to apply of type CV_8UC1 or CV_8UC3 and size 256
      */
-    def applyColorMap(userColor: Mat): Mat = {
-      val dst = new Mat()
+    def applyColorMap(userColor: UMat): Image = {
+      val dst = new Image()
       opencv_imgproc.applyColorMap(image,dst,userColor)
       dst
     }

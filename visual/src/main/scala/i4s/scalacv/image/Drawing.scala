@@ -23,7 +23,7 @@ trait Drawing {
    * double fontScale &#61; 2;
    * int thickness &#61; 3;
    *
-   * Mat img(600, 800, CV_8UC3, Scalar::all(0));
+   * UMat img(600, 800, CV_8UC3, Scalar::all(0));
    *
    * int baseline&#61;0;
    * Size textSize &#61; getTextSize(text, fontFace,
@@ -139,7 +139,7 @@ trait Drawing {
   }
 
 
-  implicit class ImageDrawing(image: Mat) {
+  implicit class ImageDrawing(image: Image) {
     /** Draws a circle.
      * <p>
      * The function cv::circle draws a simple or filled circle with a given center and radius.
@@ -295,10 +295,10 @@ trait Drawing {
      * @param lineType Type of the polygon boundaries. See #LineTypes
      * @param shift    Number of fractional bits in the vertex coordinates.
      */
-    def fillConvexPoly(points: Mat, color: Scalar, lineType: LineType, shift: Int): Unit =
+    def fillConvexPoly(points: UMat, color: Scalar, lineType: LineType, shift: Int): Unit =
       opencv_imgproc.fillConvexPoly(image,points,color,lineType.flag,shift)
 
-    def fillConvexPoly(points: Mat, color: Scalar): Unit =
+    def fillConvexPoly(points: UMat, color: Scalar): Unit =
       fillConvexPoly(points,color,LineTypes.Line8,shift = 0)
 
     def fillConvexPoly(pts: Point, npts: Int, color: Scalar, lineType: LineType, shift: Int): Unit =
@@ -331,8 +331,9 @@ trait Drawing {
     def fillPoly(pts: MatVector, color: Scalar): Unit =
       fillPoly(pts, color, LineTypes.Line8, shift = 0, offset = new Point())
 
-    def fillPoly(pts: Array[_ <: Pointer], npts: Int, ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit =
-      opencv_imgproc.fillPoly(image,pts.asPointer,npts.asPointer,ncontours,color,lineType.flag,shift,offset)
+    def fillPoly(pts: Array[_ <: Pointer], npts: Int, ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit = {
+      opencv_imgproc.fillPoly(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,color,lineType.flag,shift,offset)
+    }
 
     def fillPoly(pts: Point, npts: Int, ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit =
       opencv_imgproc.fillPoly(image,pts,npts.asPointer,ncontours,color,lineType.flag,shift,offset)
@@ -366,7 +367,7 @@ trait Drawing {
       polylines(pts,isClosed,color,thickness = 1,LineTypes.Line8,shift = 0)
 
     def polylines(pts: Array[_ <: Pointer], npts: Int, ncontours: Int, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.polylines(image,pts.asPointer,npts.asPointer,ncontours,isClosed,color,thickness,lineType.flag,shift)
+      opencv_imgproc.polylines(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,isClosed,color,thickness,lineType.flag,shift)
 
     def polylines(pts: Point, npts: Int, ncontours: Int, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
       opencv_imgproc.polylines(image,pts,npts.asPointer,ncontours,isClosed,color,thickness,lineType.flag,shift)
@@ -417,11 +418,11 @@ trait Drawing {
      *               contours. In order to solve this problem, you need to call #drawContours separately for each sub-group
      *               of contours, or iterate over the collection using contourIdx parameter.
      */
-    def drawContours(contours: MatVector, contourIdx: Int, color: Scalar, thickness: Int, lineType: LineType, hierarchy: Mat, maxLevel: Int, offset: Point): Unit =
+    def drawContours(contours: MatVector, contourIdx: Int, color: Scalar, thickness: Int, lineType: LineType, hierarchy: UMat, maxLevel: Int, offset: Point): Unit =
       opencv_imgproc.drawContours(image,contours,contourIdx,color,thickness,lineType.flag,hierarchy,maxLevel,offset)
 
     def drawContours(contours: MatVector, contourIdx: Int, color: Scalar): Unit =
-      drawContours(contours,contourIdx,color,thickness = 1,LineTypes.Line8,hierarchy = new Mat(),maxLevel = Int.MaxValue,offset = new Point())
+      drawContours(contours,contourIdx,color,thickness = 1,LineTypes.Line8,hierarchy = new UMat(),maxLevel = Int.MaxValue,offset = new Point())
 
   }
 }

@@ -2,14 +2,29 @@ package i4s.scalacv.core.types
 
 import i4s.scalacv.core.types.Types.{Cv16F, Cv16S, Cv16U, Cv32F, Cv32S, Cv64F, Cv8S, Cv8U, Type}
 
-object FlowTypes extends Enumeration {
+object MatTypes extends Enumeration {
+
+  private val ChannelMax = 512
+  private val ChannelShift = 3
+  private val DepthMax = 1 << ChannelShift
+
   protected case class FlagVal(flag: Int) extends super.Val {
-    override def toString(): String = s"${depth(this).toString}C${channels(this)}"
+    override def toString(): String = s"${dataType.toString}C${channels}"
+
+    def channels: Int = MatTypes.channels(this)
+    def dataType: Type = MatTypes.depth(this)
   }
-  type FlowType = Value
+  type MatType = Value
 
   import scala.language.implicitConversions
   implicit def valueToTypeChannel(v: Value): FlagVal = v.asInstanceOf[FlagVal]
+
+  def toString(f: Int): String = makeType(depth(f),channels(f)).toString
+  def toEnum(f: Int): MatType =
+    values.find(_.flag == f)
+      .getOrElse(FlagVal(makeType(depth(f),channels(f))))
+
+  def toEnumOption(f: Int): Option[MatType] = values.find(_.flag == f)
 
   // predefined type constants
   val Ft8UC1: FlagVal = FlagVal(Ft8UC(1))
@@ -52,12 +67,8 @@ object FlowTypes extends Enumeration {
   val Ft16FC3:FlagVal = FlagVal(Ft16FC(3))
   val Ft16FC4:FlagVal = FlagVal(Ft16FC(4))
 
-  private val ChannelMax = 512
-  private val ChannelShift = 3
-  private val DepthMax = 1 << ChannelShift
-
   def makeType(depth: Type, channels: Int): Int = {
-    require(channels > 0 && channels < ChannelMax, s"Channels count should be 1..${ChannelMax - 1}")
+    require(channels > 0 && channels < ChannelMax, s"Channel value is $channels -- Channels count should be 1..${ChannelMax - 1}")
     require(depth.flag <= ChannelMax, s"Unsupported channel depth $depth")
     (depth.flag & (DepthMax - 1)) + ((channels - 1) << ChannelShift)
   }
@@ -71,15 +82,18 @@ object FlowTypes extends Enumeration {
   def Ft64FC(ch: Int): Int = makeType(Types.Cv64F,ch)
   def Ft16FC(ch: Int): Int = makeType(Types.Cv16F,ch)
 
-  def channels(flowType: FlowType): Int = (flowType.flag >> ChannelShift) + 1
-  def depth(flowType: FlowType): Type = {
-    val flag = flowType.flag & (DepthMax - 1)
-    Types.values.find(_.flag == flag).getOrElse(throw new UnsupportedOperationException(s"Unsupported TypeDepth - $flag from $flowType"))
+  def channels(flowType: MatType): Int = channels(flowType.flag)
+  def depth(flowType: MatType): Type = depth(flowType.flag)
+
+  def channels(flag: Int): Int = (flag >> ChannelShift) + 1
+  def depth(flag: Int): Type = {
+    val f = flag & (DepthMax - 1)
+    Types.values.find(_.flag == f).getOrElse(throw new UnsupportedOperationException(s"Unsupported TypeDepth - $f from $flag"))
   }
 
-  def isInteger(flowType: FlowType): Boolean = depth(flowType).flag < Cv32F.flag
+  def isInteger(flowType: MatType): Boolean = depth(flowType).flag < Cv32F.flag
 
-  def ElementSize(flowType: FlowType): Int = depth(flowType) match {
+  def ElementSize(flowType: MatType): Int = depth(flowType) match {
     case Cv8U | Cv8S => channels(flowType)
     case Cv16S | Cv16U | Cv16F => 2 * channels(flowType)
     case Cv32S | Cv32F => 4 * channels(flowType)

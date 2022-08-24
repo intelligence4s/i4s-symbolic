@@ -35,10 +35,7 @@ object Image {
   }
 }
 
-/*
-class Image(p: Pointer) extends UMat(p) {
-
-  def this() = this(null.asInstanceOf[Pointer])
+class Image() extends UMat() {
 
   def this(rows: Int, cols: Int, mtype: MatType, usageFlags: Set[UsageFlag]) = {
     this()
@@ -81,4 +78,3 @@ class Image(p: Pointer) extends UMat(p) {
     put(mat)
   }
 }
-*/

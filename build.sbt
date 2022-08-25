@@ -50,5 +50,5 @@ lazy val server = (project in file("server"))
   .dependsOn(common.jvm, nlp % "compile->compile;test->test")
 
 lazy val web = (project in file("web"))
-  .enablePlugins(BuildInfoPlugin, CalibanPlugin, ScalaJSBundlerPlugin, ScalaJSWeb, ScalaJSPlugin)
+  .enablePlugins(BuildInfoPlugin, CalibanPlugin, ScalaJSBundlerPlugin, ScalaJSWeb)
   .dependsOn(common.js)

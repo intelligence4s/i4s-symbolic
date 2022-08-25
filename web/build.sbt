@@ -57,6 +57,7 @@ libraryDependencies ++= Seq(
 scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
 
 Compile / scalacOptions ++= Seq(
+  "-Ymacro-annotations",
   "-deprecation",
   "-feature",
   "-unchecked",

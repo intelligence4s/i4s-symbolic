@@ -13,7 +13,7 @@ object Codecs {
   def readImage(file: File): Option[Image] = readImage(file,ImageReadFlags.AnyColor)
   def readImage(file: File, readFlag: ImageReadFlags): Option[Image] = readImage(file,Set(readFlag))
   def readImage(file: File, readFlags: Set[ImageReadFlags]): Option[Image] = {
-    val combined = readFlags.foldLeft(0)(_ | _.flag)
+    val combined = readFlags.foldLeft(0)(_ | _.id)
     val mat = imread(file.getAbsolutePath,combined)
     if (mat.empty()) None else Some(mat)
   }
@@ -21,7 +21,7 @@ object Codecs {
   def readImages(file: File): List[Image] = readImages(file,ImageReadFlags.AnyColor)
   def readImages(file: File, readFlag: ImageReadFlags): List[Image] = readImages(file,Set(readFlag))
   def readImages(file: File, readFlags: Set[ImageReadFlags]): List[Image] = {
-    val combined = readFlags.foldLeft(0)(_ | _.flag)
+    val combined = readFlags.foldLeft(0)(_ | _.id)
     val matVector = new MatVector()
     val result = imreadmulti(file.getAbsolutePath,matVector,combined)
     if (result) matVectorToList(matVector)
@@ -31,7 +31,7 @@ object Codecs {
   def readImages(file: File, start: Int, count: Int): List[Image] = readImages(file,start,count,ImageReadFlags.AnyColor)
   def readImages(file: File, start: Int, count: Int, readFlag: ImageReadFlags): List[Image] = readImages(file,start,count,Set(readFlag))
   def readImages(file: File, start: Int, count: Int, readFlags: Set[ImageReadFlags]): List[Image] = {
-    val combined = readFlags.foldLeft(0)(_ | _.flag)
+    val combined = readFlags.foldLeft(0)(_ | _.id)
     val matVector = new MatVector()
     val result = imreadmulti(file.getAbsolutePath,matVector,start,count,combined)
     if (result) matVectorToList(matVector)
@@ -42,7 +42,7 @@ object Codecs {
   def imageCount(file: File): Option[Long] = imageCount(file, ImageReadFlags.AnyColor)
   def imageCount(file: File, readFlag: ImageReadFlags): Option[Long] = imageCount(file,Set(readFlag))
   def imageCount(file: File, readFlags: Set[ImageReadFlags]): Option[Long] = {
-    val combined = readFlags.foldLeft(0)(_ | _.flag)
+    val combined = readFlags.foldLeft(0)(_ | _.id)
     val result = imcount(file.getAbsolutePath, combined)
     if (result < 0) None else Some(result)
   }

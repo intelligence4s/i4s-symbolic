@@ -62,7 +62,7 @@ trait Filters {
    * @see sepFilter2D, getDerivKernels, getStructuringElement, GaussianBlur
    */
   def getGaussianKernel(ksize: Int, sigma: Double, ktype: Type): Mat =
-      opencv_imgproc.getGaussianKernel(ksize,sigma,ktype.flag)
+      opencv_imgproc.getGaussianKernel(ksize,sigma,ktype.id)
 
   def getGaussianKernel(ksize: Int, sigma: Double): Mat =
     getGaussianKernel(ksize,sigma,Types.Cv64F)
@@ -89,7 +89,7 @@ trait Filters {
    */
   def getDerivKernels(dx: Int, dy: Int, ksize: Int, normalize: Boolean, ktype: Type): (UMat,UMat) = {
     val kx, ky: UMat = new UMat()
-    opencv_imgproc.getDerivKernels(kx,ky,dx,dy,ksize,normalize,ktype.flag)
+    opencv_imgproc.getDerivKernels(kx,ky,dx,dy,ksize,normalize,ktype.id)
     (kx,ky)
   }
 
@@ -111,7 +111,7 @@ trait Filters {
    * @param ktype Type of filter coefficients. It can be CV_32F or CV_64F .
    */
   def getGaborKernel(ksize: Size, sigma: Double, theta: Double, lambd: Double, gamma: Double, psi: Double, ktype: Type): Mat =
-    opencv_imgproc.getGaborKernel(ksize,sigma,theta,lambd,gamma,psi,ktype.flag)
+    opencv_imgproc.getGaborKernel(ksize,sigma,theta,lambd,gamma,psi,ktype.id)
 
   def getGaborKernel(ksize: Size, sigma: Double, theta: Double, lambd: Double, gamma: Double): Mat =
     getGaborKernel(ksize,sigma,theta,lambd,gamma,psi = CvPi * 0.5, Cv64F)
@@ -133,7 +133,7 @@ trait Filters {
    *               operation is shifted.
    */
   def getStructuringElement(shape: MorphShape, ksize: Size, anchor: Point): Mat =
-    opencv_imgproc.getStructuringElement(shape.flag,ksize,anchor)
+    opencv_imgproc.getStructuringElement(shape.id,ksize,anchor)
 
   def getStructuringElement(shape: MorphShape, ksize: Size): Mat =
     getStructuringElement(shape,ksize,new Point(-1,-1))
@@ -194,7 +194,7 @@ trait Filters {
      */
     def gaussianBlur(ksize: Size, sigmaX: Double, sigmaY: Double /*=0*/ , borderType: BorderType /*=cv::BORDER_DEFAULT*/): Image = {
       val dst = new Image()
-      opencv_imgproc.GaussianBlur(image,dst,ksize,sigmaX,sigmaY,borderType.flag)
+      opencv_imgproc.GaussianBlur(image,dst,ksize,sigmaX,sigmaY,borderType.id)
       dst
     }
 
@@ -231,7 +231,7 @@ trait Filters {
      */
     def bilateralFilter(d: Int, sigmaColor: Double, sigmaSpace: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.bilateralFilter(image,dst,d,sigmaColor,sigmaSpace,borderType.flag)
+      opencv_imgproc.bilateralFilter(image,dst,d,sigmaColor,sigmaSpace,borderType.id)
       dst
     }
 
@@ -264,7 +264,7 @@ trait Filters {
      */
     def boxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.boxFilter(image,dst,ddepth.flag,ksize,anchor,normalize,borderType.flag)
+      opencv_imgproc.boxFilter(image,dst,ddepth.id,ksize,anchor,normalize,borderType.id)
       dst
     }
 
@@ -291,7 +291,7 @@ trait Filters {
      */
     def sqrBoxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.sqrBoxFilter(image,dst,ddepth.flag,ksize,anchor,normalize,borderType.flag)
+      opencv_imgproc.sqrBoxFilter(image,dst,ddepth.id,ksize,anchor,normalize,borderType.id)
       dst
     }
 
@@ -317,7 +317,7 @@ trait Filters {
      */
     def blur(ksize: Size, anchor: Point, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.blur(image,dst,ksize,anchor,borderType.flag)
+      opencv_imgproc.blur(image,dst,ksize,anchor,borderType.id)
       dst
     }
 
@@ -354,7 +354,7 @@ trait Filters {
      */
     def filter2D(ddepth: Type, kernel: UMat, anchor: Point, delta: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.filter2D(image,dst,ddepth.flag,kernel,anchor,delta,borderType.flag)
+      opencv_imgproc.filter2D(image,dst,ddepth.id,kernel,anchor,delta,borderType.id)
       dst
     }
 
@@ -380,7 +380,7 @@ trait Filters {
      */
     def sepFilter2D(ddepth: Type, kernelX: UMat, kernelY: UMat, anchor: Point, delta: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.sepFilter2D(image,dst,ddepth.flag,kernelX,kernelY,anchor,delta,borderType.flag)
+      opencv_imgproc.sepFilter2D(image,dst,ddepth.id,kernelX,kernelY,anchor,delta,borderType.id)
       dst
     }
 
@@ -439,7 +439,7 @@ trait Filters {
      */
     def sobel(ddepth: Type, dx: Int, dy: Int, ksize: Int /*=3*/ , scale: Double /*=1*/ , delta: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.Sobel(image,dst,ddepth.flag,dx,dy,ksize,scale,delta,borderType.flag)
+      opencv_imgproc.Sobel(image,dst,ddepth.id,dx,dy,ksize,scale,delta,borderType.id)
       dst
     }
 
@@ -467,7 +467,7 @@ trait Filters {
     def spatialGradient(ksize: Int, borderType: BorderType): (Image,Image) = {
       val dx: Image = new Image()
       val dy: Image = new Image()
-      opencv_imgproc.spatialGradient(image,dx,dy,ksize,borderType.flag)
+      opencv_imgproc.spatialGradient(image,dx,dy,ksize,borderType.id)
       (dx,dy)
     }
 
@@ -498,7 +498,7 @@ trait Filters {
      */
     def scharr(ddepth: Type, dx: Int, dy: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.Scharr(image,dst,ddepth.flag,dx,dy,scale,delta,borderType.flag)
+      opencv_imgproc.Scharr(image,dst,ddepth.id,dx,dy,scale,delta,borderType.id)
       dst
     }
 
@@ -534,7 +534,7 @@ trait Filters {
      */
     def laplacian(ddepth: Type, ksize: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.Laplacian(image,dst,ddepth.flag,ksize,scale,delta,borderType.flag)
+      opencv_imgproc.Laplacian(image,dst,ddepth.id,ksize,scale,delta,borderType.id)
       dst
     }
 
@@ -565,7 +565,7 @@ trait Filters {
      */
     def erode(kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
       val dst = new Image()
-      opencv_imgproc.erode(image,dst,kernel,anchor,iterations,borderType.flag,borderValue)
+      opencv_imgproc.erode(image,dst,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
 
@@ -601,7 +601,7 @@ trait Filters {
      */
     def dilate(kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
       val dst = new Image()
-      opencv_imgproc.dilate(image,dst,kernel,anchor,iterations,borderType.flag,borderValue)
+      opencv_imgproc.dilate(image,dst,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
 
@@ -634,7 +634,7 @@ trait Filters {
      */
     def morphologyEx(op: Int, kernel: UMat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
       val dst = new Image()
-      opencv_imgproc.morphologyEx(image,dst,op,kernel,anchor,iterations,borderType.flag,borderValue)
+      opencv_imgproc.morphologyEx(image,dst,op,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
 
@@ -663,7 +663,7 @@ trait Filters {
      */
     def pyrDown(dstsize: Size, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.pyrDown(image,dst,dstsize,borderType.flag)
+      opencv_imgproc.pyrDown(image,dst,dstsize,borderType.id)
       dst
     }
 
@@ -689,7 +689,7 @@ trait Filters {
      */
     def pyrUp(dstsize: Size, borderType: BorderType): Image = {
       val dst = new Image()
-      opencv_imgproc.pyrUp(image,dst,dstsize,borderType.flag)
+      opencv_imgproc.pyrUp(image,dst,dstsize,borderType.id)
       dst
     }
 
@@ -709,7 +709,7 @@ trait Filters {
      */
     def buildPyramid(maxlevel: Int, borderType: BorderType): MatVector = {
       val dst = new MatVector()
-      opencv_imgproc.buildPyramid(image,dst,maxlevel,borderType.flag)
+      opencv_imgproc.buildPyramid(image,dst,maxlevel,borderType.id)
       dst
     }
 

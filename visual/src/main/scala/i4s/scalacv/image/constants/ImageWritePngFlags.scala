@@ -9,27 +9,21 @@ package i4s.scalacv.image.constants
  * -   IMWRITE_PNG_STRATEGY_FIXED prevents the use of dynamic Huffman codes, allowing for a simpler decoder for special applications.
  */
 object ImageWritePngFlags extends Enumeration {
-  protected case class FlagVal(flag: Int) extends super.Val
-
   type ImageReadFlags = Value
 
-  import scala.language.implicitConversions
-
-  implicit def valueToImageReadFlag(v: Value): FlagVal = v.asInstanceOf[FlagVal]
-
   /** Use this value for normal data. */
-  val Default: FlagVal = FlagVal(0)
+  val Default: Value = Value(0)
 
   /** Use this value for data produced by a filter (or predictor).Filtered data consists mostly of small values with a somewhat random distribution. In this case, the compression algorithm is tuned to compress them better. */
-  val Filtered: FlagVal = FlagVal(1)
+  val Filtered: Value = Value(1)
 
   /** Use this value to force Huffman encoding only (no string match). */
-  val HuffmanOnly: FlagVal = FlagVal(2)
+  val HuffmanOnly: Value = Value(2)
 
   /** Use this value to limit match distances to one (run-length encoding). */
-  val Rle: FlagVal = FlagVal(3)
+  val Rle: Value = Value(3)
 
   /** Using this value prevents the use of dynamic Huffman codes, allowing for a simpler decoder for special applications. */
-  val Fixed: FlagVal = FlagVal(4)
+  val Fixed: Value = Value(4)
 
 }

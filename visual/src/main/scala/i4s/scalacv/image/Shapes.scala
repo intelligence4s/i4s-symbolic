@@ -94,7 +94,7 @@ trait Shapes {
      * @param ccltype      connected components algorithm type (see the #ConnectedComponentsAlgorithmsTypes).
      */
     def connectedComponentsWithAlgorithm(labels: UMat, connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): Int =
-      opencv_imgproc.connectedComponentsWithAlgorithm(image,labels,connectivity,ltype.flag,ccltype.flag)
+      opencv_imgproc.connectedComponentsWithAlgorithm(image,labels,connectivity,ltype.id,ccltype.id)
 
     /** \overload
      * <p>
@@ -105,7 +105,7 @@ trait Shapes {
      */
     def connectedComponents(connectivity: Int /*=8*/ , ltype: Type /*=CV_32S*/): (Image,Int) = {
       val labels = new Image()
-      val result = opencv_imgproc.connectedComponents(image,labels,connectivity,ltype.flag)
+      val result = opencv_imgproc.connectedComponents(image,labels,connectivity,ltype.id)
       (labels,result)
     }
 
@@ -140,7 +140,7 @@ trait Shapes {
       val labels = new Image()
       val stats = new UMat()
       val centroids = new UMat()
-      val result = opencv_imgproc.connectedComponentsWithStatsWithAlgorithm(image,labels,stats,centroids,connectivity,ltype.flag,ccltype.flag)
+      val result = opencv_imgproc.connectedComponentsWithStatsWithAlgorithm(image,labels,stats,centroids,connectivity,ltype.id,ccltype.id)
       (labels,stats,centroids,result)
     }
 
@@ -159,7 +159,7 @@ trait Shapes {
       val labels = new Image()
       val stats = new UMat()
       val centroids = new UMat()
-      val result = opencv_imgproc.connectedComponentsWithStats(image,labels,stats,centroids,connectivity,ltype.flag)
+      val result = opencv_imgproc.connectedComponentsWithStats(image,labels,stats,centroids,connectivity,ltype.id)
       (labels,stats,centroids,result)
     }
 
@@ -195,7 +195,7 @@ trait Shapes {
      */
     def findContours(hierarchy: UMat, mode: RetrievalMode, method: ContourApproximationMethod, offset: Point): MatVector = {
       val contours = new MatVector()
-      opencv_imgproc.findContours(image, contours, hierarchy, mode.flag, method.flag, offset)
+      opencv_imgproc.findContours(image, contours, hierarchy, mode.id, method.id, offset)
       contours
     }
 
@@ -205,7 +205,7 @@ trait Shapes {
     /** \overload */
     def findContours(mode: RetrievalMode, method: ContourApproximationMethod, offset: Point): MatVector = {
       val contours = new MatVector()
-      opencv_imgproc.findContours(image,contours,mode.flag,method.flag,offset)
+      opencv_imgproc.findContours(image,contours,mode.id,method.id,offset)
       contours
     }
 
@@ -383,7 +383,7 @@ trait Shapes {
    * @param parameter Method-specific parameter (not supported now).
    */
   def matchShapes(contour1: UMat, contour2: UMat, method: ShapeMatchMode, parameter: Double): Double =
-    opencv_imgproc.matchShapes(contour1, contour2, method.flag, parameter)
+    opencv_imgproc.matchShapes(contour1, contour2, method.id, parameter)
 
   /** \example samples/cpp/convexhull.cpp
    * An example using the convexHull functionality
@@ -627,7 +627,7 @@ trait Shapes {
    */
   def fitLine(points: UMat, distType: DistanceType, param: Double, reps: Double, aeps: Double): UMat = {
     val line = new UMat()
-    opencv_imgproc.fitLine(points, line, distType.flag, param, reps, aeps)
+    opencv_imgproc.fitLine(points, line, distType.id, param, reps, aeps)
     line
   }
 
@@ -670,7 +670,7 @@ trait Shapes {
   def rotatedRectangleIntersection(rect1: RotatedRect, rect2: RotatedRect): (RectanglesIntersectType, UMat) = {
     val intersectingRegion = new UMat()
     val itypeFlag = opencv_imgproc.rotatedRectangleIntersection(rect1, rect2, intersectingRegion)
-    val itype: RectanglesIntersectType = RectanglesIntersectTypes.values.find(_.flag == itypeFlag).get
+    val itype: RectanglesIntersectType = RectanglesIntersectTypes(itypeFlag)
     (itype, intersectingRegion)
   }
 

@@ -1,19 +1,13 @@
 package i4s.scalacv.image.constants
 
 object InterpolationMasks extends Enumeration {
-  protected case class FlagVal(flag: Int) extends super.Val
-
   type InterpolationMask = Value
 
-  import scala.language.implicitConversions
+  val Bits: Value = Value(5)
 
-  implicit def valueToInterpolationMask(v: Value): FlagVal = v.asInstanceOf[FlagVal]
+  val Bits2: Value = Value(Bits.id * 2)
 
-  val Bits: FlagVal = FlagVal(5)
+  val TabSize: Value = Value(1 << Bits.id)
 
-  val Bits2: FlagVal = FlagVal(Bits.flag * 2)
-
-  val TabSize: FlagVal = FlagVal(1 << Bits.flag)
-
-  val TabSize2: FlagVal = FlagVal(TabSize.flag * TabSize.flag)
+  val TabSize2: Value = Value(TabSize.id * TabSize.id)
 }

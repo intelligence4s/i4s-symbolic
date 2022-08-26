@@ -1,14 +1,13 @@
 package i4s.scalacv.image.constants
 
 object HersheyFonts extends Enumeration {
-  protected case class TypeVal(flag: Int) extends super.Val {
-    def face(italic: Boolean): Int = if (italic) flag | HersheyFonts.Italic.flag else flag
+  protected case class TypeVal(override val id: Int) extends super.Val {
+    def face(italic: Boolean): Int = if (italic) id | HersheyFonts.Italic.id else id
   }
 
   type HersheyFont = Value
 
   import scala.language.implicitConversions
-
   implicit def valueToImageReadFlag(v: Value): TypeVal = v.asInstanceOf[TypeVal]
 
   /** normal size sans-serif font */

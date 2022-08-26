@@ -55,7 +55,7 @@ trait Colors {
 
     def cvtColor(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
       val dst = new Image()
-      opencv_imgproc.cvtColor(image,dst,code.flag,dstCn)
+      opencv_imgproc.cvtColor(image,dst,code.id,dstCn)
       dst
     }
 
@@ -82,7 +82,7 @@ trait Colors {
      */
     def cvtColorTwoPlane(src2: Image, code: ColorConversionCode): Image = {
       val dst = new Image()
-      opencv_imgproc.cvtColorTwoPlane(image,src2,dst,code.flag)
+      opencv_imgproc.cvtColorTwoPlane(image,src2,dst,code.id)
       dst
     }
 
@@ -118,7 +118,7 @@ trait Colors {
      */
     def demosaicing(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
       val dst = new Image()
-      opencv_imgproc.demosaicing(image,dst,code.flag,dstCn)
+      opencv_imgproc.demosaicing(image,dst,code.id,dstCn)
       dst
     }
 
@@ -133,7 +133,7 @@ trait Colors {
      */
     def applyColorMap(colorMap: ColorMap): Image = {
       val dst = new Image()
-      opencv_imgproc.applyColorMap(image,dst,colorMap.flag)
+      opencv_imgproc.applyColorMap(image,dst,colorMap.id)
       dst
     }
 

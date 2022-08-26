@@ -153,7 +153,7 @@ trait Drawing {
      * @param shift     Number of fractional bits in the coordinates of the center and in the radius value.
      */
     def circle(center: Point, radius: Int, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.circle(image, center, radius, color, thickness, lineType.flag, shift)
+      opencv_imgproc.circle(image, center, radius, color, thickness, lineType.id, shift)
 
     def circle(center: Point, radius: Int, color: Scalar): Unit =
       circle(center, radius, color, thickness = 1, LineTypes.Line8, shift = 0)
@@ -184,7 +184,7 @@ trait Drawing {
      * @param shift      Number of fractional bits in the coordinates of the center and values of axes.
      */
     def ellipse(center: Point, axes: Size, angle: Double, startAngle: Double, endAngle: Double, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.ellipse(image,center,axes,angle,startAngle,endAngle,color,thickness,lineType.flag,shift)
+      opencv_imgproc.ellipse(image,center,axes,angle,startAngle,endAngle,color,thickness,lineType.id,shift)
 
     def ellipse(center: Point, axes: Size, angle: Double, startAngle: Double, endAngle: Double, color: Scalar): Unit =
       ellipse(center,axes,angle,startAngle,endAngle,color,thickness = 1,LineTypes.Line8,shift = 0)
@@ -198,7 +198,7 @@ trait Drawing {
      * @param lineType  Type of the ellipse boundary. See #LineTypes
      */
     def ellipse(box: RotatedRect, color: Scalar, thickness: Int, lineType: LineType): Unit =
-      opencv_imgproc.ellipse(image,box,color,thickness,lineType.flag)
+      opencv_imgproc.ellipse(image,box,color,thickness,lineType.id)
 
     def ellipse(box: RotatedRect, color: Scalar): Unit =
       ellipse(box,color,thickness = 1,LineTypes.Line8)
@@ -218,7 +218,7 @@ trait Drawing {
      * @param shift     Number of fractional bits in the point coordinates.
      */
     def rectangle(point1: Point, point2: Point, color: Scalar, lineType: LineType, thickness: Int, shift: Int): Unit =
-      opencv_imgproc.rectangle(image, point1, point2, color, thickness, lineType.flag, shift)
+      opencv_imgproc.rectangle(image, point1, point2, color, thickness, lineType.id, shift)
 
     def rectangle(point1: Point, point2: Point, color: Scalar): Unit =
       rectangle(point1, point2, color, LineTypes.Line8, thickness = 1, shift = 0)
@@ -237,7 +237,7 @@ trait Drawing {
      * @param shift     Number of fractional bits in the point coordinates.
      */
     def rectangle(rect: Rect, color: Scalar, lineType: LineType, thickness: Int, shift: Int): Unit =
-      opencv_imgproc.rectangle(image, rect, color, thickness, lineType.flag, shift)
+      opencv_imgproc.rectangle(image, rect, color, thickness, lineType.id, shift)
 
     def rectangle(rect: Rect, color: Scalar): Unit =
       rectangle(rect,color,LineTypes.Line8,thickness = 1,shift = 0)
@@ -255,7 +255,7 @@ trait Drawing {
      * @param markerSize The length of the marker axis [default = 20 pixels]
      */
     def drawMarker(position: Point, color: Scalar, markerType: MarkerType, markerSize: Int, thickness: Int, lineType: LineType): Unit =
-      opencv_imgproc.drawMarker(image,position,color,markerType.flag,markerSize,thickness,lineType.flag)
+      opencv_imgproc.drawMarker(image,position,color,markerType.id,markerSize,thickness,lineType.id)
 
     def drawMarker(position: Point, color: Scalar): Unit =
       drawMarker(position,color,MarkerTypes.Cross,markerSize = 20,thickness = 1,LineTypes.Line8)
@@ -277,7 +277,7 @@ trait Drawing {
      *                         it is at the top-left corner.
      */
     def putText(text: String, org: Point, fontFace: HersheyFont, fontScale: Double, italic: Boolean, color: Scalar, thickness: Int, lineType: LineType, bottomLeftOrigin: Boolean): Unit =
-      opencv_imgproc.putText(image,text,org,fontFace.face(italic),fontScale,color,thickness,lineType.flag,bottomLeftOrigin)
+      opencv_imgproc.putText(image,text,org,fontFace.face(italic),fontScale,color,thickness,lineType.id,bottomLeftOrigin)
 
     def putText(text: String, org: Point, fontFace: HersheyFont, fontScale: Double, italic: Boolean, color: Scalar): Unit =
       putText(text,org,fontFace,fontScale,italic,color,1,LineTypes.Line8,bottomLeftOrigin = false)
@@ -296,13 +296,13 @@ trait Drawing {
      * @param shift    Number of fractional bits in the vertex coordinates.
      */
     def fillConvexPoly(points: UMat, color: Scalar, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.fillConvexPoly(image,points,color,lineType.flag,shift)
+      opencv_imgproc.fillConvexPoly(image,points,color,lineType.id,shift)
 
     def fillConvexPoly(points: UMat, color: Scalar): Unit =
       fillConvexPoly(points,color,LineTypes.Line8,shift = 0)
 
     def fillConvexPoly(pts: Point, npts: Int, color: Scalar, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.fillConvexPoly(image,pts,npts,color,lineType.flag,shift)
+      opencv_imgproc.fillConvexPoly(image,pts,npts,color,lineType.id,shift)
 
     def fillConvexPoly(pts: Point, npts: Int, color: Scalar): Unit =
       fillConvexPoly(pts,npts,color,LineTypes.Line8,shift = 0)
@@ -326,23 +326,23 @@ trait Drawing {
      * @param offset   Optional offset of all points of the contours.
      */
     def fillPoly(pts: MatVector, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit =
-      opencv_imgproc.fillPoly(image,pts,color,lineType.flag,shift,offset)
+      opencv_imgproc.fillPoly(image,pts,color,lineType.id,shift,offset)
 
     def fillPoly(pts: MatVector, color: Scalar): Unit =
       fillPoly(pts, color, LineTypes.Line8, shift = 0, offset = new Point())
 
     def fillPoly(pts: Array[_ <: Pointer], npts: Int, ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit = {
-      opencv_imgproc.fillPoly(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,color,lineType.flag,shift,offset)
+      opencv_imgproc.fillPoly(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,color,lineType.id,shift,offset)
     }
 
     def fillPoly(pts: Point, npts: Int, ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit =
-      opencv_imgproc.fillPoly(image,pts,npts.asPointer,ncontours,color,lineType.flag,shift,offset)
+      opencv_imgproc.fillPoly(image,pts,npts.asPointer,ncontours,color,lineType.id,shift,offset)
 
     def fillPoly(pts: Point, npts: Int, ncontours: Int, color: Scalar): Unit =
       fillPoly(pts, npts, ncontours, color, LineTypes.Line8, shift = 0, offset = new Point())
 
     def fillPoly(pts: Point, npts: Array[Int], ncontours: Int, color: Scalar, lineType: LineType, shift: Int, offset: Point): Unit =
-      opencv_imgproc.fillPoly(image, pts, npts, ncontours, color, lineType.flag, shift, offset)
+      opencv_imgproc.fillPoly(image, pts, npts, ncontours, color, lineType.id, shift, offset)
 
     def fillPoly(pts: Point, npts: Array[Int], ncontours: Int, color: Scalar): Unit =
       fillPoly(pts, npts, ncontours, color, LineTypes.Line8, shift = 0, offset = new Point())
@@ -361,22 +361,22 @@ trait Drawing {
      *                  The function cv::polylines draws one or more polygonal curves.
      */
     def polylines(pts: MatVector, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.polylines(image,pts,isClosed,color,thickness,lineType.flag,shift)
+      opencv_imgproc.polylines(image,pts,isClosed,color,thickness,lineType.id,shift)
 
     def polylines(pts: MatVector, isClosed: Boolean, color: Scalar): Unit =
       polylines(pts,isClosed,color,thickness = 1,LineTypes.Line8,shift = 0)
 
     def polylines(pts: Array[_ <: Pointer], npts: Int, ncontours: Int, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.polylines(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,isClosed,color,thickness,lineType.flag,shift)
+      opencv_imgproc.polylines(image.getMat(0),pts.asPointer,npts.asPointer,ncontours,isClosed,color,thickness,lineType.id,shift)
 
     def polylines(pts: Point, npts: Int, ncontours: Int, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineType, shift: Int): Unit =
-      opencv_imgproc.polylines(image,pts,npts.asPointer,ncontours,isClosed,color,thickness,lineType.flag,shift)
+      opencv_imgproc.polylines(image,pts,npts.asPointer,ncontours,isClosed,color,thickness,lineType.id,shift)
 
     def polylines(pts: Point, npts: Int, ncontours: Int, isClosed: Boolean, color: Scalar): Unit =
       polylines(pts, npts, ncontours, isClosed, color, thickness = 1, LineTypes.Line8, shift = 1)
 
     def polylines(pts: Point, npts: Array[Int], ncontours: Int, isClosed: Boolean, color: Scalar, thickness: Int, lineType: LineTypes.LineType, shift: Int): Unit =
-      opencv_imgproc.polylines(image,pts,npts,ncontours,isClosed,color,thickness,lineType.flag,shift)
+      opencv_imgproc.polylines(image,pts,npts,ncontours,isClosed,color,thickness,lineType.id,shift)
 
     def polylines(pts: Point, npts: Array[Int], ncontours: Int, isClosed: Boolean, color: Scalar): Unit =
       polylines(pts,npts, ncontours, isClosed, color, thickness = 1, lineType = LineTypes.Line8, shift = 0)
@@ -419,7 +419,7 @@ trait Drawing {
      *               of contours, or iterate over the collection using contourIdx parameter.
      */
     def drawContours(contours: MatVector, contourIdx: Int, color: Scalar, thickness: Int, lineType: LineType, hierarchy: UMat, maxLevel: Int, offset: Point): Unit =
-      opencv_imgproc.drawContours(image,contours,contourIdx,color,thickness,lineType.flag,hierarchy,maxLevel,offset)
+      opencv_imgproc.drawContours(image,contours,contourIdx,color,thickness,lineType.id,hierarchy,maxLevel,offset)
 
     def drawContours(contours: MatVector, contourIdx: Int, color: Scalar): Unit =
       drawContours(contours,contourIdx,color,thickness = 1,LineTypes.Line8,hierarchy = new UMat(),maxLevel = Int.MaxValue,offset = new Point())

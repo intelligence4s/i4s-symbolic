@@ -51,7 +51,7 @@ trait Transforms {
    * @see remap, undistort, initUndistortRectifyMap
    */
   def convertMaps(map1: UMat, map2: UMat, dstmap1: UMat, dstmap2: UMat, dstmap1type: MatType, nninterpolation: Boolean): Unit =
-    opencv_imgproc.convertMaps(map1,map2,dstmap1,dstmap2,dstmap1type.flag,nninterpolation)
+    opencv_imgproc.convertMaps(map1,map2,dstmap1,dstmap2,dstmap1type.id,nninterpolation)
 
   def convertMaps(map1: UMat, map2: UMat, dstmap1: UMat, dstmap2: UMat, dstmap1type: MatType): Unit =
     convertMaps(map1,map2,dstmap1,dstmap2,dstmap1type,nninterpolation = true)
@@ -138,14 +138,14 @@ trait Transforms {
    */
 
   def getPerspectiveTransform(src: UMat, dst: UMat, solveMethod: DecompositionMethod): Mat =
-    opencv_imgproc.getPerspectiveTransform(src, dst, solveMethod.flag)
+    opencv_imgproc.getPerspectiveTransform(src, dst, solveMethod.id)
 
   def getPerspectiveTransform(src: UMat, dst: UMat): Mat =
     getPerspectiveTransform(src, dst, DecompositionMethods.Lu)
 
   /** \overload */
   def getPerspectiveTransform(src: Point2f, dst: Point2f, solveMethod: DecompositionMethod): Mat =
-    opencv_imgproc.getPerspectiveTransform(src, dst, solveMethod.flag)
+    opencv_imgproc.getPerspectiveTransform(src, dst, solveMethod.id)
 
   def getPerspectiveTransform(src: Point2f, dst: Point2f): Mat =
     getPerspectiveTransform(src, dst, DecompositionMethods.Lu)
@@ -191,7 +191,7 @@ trait Transforms {
      */
     def resize(dsize: Size, fx: Double, fy: Double, interpolation: InterpolationFlag): Image = {
       val dst = new Image()
-      opencv_imgproc.resize(image,dst,dsize,fx,fy,interpolation.flag)
+      opencv_imgproc.resize(image,dst,dsize,fx,fy,interpolation.id)
       dst
     }
 
@@ -222,9 +222,9 @@ trait Transforms {
      * @see warpPerspective, resize, remap, getRectSubPix, transform
      */
     def warpAffine(matrix: UMat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image = {
-      val iflags = flags.foldLeft(0)(_ | _.flag)
+      val iflags = flags.foldLeft(0)(_ | _.id)
       val dst = new Image()
-      opencv_imgproc.warpAffine(image,dst,matrix,dsize,iflags,borderMode.flag,borderValue)
+      opencv_imgproc.warpAffine(image,dst,matrix,dsize,iflags,borderMode.id,borderValue)
       dst
     }
 
@@ -255,9 +255,9 @@ trait Transforms {
      */
     def warpPerspective(matrix: UMat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image =
     {
-      val iflags = flags.foldLeft(0)(_ | _.flag)
+      val iflags = flags.foldLeft(0)(_ | _.id)
       val dst = new Image()
-      opencv_imgproc.warpPerspective(image,dst,matrix,dsize,iflags,borderMode.flag,borderValue)
+      opencv_imgproc.warpPerspective(image,dst,matrix,dsize,iflags,borderMode.id,borderValue)
       dst
     }
 
@@ -298,7 +298,7 @@ trait Transforms {
      */
     def remap(map1: UMat, map2: UMat, interpolation: InterpolationFlag, borderMode: BorderType /*=cv::BORDER_CONSTANT*/, borderValue: Scalar): Image = {
       val dst = new Image()
-      opencv_imgproc.remap(image,dst,map1,map2,interpolation.flag,borderMode.flag,borderValue)
+      opencv_imgproc.remap(image,dst,map1,map2,interpolation.id,borderMode.id,borderValue)
       dst
     }
 
@@ -327,7 +327,7 @@ trait Transforms {
      */
     def rectSubPixels(patchSize: Size, center: Point2f, patchType: Type): Image = {
       val patch = new Image()
-      opencv_imgproc.getRectSubPix(image,patchSize,center,patch,patchType.flag)
+      opencv_imgproc.getRectSubPix(image,patchSize,center,patch,patchType.id)
       patch
     }
 
@@ -375,7 +375,7 @@ trait Transforms {
      *                  <p>
      */
     def linearPolar(center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
-      val iflags = flags.foldLeft(0)(_ | _.flag)
+      val iflags = flags.foldLeft(0)(_ | _.id)
       val dst = new Image()
       opencv_imgproc.linearPolar(image,dst,center,maxRadius,iflags)
       dst
@@ -468,7 +468,7 @@ trait Transforms {
      */
     def warpPolar(dsize: Size, center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
       val dst = new Image()
-      val iflags = flags.foldLeft(0)(_ | _.flag)
+      val iflags = flags.foldLeft(0)(_ | _.id)
       opencv_imgproc.warpPolar(image,dst,dsize,center,maxRadius,iflags)
       dst
     }
@@ -559,7 +559,7 @@ trait Transforms {
      * @see adaptiveThreshold, findContours, compare, min, max
      */
     def threshold(thresh: Double, maxval: Double, thresholdType: Set[ThresholdType]): (Image,Double) = {
-      val tflag = thresholdType.foldLeft(0)(_ | _.flag)
+      val tflag = thresholdType.foldLeft(0)(_ | _.id)
       val dst = new Image()
       val result = opencv_imgproc.threshold(image,dst,thresh,maxval,tflag)
       (dst,result)
@@ -593,7 +593,7 @@ trait Transforms {
      */
     def adaptiveThreshold(maxValue: Double, adaptiveMethod: ThresholdMethod, thresholdType: ThresholdType, blockSize: Int, constant: Double): Image = {
       val dst = new Image()
-      opencv_imgproc.adaptiveThreshold(image,dst,maxValue,adaptiveMethod.flag,thresholdType.flag,blockSize,constant)
+      opencv_imgproc.adaptiveThreshold(image,dst,maxValue,adaptiveMethod.id,thresholdType.id,blockSize,constant)
       dst
     }
 
@@ -652,7 +652,7 @@ trait Transforms {
      */
     def distanceTransformWithLabels(labels: Image, distanceType: DistanceType, maskSize: Int, labelType: DistanceLabelType): Image = {
       val dst = new Image()
-      opencv_imgproc.distanceTransformWithLabels(image,dst,labels,distanceType.flag,maskSize,labelType.flag)
+      opencv_imgproc.distanceTransformWithLabels(image,dst,labels,distanceType.id,maskSize,labelType.id)
       dst
     }
 
@@ -672,7 +672,7 @@ trait Transforms {
      */
     def distanceTransform(distanceType: DistanceType, maskSize: Int, dstType: Type): Image = {
       val dst = new Image()
-      opencv_imgproc.distanceTransform(image,dst,distanceType.flag,maskSize,dstType.flag)
+      opencv_imgproc.distanceTransform(image,dst,distanceType.id,maskSize,dstType.id)
       dst
     }
 

@@ -53,7 +53,7 @@ trait Colors {
      * @see \ref imgproc_color_conversions
      */
 
-    def cvtColor(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
+    def cvtColor(code: ColorConversionCode, dstCn: Int): Image = {
       val dst = new Image()
       opencv_imgproc.cvtColor(image,dst,code.id,dstCn)
       dst
@@ -116,7 +116,7 @@ trait Colors {
      *              <p>
      * @see cvtColor
      */
-    def demosaicing(code: ColorConversionCode, dstCn: Int /*=0*/): Image = {
+    def demosaicing(code: ColorConversionCode, dstCn: Int): Image = {
       val dst = new Image()
       opencv_imgproc.demosaicing(image,dst,code.id,dstCn)
       dst

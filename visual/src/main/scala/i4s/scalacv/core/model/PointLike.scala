@@ -27,7 +27,7 @@ trait PointLike[T] {
     case _ => false
   }
 
-  override def hashCode(): Int = Int.hashCode() * x.hashCode() + y.hashCode()
+  override def hashCode(): Int = 1 << 32 * x.hashCode() + y.hashCode()
 
   override def toString: String = s"($x,$y)"
 

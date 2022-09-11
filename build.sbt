@@ -1,6 +1,8 @@
 import sbt.url
 
-ThisBuild / scalaVersion     := "2.13.8"
+val scalaV = "2.13.8"
+
+ThisBuild / scalaVersion     := scalaV
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "io.github.intelligence4s"
 ThisBuild / organizationName := "Intelligence4s"
@@ -35,7 +37,10 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
     javaCppPlatform := Seq() // Indicate to javaCPP plugin that we do not need any cpp presets
   )
   .jvmSettings(
-    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided"
+    libraryDependencies ++= Seq(
+      "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
+      "org.scala-lang" % "scala-reflect" % scalaV
+    )
   )
   .jsSettings()
 

@@ -1,12 +1,10 @@
 package i4s.scalacv.image
 
 import i4s.scalacv.core.constants.AccessFlags.AccessFlag
-import i4s.scalacv.core.constants.{AccessFlags, UsageFlags}
 import i4s.scalacv.core.constants.UsageFlags.UsageFlag
-import i4s.scalacv.core.types.{MatTypes, Types}
 import i4s.scalacv.core.types.MatTypes.MatType
 import i4s.scalacv.core.types.Types.Type
-import org.bytedeco.javacpp.Pointer
+import i4s.scalacv.core.types.{MatTypes, Types}
 import org.bytedeco.javacv.{Java2DFrameConverter, OpenCVFrameConverter}
 import org.bytedeco.opencv.opencv_core.{Mat, Scalar, Size, UMat}
 
@@ -33,54 +31,34 @@ object Image {
   implicit def umat2Image(mat: UMat): Image = Image(mat)
 }
 
-class Image() extends UMat() {
+class Image(rows: Int, cols: Int, mtype: MatType) extends Mat(rows, cols, mtype.id) {
+  def this() = this(0,0,MatTypes.Cv8UC3)
 
-  def this(rows: Int, cols: Int, mtype: MatType, usageFlags: Set[UsageFlag]) = {
-    this()
-    create(rows,cols,mtype.id,usageFlags.foldLeft(0)(_ | _.id))
+  def this(rows: Int, cols: Int, mtype: MatType, init: Scalar) = {
+    this(rows,cols,mtype)
+    put(init)
   }
 
-  def this(rows: Int, cols: Int, mtype: MatType) = {
-    this()
-    create(rows,cols,mtype.id,UsageFlags.Default.id)
-  }
-
-  def this(size: Size, mtype: MatType, usageFlags: Set[UsageFlag]) = {
-    this()
-    create(size,mtype.id,usageFlags.foldLeft(0)(_ | _.id))
-  }
-
-  def this(size: Size, mtype: MatType) = {
-    this()
-    create(size,mtype.id,UsageFlags.Default.id)
-  }
-
-  def this(rows: Int, cols: Int, mtype: MatType, s: Scalar, usageFlags: Set[UsageFlag]) = {
-    this(rows,cols,mtype,usageFlags)
-    put(s)
-  }
-
-  def this(rows: Int, cols: Int, mtype: MatType, s: Scalar) = {
-    this()
-    create(rows,cols,mtype.id)
-    put(s)
+  def this(size: Size, mtype: MatType, init: Scalar) = {
+    this(size.width,size.height,mtype)
+    put(init)
   }
 
   def this(umat: UMat) = {
-    this()
+    this(umat.rows,umat.cols,MatTypes(umat.`type`))
     put(umat)
   }
 
   def this(mat: Mat) = {
-    this()
+    this(mat.rows,mat.cols,MatTypes(mat.`type`))
     put(mat)
   }
 
-  def getMat(flag: AccessFlag): Mat = super.getMat(flag.id)
+  def getUMat(flag: AccessFlag): UMat = super.getUMat(flag.id)
 
   def toBufferedImage: BufferedImage = {
     Using.resource(new OpenCVFrameConverter.ToMat()) { openCVConverter =>
-      Using.resource(openCVConverter.convert(getMat(AccessFlags.Read))) { frame =>
+      Using.resource(openCVConverter.convert(this)) { frame =>
         Using.resource(new Java2DFrameConverter()) { java2DConverter =>
           java2DConverter.convert(frame)
         }
@@ -93,7 +71,7 @@ class Image() extends UMat() {
 
   def description: String = {
     val sizeString = s"${size().width} x ${size().height()}"
-    s"Image(UMat) (${dims()}) = [${sizeString}] - type: ${matType} (${`type`()}), channels = $channels, dataType = $dataType, total = $total "
+    s"Image(Mat) (${dims()}) = [${sizeString}] - type: ${matType} (${`type`()}), channels = $channels, dataType = $dataType, total = $total "
   }
 
 }

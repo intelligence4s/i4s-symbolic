@@ -1,7 +1,7 @@
 package i4s.scalacv.image.constants
 
 object ImageReadFlags extends Enumeration {
-  type ImageReadFlags = Value
+  type ImageReadFlag = Value
 
   /** If set, return the loaded image as is (with alpha channel, otherwise it gets cropped). Ignore EXIF orientation. */
   val Unchanged: Value = Value(-1)

@@ -1,7 +1,7 @@
 package i4s.scalacv.image.constants
 
 object ImageWriteFlags extends Enumeration {
-  type ImageWriteFlags = Value
+  type ImageWriteFlag = Value
 
   /** For JPEG, it can be a quality from 0 to 100 (the higher is the better). Default value is 95. */
   val JpegQuality: Value = Value(1)

@@ -3,8 +3,8 @@ package i4s.scalacv.core.model
 import i4s.scalacv.core.model.Math.NumberLike
 
 trait SizeLike[T] {
-  protected val width: T
-  protected val height: T
+  val width: T
+  val height: T
 
   def construct(width: T, height: T): SizeLike[T]
 

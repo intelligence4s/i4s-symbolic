@@ -1,12 +1,12 @@
 package i4s.scalacv.image
 
 import i4s.scalacv.core.constants.AccessFlags.AccessFlag
-import i4s.scalacv.core.constants.UsageFlags.UsageFlag
-import i4s.scalacv.core.types.MatTypes.MatType
-import i4s.scalacv.core.types.Types.Type
-import i4s.scalacv.core.types.{MatTypes, Types}
+import i4s.scalacv.core.model.syntax._
+import i4s.scalacv.core.model.{Mat, Scalar, Size}
+import i4s.scalacv.core.types.Types
+import i4s.scalacv.core.types.Types.{Cv8U, Type}
 import org.bytedeco.javacv.{Java2DFrameConverter, OpenCVFrameConverter}
-import org.bytedeco.opencv.opencv_core.{Mat, Scalar, Size, UMat}
+import org.bytedeco.opencv.opencv_core.UMat
 
 import java.awt.image.BufferedImage
 import scala.util.Using
@@ -14,44 +14,47 @@ import scala.util.Using
 object Image {
   def apply(): Image = new Image()
 
-  def apply(mat: Mat): Image = {
-    val image = Image()
-    mat.copyTo(image)
-    image
-  }
-
-  def apply(umat: UMat): Image = {
-    val image = Image()
-    umat.copyTo(image)
-    image
-  }
+  def apply(umat: UMat): Image = new Image(umat)
+  def apply(mat: org.bytedeco.opencv.opencv_core.Mat): Image = new Image(mat)
 
   import scala.language.implicitConversions
-  implicit def mat2Image(mat: Mat): Image = Image(mat)
+  implicit def mat2Image(mat: org.bytedeco.opencv.opencv_core.Mat): Image = Image(mat)
   implicit def umat2Image(mat: UMat): Image = Image(mat)
 }
 
-class Image(rows: Int, cols: Int, mtype: MatType) extends Mat(rows, cols, mtype.id) {
-  def this() = this(0,0,MatTypes.Cv8UC3)
+class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Byte](rows, cols, Some(channels)) {
+  def this() = this(0,0)
 
-  def this(rows: Int, cols: Int, mtype: MatType, init: Scalar) = {
-    this(rows,cols,mtype)
+  def this(rows: Int, cols: Int, channels: Int, init: Scalar) = {
+    this(rows,cols,channels)
     put(init)
   }
 
-  def this(size: Size, mtype: MatType, init: Scalar) = {
-    this(size.width,size.height,mtype)
+  def this(rows: Int, cols: Int, init: Scalar) = {
+    this(rows,cols)
+    put(init)
+  }
+
+  def this(size: Size, init: Scalar) = {
+    this(size.width,size.height)
     put(init)
   }
 
   def this(umat: UMat) = {
-    this(umat.rows,umat.cols,MatTypes(umat.`type`))
+    this(umat.rows,umat.cols,umat.channels)
+    assert(Types(umat.depth) == Cv8U, "We can only initialize with Mats of unsigned byte depths")
     put(umat)
   }
 
-  def this(mat: Mat) = {
-    this(mat.rows,mat.cols,MatTypes(mat.`type`))
+  def this(mat: org.bytedeco.opencv.opencv_core.Mat) = {
+    this(mat.rows,mat.cols,mat.channels)
+    assert(Types(mat.depth) == Cv8U, "We can only initialize with Mats of unsigned byte depths")
     put(mat)
+  }
+
+  def this(image: Image) = {
+    this(image.rows,image.cols,image.channels)
+    put(image)
   }
 
   def getUMat(flag: AccessFlag): UMat = super.getUMat(flag.id)
@@ -66,7 +69,6 @@ class Image(rows: Int, cols: Int, mtype: MatType) extends Mat(rows, cols, mtype.
     }
   }
 
-  def matType: MatType = MatTypes(super.`type`)
   def dataType: Type = Types(super.depth)
 
   def description: String = {

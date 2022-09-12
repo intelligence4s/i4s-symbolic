@@ -12,9 +12,9 @@ class Mat[T](size: Size, channels: Int)(implicit matable: Matable[T])
   extends org.bytedeco.opencv.opencv_core.Mat(size,MatTypes.makeType(matable.depth,channels))
 {
   def this(c: Int)(implicit matable: Matable[T]) = this(Size(1,c),matable.channels)
-  def this(r: Int, c: Int)(implicit matable: Matable[T]) = this(Size(r,c),matable.channels)
-  def this(c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(1,c),ch.getOrElse(matable.channels))
-  def this(r: Int, c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(r,c),ch.getOrElse(matable.channels))
+  def this(r: Int, c: Int)(implicit matable: Matable[T]) = this(Size(c,r),matable.channels)
+  def this(c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(c,1),ch.getOrElse(matable.channels))
+  def this(r: Int, c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(c,r),ch.getOrElse(matable.channels))
 
   implicit val indexer: Indexer = matable.indexer(this)
 

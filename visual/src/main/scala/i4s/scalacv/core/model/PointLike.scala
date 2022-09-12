@@ -3,8 +3,8 @@ package i4s.scalacv.core.model
 import i4s.scalacv.core.model.Math.NumberLike
 
 trait PointLike[T] {
-  protected val x: T
-  protected val y: T
+  val x: T
+  val y: T
 
   def construct(x: T, y: T): PointLike[T]
 

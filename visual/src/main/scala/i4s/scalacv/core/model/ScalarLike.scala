@@ -2,6 +2,8 @@ package i4s.scalacv.core.model
 
 import i4s.scalacv.core.model.Math.NumberLike
 
+import scala.reflect.ClassTag
+
 trait ScalarLike[T] {
   protected val v0, v1, v2, v3: T
 
@@ -18,6 +20,8 @@ trait ScalarLike[T] {
   def *(a: T)(implicit ev: NumberLike[T]): ScalarLike[T] = construct(ev.multiply(v0, a),ev.multiply(v1, a),ev.multiply(v2, a),ev.multiply(v3, a))
 
   def /(a: T)(implicit ev: NumberLike[T]): ScalarLike[T] = construct(ev.divide(v0, a),ev.divide(v1, a),ev.divide(v2, a),ev.divide(v3, a))
+
+  def asArray(implicit classTag: ClassTag[T]): Array[T] = Array(v0, v1, v2, v3)
 
   def canEqual(that: Any): Boolean = that.isInstanceOf[ScalarLike[T]]
 

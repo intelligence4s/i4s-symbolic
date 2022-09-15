@@ -40,4 +40,7 @@ package object syntax {
     override def depth: Type = Types.Cv32S
   }
 
+  implicit val scalarMatable = new ByteScalarMatable {
+    override def depth: Type = Types.Cv8S
+  }
 }

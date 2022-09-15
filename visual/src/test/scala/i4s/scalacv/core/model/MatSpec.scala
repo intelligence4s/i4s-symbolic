@@ -5,10 +5,10 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class MatSpec extends AnyWordSpec with Matchers {
   "Mat[Byte]" should {
-    import syntax._
+    import mats._
 
     "support a single dimenional array" in {
-      val mat = Mat[Double](10, Scalar(0,0,0,0))
+      val mat = mats.Mat[Double](10, Scalar(0,0,0,0))
 
       val values = (1 to 10).map(_.toDouble)
       mat.putAll(0, values)
@@ -28,7 +28,7 @@ class MatSpec extends AnyWordSpec with Matchers {
     }
 
     "support a two dimensional array" in {
-      val mat = Mat[Double](10,10, Scalar(0,0,0,0))
+      val mat = mats.Mat[Double](10,10, Scalar(0,0,0,0))
 
       val values = 1 to 100 map (_.toDouble)
       mat.putAll(0,values)
@@ -59,7 +59,7 @@ class MatSpec extends AnyWordSpec with Matchers {
     }
 
     "support a three dimentional array" in {
-      val mat = Mat[Double](Scalar(0,0,0,0),2,10,10)
+      val mat = mats.Mat[Double](Scalar(0,0,0,0),2,10,10)
 
       val value = 1 to 200 map (_.toDouble)
       mat.putAll(0, value)

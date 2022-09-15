@@ -2,7 +2,7 @@ package i4s.scalacv.core.model
 import i4s.scalacv.core.types.Types
 import i4s.scalacv.core.types.Types.Type
 
-package object syntax {
+package object mats {
   implicit val byteMatable: Matable[Byte] = new PrimitiveMatable[Byte] {
     override val depth: Type = Types.Cv8S
   }

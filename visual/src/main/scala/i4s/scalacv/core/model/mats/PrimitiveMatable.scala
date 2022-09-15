@@ -1,6 +1,4 @@
-package i4s.scalacv.core.model.syntax
-
-import i4s.scalacv.core.model.{Indexable, Mat, Matable}
+package i4s.scalacv.core.model.mats
 
 import scala.reflect.ClassTag
 

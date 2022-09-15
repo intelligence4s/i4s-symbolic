@@ -1,5 +1,6 @@
-package i4s.scalacv.core.model
+package i4s.scalacv.core.model.mats
 
+import i4s.scalacv.core.model.Scalar
 import i4s.scalacv.core.types.MatTypes
 import i4s.scalacv.core.types.MatTypes.MatType
 import org.bytedeco.javacpp.IntPointer

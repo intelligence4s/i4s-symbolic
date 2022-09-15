@@ -1,4 +1,4 @@
-package i4s.scalacv.core.model
+package i4s.scalacv.core.model.mats
 
 import org.bytedeco.javacpp.indexer._
 

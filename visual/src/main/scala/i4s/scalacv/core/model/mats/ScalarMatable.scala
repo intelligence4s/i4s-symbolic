@@ -1,6 +1,6 @@
-package i4s.scalacv.core.model.syntax
+package i4s.scalacv.core.model.mats
 
-import i4s.scalacv.core.model.{Mat, Matable, Scalar}
+import i4s.scalacv.core.model.Scalar
 import org.bytedeco.javacpp.indexer.{ByteIndexer, Indexer}
 
 /*

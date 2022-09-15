@@ -16,5 +16,6 @@ libraryDependencies ++=
   neo4jDependencies ++
   Seq(
     "org.bytedeco" % "javacv-platform" % "1.5.8-SNAPSHOT",
+    "org.scala-lang" % "scala-reflect" % scalaV,
     scalaTest
   )

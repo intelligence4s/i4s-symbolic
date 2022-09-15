@@ -1,6 +1,5 @@
 import sbt.url
-
-val scalaV = "2.13.8"
+import Dependencies._
 
 ThisBuild / scalaVersion     := scalaV
 ThisBuild / version          := "0.1.0-SNAPSHOT"

@@ -22,7 +22,7 @@ object Image {
   implicit def umat2Image(mat: UMat): Image = Image(mat)
 }
 
-class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Byte](rows, cols, Some(channels)) {
+class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Byte](Some(channels), rows, Seq(cols):_*) {
   def this() = this(0,0)
 
   def this(rows: Int, cols: Int, channels: Int, init: Scalar) = {

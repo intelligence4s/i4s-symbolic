@@ -8,42 +8,74 @@ import org.bytedeco.opencv.opencv_core
 
 import java.nio.IntBuffer
 
-class Mat[T](size: Size, channels: Int)(implicit matable: Matable[T])
-  extends org.bytedeco.opencv.opencv_core.Mat(size,MatTypes.makeType(matable.depth,channels))
+object Mat {
+  def apply[T](rows: Int)(implicit matable: Matable[T]): Mat[T] = new Mat[T](rows)
+  def apply[T](rows: Int, init: Scalar)(implicit matable: Matable[T]): Mat[T] = new Mat[T](init,rows)
+  def apply[T](rows: Int, ch: Option[Int])(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,rows)
+  def apply[T](rows: Int, ch: Option[Int], init: Scalar)(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,init,rows)
+
+  def apply[T](rows: Int, cols: Int)(implicit matable: Matable[T]): Mat[T] = new Mat[T](rows,Seq(cols):_*)
+  def apply[T](rows: Int, cols: Int, init: Scalar)(implicit matable: Matable[T]): Mat[T] = new Mat[T](init,rows,Seq(cols):_*)
+  def apply[T](rows: Int, cols: Int, ch: Option[Int])(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,rows,Seq(cols):_*)
+  def apply[T](rows: Int, cols: Int, ch: Option[Int], init: Scalar)(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,init,rows,Seq(cols):_*)
+
+  def apply[T](dim1: Int, dims: Int*)(implicit matable: Matable[T]): Mat[T] = new Mat[T](dim1,dims:_*)
+  def apply[T](init: Scalar,dim1: Int, dims: Int*)(implicit matable: Matable[T]): Mat[T] = new Mat[T](init,dim1,dims:_*)
+  def apply[T](ch: Option[Int], dim1: Int, dims: Int*)(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,dim1,dims:_*)
+  def apply[T](ch: Option[Int], init: Scalar, dim1: Int, dims: Int*)(implicit matable: Matable[T]): Mat[T] = new Mat[T](ch,init,dim1,dims:_*)
+ }
+
+class Mat[T](channels: Int, dim1: Int, dims: Int*)(implicit matable: Matable[T])
+  extends org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(matable.depth,channels))
 {
-  def this(c: Int)(implicit matable: Matable[T]) = this(Size(1,c),matable.channels)
-  def this(r: Int, c: Int)(implicit matable: Matable[T]) = this(Size(c,r),matable.channels)
-  def this(c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(c,1),ch.getOrElse(matable.channels))
-  def this(r: Int, c: Int, ch: Option[Int])(implicit matable: Matable[T]) = this(Size(c,r),ch.getOrElse(matable.channels))
+  def this(ch: Option[Int], r: Int)(implicit matable: Matable[T]) = this(ch.getOrElse(matable.channels),r,Nil :_*)
+  def this(ch: Option[Int], init: Scalar, r: Int)(implicit matable: Matable[T]) = {
+    this(ch.getOrElse(matable.channels),r,Nil:_*)
+    put(init)
+  }
+
+  def this(ch: Option[Int], d1: Int, ds: Int*)(implicit matable: Matable[T]) = this(ch.getOrElse(matable.channels),d1,ds:_*)
+  def this(ch: Option[Int], init: Scalar, d1: Int, ds: Int*)(implicit matable: Matable[T]) = {
+    this(ch.getOrElse(matable.channels),d1,ds:_*)
+    put(init)
+  }
+
+  def this(r: Int)(implicit matable: Matable[T]) = this(matable.channels,r,Nil:_*)
+  def this(init: Scalar, r: Int)(implicit matable: Matable[T]) = {
+    this(matable.channels,r,Nil:_*)
+    put(init)
+  }
+
+  def this(d1: Int, ds: Int*)(implicit matable: Matable[T]) = this(matable.channels,d1,ds:_*)
+  def this(init: Scalar, d1: Int, ds: Int*)(implicit matable: Matable[T]) = {
+    this(matable.channels,d1,ds:_*)
+    put(init)
+  }
 
   implicit val indexer: Indexer = matable.indexer(this)
 
   def matType: MatType = MatTypes(MatTypes.makeType(matable.depth,channels))
 
   def get(i: Int): T = matable.get(this,i)
-  def get(i: Int, j: Int): T = matable.get(this,i,j)
-  def get(i: Int, j: Int, k: Int): T = matable.get(this,i,j,k)
-  def get(indices: Int*): T = matable.get(this,indices:_*)
+  def get(i: Int, is: Int*): T = matable.get(this, i +: is:_*)
 
-  def getN(i: Int, n: Int): IndexedSeq[T] = matable.getN(this,Array(i),n)
-  def getN(i: Int, j: Int, n: Int): IndexedSeq[T] = matable.getN(this,Array(i,j),n)
-  def getN(indices: IndexedSeq[Int], n: Int): IndexedSeq[T] = matable.getN(this,indices,n)
-
-  def getAll(i: Int): IndexedSeq[T] = getN(i,total(i).toInt)
-  def getAll(i: Int, j: Int): Seq[T] = getN(i,j,total(i,j).toInt)
+  def getN(n: Int, i: Int): IndexedSeq[T] = matable.getN(this,Array(i),n)
+  def getN(n: Int, i: Int, is: Int*): IndexedSeq[T] = matable.getN(this,i +: is,n)
 
   def put(i: Int, value: T): Unit = matable.put(this,Array(i),value)
   def put(i: Int, j: Int, value: T): Unit = matable.put(this,Array(i,j),value)
   def put(i: Int, j: Int, k: Int, value: T): Unit = matable.put(this,Array(i,j,k),value)
-
   def put(indices: IndexedSeq[Int], value: T): Unit = matable.put(this,indices,value)
 
   def putT1(values: (Int, T)*): Unit = values.foreach { case (i, v) => put(i, v) }
   def putT2(values: (Int, Int, T)*): Unit = values.foreach { case (i, j, v) => put(i, j, v) }
   def putT3(values: (Int, Int, Int, T)*): Unit = values.foreach { case (i, j, k, v) => put(i, j, k, v) }
 
+  def putAll(values: Seq[T]): Unit = matable.putN(this,Array(0),values)
   def putAll(i: Int, values: Seq[T]): Unit = matable.putN(this,Array(i),values)
   def putAll(i: Int, j: Int, values: Seq[T]): Unit = matable.putN(this,Array(i,j),values)
+
+  def shape(): Seq[Int] = (0 until dims()).map(this.size)
 
   // Disallow calls to underlaying Mat object that will cause side-effects...
   override def create(size: opencv_core.Size, `type`: Int): Unit =

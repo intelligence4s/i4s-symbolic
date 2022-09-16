@@ -1,11 +1,13 @@
-package i4s.scalacv.core.model
+package i4s.scalacv.core.model.mats
 
+import i4s.scalacv.core.model.{Scalar, mats}
+import i4s.scalacv.core.types.Types
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class MatSpec extends AnyWordSpec with Matchers {
   "Mat[Byte]" should {
-    import mats._
+    import i4s.scalacv.core.model.mats.Primitives._
 
     "support a single dimenional array" in {
       val mat = mats.Mat[Double](10, Scalar(0,0,0,0))

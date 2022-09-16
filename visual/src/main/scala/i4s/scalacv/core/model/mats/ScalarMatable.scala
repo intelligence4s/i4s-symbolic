@@ -1,46 +1,37 @@
 package i4s.scalacv.core.model.mats
 
+import i4s.scalacv.core.model.Math.NumberLike
 import i4s.scalacv.core.model.Scalar
-import org.bytedeco.javacpp.indexer.{ByteIndexer, Indexer}
+import i4s.scalacv.core.types.Types
+import i4s.scalacv.core.types.Types.Type
 
-/*
-trait ScalarMatable[T <: AnyVal] extends Matable[Scalar] {
+import scala.reflect.ClassTag
+
+class ScalarMatable[T <: AnyVal] extends MappedMatable[Scalar,T] {
   override def channels: Int = 4  // Default channel count
+  override def depth: Type = Types.Cv64F
 
-  override def get(mat: Mat[Scalar], indices: Int*)(implicit indexer: Indexer): Scalar = {
-    val longs = indices.map(_.toLong)
-
+  override def getMapped(mat: Mat[T], indices: Int*)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Scalar = {
     val ch = mat.channels
-    val values = (0 until ch) map(ch => indexer.asInstanceOf[ByteIndexer].get(longs :+ ch.toLong :_*))
-
-    Scalar(values:_*)
+    val values = getN(mat, indices, ch).map(nl.toDouble)
+    Scalar(values: _*)
   }
 
-  override def getN(mat: Mat[Scalar], indices: Seq[Int], n: Int)(implicit indexer: Indexer): IndexedSeq[Scalar] = {
-    val longs = indices.map(_.toLong)
-    val ch = mat.channels()
-
-    val buffer = new Array[T](n*ch)
-    indexer.asInstanceOf[ByteIndexer].get(longs.toArray,buffer,0,buffer.length)
-
-    val scalars = buffer.sliding(ch,ch).map(s => Scalar(s:_*))
-    scalars.toIndexedSeq
+  override def getMappedN(mat: Mat[T], indices: Seq[Int], n: Int)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): IndexedSeq[Scalar] = {
+    val ch = mat.channels
+    val values = getN(mat, indices, ch*n).map(nl.toDouble)
+    values.sliding(ch,ch).map(s => Scalar(s:_*)).toIndexedSeq
   }
 
-  override def put(mat: Mat[Scalar], indices: Seq[Int], value: Scalar)(implicit indexer: Indexer): Unit = {
-    val longs = indices.map(_.toLong)
-    val ch = mat.channels()
-
-    val parts = value.asArray.take(ch)
-    indexer.asInstanceOf[ByteIndexer].put(longs.toArray,parts,0,parts.length)
+  override def putMapped(mat: Mat[T], indices: Seq[Int], value: Scalar)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+    val ch = mat.channels
+    val parts = value.asArray.take(ch).map(nl.fromDouble)
+    putN(mat,indices,parts)
   }
 
-  override def putN(mat: Mat[Scalar], indices: Seq[Int], values: Seq[Scalar])(implicit indexer: Indexer): Unit = {
-    val longs = indices.map(_.toLong)
-    val ch = mat.channels()
-
-    val buffer = values.flatMap(_.asArray.take(ch)).toArray
-    indexer.asInstanceOf[ByteIndexer].put(longs.toArray,buffer,0,buffer.length)
+  override def putMappedN(mat: Mat[T], indices: Seq[Int], values: Seq[Scalar])(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+    val ch = mat.channels
+    val expanded = values.flatMap(_.asArray.take(ch).map(nl.fromDouble))
+    putN(mat,indices,expanded)
   }
 }
-*/

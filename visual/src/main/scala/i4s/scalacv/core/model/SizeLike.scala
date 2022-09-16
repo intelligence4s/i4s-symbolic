@@ -2,7 +2,7 @@ package i4s.scalacv.core.model
 
 import i4s.scalacv.core.model.Math.NumberLike
 
-trait SizeLike[T] {
+trait SizeLike[T <: AnyVal] {
   val width: T
   val height: T
 

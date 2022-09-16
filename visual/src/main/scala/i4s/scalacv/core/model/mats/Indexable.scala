@@ -9,39 +9,39 @@ object Indexable {
     val indexable = indexer match {
       case indexer: ByteIndexer =>
         assert(tag.runtimeClass == classOf[Byte])
-        byteIndexer(indexer.asInstanceOf[ByteIndexer])
+        byteIndexer(indexer)
 
       case indexer: UByteIndexer =>
         assert(tag.runtimeClass == classOf[Int])
-        ubyteIndexer(indexer.asInstanceOf[UByteIndexer])
+        ubyteIndexer(indexer)
 
       case indexer: CharIndexer =>
         assert(tag.runtimeClass == classOf[Char])
-        charIndexer(indexer.asInstanceOf[CharIndexer])
+        charIndexer(indexer)
 
       case indexer: ShortIndexer =>
         assert(tag.runtimeClass == classOf[Short])
-        shortIndexer(indexer.asInstanceOf[ShortIndexer])
+        shortIndexer(indexer)
 
       case indexer: UShortIndexer =>
         assert(tag.runtimeClass == classOf[Int])
-        ushortIndexer(indexer.asInstanceOf[UShortIndexer])
+        ushortIndexer(indexer)
 
       case indexer: IntIndexer =>
         assert(tag.runtimeClass == classOf[Int])
-        intIndexer(indexer.asInstanceOf[IntIndexer])
+        intIndexer(indexer)
 
       case indexer: FloatIndexer =>
         assert(tag.runtimeClass == classOf[Float])
-        floatIndexer(indexer.asInstanceOf[FloatIndexer])
+        floatIndexer(indexer)
 
       case indexer: LongIndexer =>
         assert(tag.runtimeClass == classOf[Long])
-        longIndexer(indexer.asInstanceOf[LongIndexer])
+        longIndexer(indexer)
 
       case indexer: DoubleIndexer =>
         assert(tag.runtimeClass == classOf[Double])
-        doubleIndexer(indexer.asInstanceOf[DoubleIndexer])
+        doubleIndexer(indexer)
     }
 
     indexable.asInstanceOf[Indexable[T]]

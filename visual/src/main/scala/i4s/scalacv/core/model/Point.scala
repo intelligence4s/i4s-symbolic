@@ -3,6 +3,11 @@ package i4s.scalacv.core.model
 object Point {
   def apply(p: org.bytedeco.opencv.opencv_core.Point): Point = new Point(p.x,p.y)
 
+  def apply(vals: Int*): Point = {
+    val vs: Array[Int] = vals.toArray.take(2).padTo(2,0)
+    new Point(vs(0),vs(1))
+  }
+
   import scala.language.implicitConversions
   implicit def p2p(p: org.bytedeco.opencv.opencv_core.Point): Point = apply(p)
 }

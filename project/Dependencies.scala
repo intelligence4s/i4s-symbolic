@@ -30,7 +30,7 @@ object Dependencies {
   )
 
   lazy val nlpDependencies = {
-    val procVer = "8.5.2-SNAPSHOT"
+    val procVer = "8.5.3-SNAPSHOT"
     Seq(
     "org.clulab" %% "processors-main" % procVer,
     "org.clulab" %% "processors-corenlp" % procVer,

@@ -48,7 +48,7 @@ class RectLikeSpec extends AnyWordSpec with Matchers {
     }
 
     "support Rect of Double values" in {
-      val rect2d = Rect2d(x = 0, y = 10, width = 20, height = 30)
+      val rect2d = Rect4d(x = 0, y = 10, width = 20, height = 30)
       val moved2d = rect2d.moveTo(Point2d(25, 25))
 
       rect2d.area shouldBe 600
@@ -63,7 +63,7 @@ class RectLikeSpec extends AnyWordSpec with Matchers {
     }
 
     "support Rect of Float values" in {
-      val rect2f = Rect2f(x = 0, y = 10, width = 20, height = 30)
+      val rect2f = Rect4f(x = 0, y = 10, width = 20, height = 30)
       val moved2f = rect2f.moveTo(Point2f(25, 25))
 
       rect2f.area shouldBe 600

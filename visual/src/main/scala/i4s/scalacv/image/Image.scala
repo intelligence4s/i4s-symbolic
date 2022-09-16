@@ -2,6 +2,7 @@ package i4s.scalacv.image
 
 import i4s.scalacv.core.constants.AccessFlags.AccessFlag
 import i4s.scalacv.core.model.mats._
+import i4s.scalacv.core.model.mats.Primitives._
 import i4s.scalacv.core.model.{Scalar, Size}
 import i4s.scalacv.core.types.Types
 import i4s.scalacv.core.types.Types.{Cv8U, Type}
@@ -22,11 +23,11 @@ object Image {
   implicit def umat2Image(mat: UMat): Image = Image(mat)
 }
 
-class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Byte](Some(channels), rows, Seq(cols):_*) {
-  def this() = this(0,0)
+class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Int](Some(Types.Cv8U), Some(channels), rows, Seq(cols):_*) {
+  def this() = this(1,1)
 
   def this(rows: Int, cols: Int, channels: Int, init: Scalar) = {
-    this(rows,cols,channels)
+    this(rows,cols,channels = channels)
     put(init)
   }
 

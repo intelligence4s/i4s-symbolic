@@ -11,25 +11,25 @@ class PointMatable[T <: AnyVal] extends MappedMatable[Point,T] {
   override def channels: Int = 4  // Default channel count
   override def depth: Type = Types.Cv32S
 
-  override def getMapped(mat: Mat[T], indices: Int*)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Point = {
+  override def getMapped(mat: BaseMat[T], indices: Int*)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Point = {
     val ch = mat.channels
     val values = getN(mat, indices, ch).map(nl.toInt)
     Point(values: _*)
   }
 
-  override def getMappedN(mat: Mat[T], indices: Seq[Int], n: Int)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): IndexedSeq[Point] = {
+  override def getMappedN(mat: BaseMat[T], indices: Seq[Int], n: Int)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): IndexedSeq[Point] = {
     val ch = mat.channels
     val values = getN(mat, indices, ch*n).map(nl.toInt)
     values.sliding(ch,ch).map(s => Point(s:_*)).toIndexedSeq
   }
 
-  override def putMapped(mat: Mat[T], indices: Seq[Int], value: Point)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+  override def putMapped(mat: BaseMat[T], indices: Seq[Int], value: Point)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
     val ch = mat.channels
     val parts = value.asArray.take(ch).map(nl.fromInt)
     putN(mat,indices,parts)
   }
 
-  override def putMappedN(mat: Mat[T], indices: Seq[Int], values: Seq[Point])(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+  override def putMappedN(mat: BaseMat[T], indices: Seq[Int], values: Seq[Point])(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
     val ch = mat.channels
     val expanded = values.flatMap(_.asArray.take(ch).map(nl.fromInt))
     putN(mat,indices,expanded)

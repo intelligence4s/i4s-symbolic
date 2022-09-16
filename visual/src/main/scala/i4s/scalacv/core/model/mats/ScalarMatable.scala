@@ -11,25 +11,25 @@ class ScalarMatable[T <: AnyVal] extends MappedMatable[Scalar,T] {
   override def channels: Int = 4  // Default channel count
   override def depth: Type = Types.Cv64F
 
-  override def getMapped(mat: Mat[T], indices: Int*)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Scalar = {
+  override def getMapped(mat: BaseMat[T], indices: Int*)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Scalar = {
     val ch = mat.channels
     val values = getN(mat, indices, ch).map(nl.toDouble)
     Scalar(values: _*)
   }
 
-  override def getMappedN(mat: Mat[T], indices: Seq[Int], n: Int)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): IndexedSeq[Scalar] = {
+  override def getMappedN(mat: BaseMat[T], indices: Seq[Int], n: Int)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): IndexedSeq[Scalar] = {
     val ch = mat.channels
     val values = getN(mat, indices, ch*n).map(nl.toDouble)
     values.sliding(ch,ch).map(s => Scalar(s:_*)).toIndexedSeq
   }
 
-  override def putMapped(mat: Mat[T], indices: Seq[Int], value: Scalar)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+  override def putMapped(mat: BaseMat[T], indices: Seq[Int], value: Scalar)(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
     val ch = mat.channels
     val parts = value.asArray.take(ch).map(nl.fromDouble)
     putN(mat,indices,parts)
   }
 
-  override def putMappedN(mat: Mat[T], indices: Seq[Int], values: Seq[Scalar])(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
+  override def putMappedN(mat: BaseMat[T], indices: Seq[Int], values: Seq[Scalar])(implicit indexer: Indexable[T], nl: NumberLike[T], tag: ClassTag[T]): Unit = {
     val ch = mat.channels
     val expanded = values.flatMap(_.asArray.take(ch).map(nl.fromDouble))
     putN(mat,indices,expanded)

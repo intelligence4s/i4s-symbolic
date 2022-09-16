@@ -28,7 +28,7 @@ object Mat {
 }
 
 class Mat[T <: AnyVal : ClassTag](depth: Option[Type], channels: Int, dim1: Int, dims: Int*)(implicit matable: Matable[T])
-  extends org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(matable.depth),channels))
+  extends BaseMat[T](depth,channels,dim1,dims:_*)
 {
   def this(depth: Option[Type], ch: Option[Int], r: Int)(implicit matable: Matable[T]) = this(depth,ch.getOrElse(matable.channels),r,Nil :_*)
   def this(depth: Option[Type], ch: Option[Int], init: Scalar, r: Int)(implicit matable: Matable[T]) = {
@@ -54,10 +54,6 @@ class Mat[T <: AnyVal : ClassTag](depth: Option[Type], channels: Int, dim1: Int,
     put(init)
   }
 
-  implicit val indexable: Indexable[T] = matable.indexer(this)
-
-  def matType: MatType = MatTypes(MatTypes.makeType(Types(depth()),channels()))
-
   def get(i: Int): T = matable.get(this,i)
   def get(i: Int, is: Int*): T = matable.get(this, i +: is:_*)
 
@@ -78,30 +74,4 @@ class Mat[T <: AnyVal : ClassTag](depth: Option[Type], channels: Int, dim1: Int,
   def putAll(i: Int, j: Int, values: Seq[T]): Unit = matable.putN(this,Array(i,j),values)
 
   def shape(): Seq[Int] = (0 until dims()).map(this.size)
-
-  // Disallow calls to underlaying Mat object that will cause side-effects...
-  override def create(size: opencv_core.Size, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(ndims: Int, sizes: Array[Int], `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(ndims: Int, sizes: IntPointer, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(rows: Int, cols: Int, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(sizes: Array[Int], `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(sizes: IntBuffer, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(sizes: IntPointer, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
-  override def create(ndims: Int, sizes: IntBuffer, `type`: Int): Unit =
-    throw new UnsupportedOperationException(s"Side effects changing the size, shape or allocation of the underlaying Mat object are not allowed from the Scala wrapper")
-
 }

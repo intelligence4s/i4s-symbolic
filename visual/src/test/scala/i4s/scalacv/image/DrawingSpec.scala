@@ -1,7 +1,7 @@
 package i4s.scalacv.image
 
 import i4s.scalacv.core.constants.AccessFlags
-import i4s.scalacv.core.model.mats.Mat
+import i4s.scalacv.core.model.mats.BaseMat
 import i4s.scalacv.core.model.{Point, Rect, Scalar}
 import i4s.scalacv.core.types.MatTypes
 import i4s.scalacv.image.constants.LineTypes

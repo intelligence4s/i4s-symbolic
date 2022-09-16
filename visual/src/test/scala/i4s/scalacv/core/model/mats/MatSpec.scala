@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class MatSpec extends AnyWordSpec with Matchers {
   "Mat[Byte]" should {
-    import i4s.scalacv.core.model.mats.Primitives._
+    import i4s.scalacv.core.model.mats.syntax._
 
     "support a single dimenional array" in {
       val mat = mats.Mat[Double](10, Scalar(0,0,0,0))

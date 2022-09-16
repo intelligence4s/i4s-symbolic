@@ -2,7 +2,7 @@ package i4s.scalacv.image
 
 import i4s.scalacv.core.constants.AccessFlags.AccessFlag
 import i4s.scalacv.core.model.mats._
-import i4s.scalacv.core.model.mats.Primitives._
+import i4s.scalacv.core.model.mats.syntax._
 import i4s.scalacv.core.model.{Scalar, Size}
 import i4s.scalacv.core.types.Types
 import i4s.scalacv.core.types.Types.{Cv8U, Type}

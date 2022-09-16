@@ -7,7 +7,8 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class MappedMatSpec extends AnyWordSpec with Matchers {
   "MappedMat" should {
-    import i4s.scalacv.core.model.mats.Scalars._
+
+    import i4s.scalacv.core.model.mats.syntax._
 
     "Put/Get Scalar values to/from a Byte Map" in {
       val mat = MappedMat[Scalar,Int](50,50,Some(Types.Cv8U),Some(3))

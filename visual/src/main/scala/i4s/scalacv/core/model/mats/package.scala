@@ -3,7 +3,7 @@ import i4s.scalacv.core.types.Types
 import i4s.scalacv.core.types.Types.Type
 
 package object mats {
-  object Primitives {
+  object syntax {
     implicit val byteMatable: Matable[Byte] = new Matable[Byte] {
       override def depth: Type = Types.Cv8S
     }
@@ -22,25 +22,19 @@ package object mats {
     implicit val intMatable: Matable[Int] = new Matable[Int] {
       override def depth: Type = Types.Cv32S
     }
-  }
 
-  object Scalars {
     implicit val byteScalarMatable: ScalarMatable[Byte] = new ScalarMatable[Byte]
     implicit val shortScalarMatable: ScalarMatable[Short] = new ScalarMatable[Short]
     implicit val doubleScalarMatable: ScalarMatable[Double] = new ScalarMatable[Double]
     implicit val floatScalarMatable: ScalarMatable[Float] = new ScalarMatable[Float]
     implicit val intScalarMatable: ScalarMatable[Int] = new ScalarMatable[Int]
-  }
 
-  object Rects {
     implicit val byteRectMatable: RectMatable[Byte] = new RectMatable[Byte]
     implicit val shortRectMatable: RectMatable[Short] = new RectMatable[Short]
     implicit val doubleRectMatable: RectMatable[Double] = new RectMatable[Double]
     implicit val floatRectMatable: RectMatable[Float] = new RectMatable[Float]
     implicit val intRectMatable: RectMatable[Int] = new RectMatable[Int]
-  }
 
-  object Points {
     implicit val bytePointMatable: PointMatable[Byte] = new PointMatable[Byte]
     implicit val shortPointMatable: PointMatable[Short] = new PointMatable[Short]
     implicit val doublePointMatable: PointMatable[Double] = new PointMatable[Double]

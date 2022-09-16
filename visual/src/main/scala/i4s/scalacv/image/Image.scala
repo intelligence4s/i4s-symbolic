@@ -23,7 +23,7 @@ object Image {
   implicit def umat2Image(mat: UMat): Image = Image(mat)
 }
 
-class Image(rows: Int, cols: Int, channels: Int = 3) extends Mat[Int](Some(Types.Cv8U), Some(channels), rows, Seq(cols):_*) {
+class Image(rows: Int, cols: Int, channels: Int = 3) extends MappedMat[Scalar,Int](Some(Types.Cv8U), Some(channels), rows, Seq(cols):_*) {
   def this() = this(1,1)
 
   def this(rows: Int, cols: Int, channels: Int, init: Scalar) = {

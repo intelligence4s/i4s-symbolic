@@ -13,7 +13,7 @@ class MatSpec extends AnyWordSpec with Matchers {
       val mat = mats.Mat[Double](10, Scalar(0,0,0,0))
 
       val values = (1 to 10).map(_.toDouble)
-      mat.putAll(0, values)
+      mat.put(0, values)
 
       mat.dims shouldBe 2
       mat.shape shouldBe Seq(10,1)
@@ -33,7 +33,7 @@ class MatSpec extends AnyWordSpec with Matchers {
       val mat = mats.Mat[Double](10,10, Scalar(0,0,0,0))
 
       val values = 1 to 100 map (_.toDouble)
-      mat.putAll(0,values)
+      mat.put(0,values)
 
       mat.dims shouldBe 2
       mat.shape shouldBe Seq(10, 10)
@@ -64,7 +64,7 @@ class MatSpec extends AnyWordSpec with Matchers {
       val mat = mats.Mat[Double](Scalar(0,0,0,0),2,10,10)
 
       val value = 1 to 200 map (_.toDouble)
-      mat.putAll(0, value)
+      mat.put(0, value)
 
       mat.dims shouldBe 3
       mat.shape shouldBe Seq(2,10,10)
@@ -108,7 +108,8 @@ class MatSpec extends AnyWordSpec with Matchers {
 
       assertThrows[IndexOutOfBoundsException](mat.get(50))
       assertThrows[IndexOutOfBoundsException](mat.get(49,50))
-      assertThrows[IndexOutOfBoundsException](mat.getN(n = 50,49,40))*/
+      assertThrows[IndexOutOfBoundsException](mat.getN(n = 50,49,40))
+*/
 
     }
   }

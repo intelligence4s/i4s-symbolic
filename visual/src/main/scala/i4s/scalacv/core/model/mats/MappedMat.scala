@@ -61,11 +61,30 @@ class MappedMat[M : ClassTag, T <: AnyVal : ClassTag : NumberLike](depth: Option
   def put(i: Int, j: Int, k: Int, value: M): Unit = mm.putMapped(this,Array(i,j,k),value)
   def put(indices: IndexedSeq[Int], value: M): Unit = mm.putMapped(this,indices,value)
 
+  def put(values: Seq[M]): Unit = mm.putMappedN(this,Array(0),values)
+  def put(i: Int, values: Seq[M]): Unit = mm.putMappedN(this,Array(i),values)
+  def put(i: Int, j: Int, values: Seq[M]): Unit = mm.putMappedN(this,Array(i,j),values)
+  def put(indices: IndexedSeq[Int], values: Seq[M]): Unit = mm.putMappedN(this,indices,values)
+
   def putT1(values: (Int, M)*): Unit = values.foreach { case (i, v) => put(i, v) }
   def putT2(values: (Int, Int, M)*): Unit = values.foreach { case (i, j, v) => put(i, j, v) }
   def putT3(values: (Int, Int, Int, M)*): Unit = values.foreach { case (i, j, k, v) => put(i, j, k, v) }
 
-  def putAll(values: Seq[M]): Unit = mm.putMappedN(this,Array(0),values)
-  def putAll(i: Int, values: Seq[M]): Unit = mm.putMappedN(this,Array(i),values)
-  def putAll(i: Int, j: Int, values: Seq[M]): Unit = mm.putMappedN(this,Array(i,j),values)
+  def getRaw(i: Int): T = m.get(this, i)
+  def getRaw(i: Int, is: Int*): T = m.get(this, i +: is: _*)
+
+  def getRawN(n: Int, i: Int): IndexedSeq[T] = m.getN(this, Array(i), n)
+  def getRawN(n: Int, i: Int, is: Int*): IndexedSeq[T] = m.getN(this, i +: is, n)
+
+  def putRaw(i: Int, value: T): Unit = m.put(this, Array(i), value)
+  def putRaw(i: Int, j: Int, value: T): Unit = m.put(this, Array(i, j), value)
+  def putRaw(i: Int, j: Int, k: Int, value: T): Unit = m.put(this, Array(i, j, k), value)
+  def putRaw(indices: IndexedSeq[Int], value: T): Unit = m.put(this, indices, value)
+
+  def putRaw(values: Seq[T]): Unit = m.putN(this, Array(0), values)
+  def putRaw(i: Int, values: Seq[T]): Unit = m.putN(this, Array(i), values)
+  def putRaw(i: Int, j: Int, values: Seq[T]): Unit = m.putN(this, Array(i, j), values)
+  def putRaw(indices: IndexedSeq[Int], values: Seq[T]): Unit = m.putN(this, indices, values)
+
+
 }

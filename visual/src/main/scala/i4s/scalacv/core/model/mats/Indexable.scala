@@ -8,39 +8,39 @@ object Indexable {
   def apply[T <: AnyVal](indexer: Indexer)(implicit tag: ClassTag[T]): Indexable[T] = {
     val indexable = indexer match {
       case indexer: ByteIndexer =>
-        assert(tag.runtimeClass == classOf[Byte])
+        assert(tag.runtimeClass == classOf[Byte], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Bytes")
         byteIndexer(indexer)
 
       case indexer: UByteIndexer =>
-        assert(tag.runtimeClass == classOf[Int])
+        assert(tag.runtimeClass == classOf[Int], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of UBytes")
         ubyteIndexer(indexer)
 
       case indexer: CharIndexer =>
-        assert(tag.runtimeClass == classOf[Char])
+        assert(tag.runtimeClass == classOf[Char], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Char")
         charIndexer(indexer)
 
       case indexer: ShortIndexer =>
-        assert(tag.runtimeClass == classOf[Short])
+        assert(tag.runtimeClass == classOf[Short], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Short")
         shortIndexer(indexer)
 
       case indexer: UShortIndexer =>
-        assert(tag.runtimeClass == classOf[Int])
+        assert(tag.runtimeClass == classOf[Int], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of UShort")
         ushortIndexer(indexer)
 
       case indexer: IntIndexer =>
-        assert(tag.runtimeClass == classOf[Int])
+        assert(tag.runtimeClass == classOf[Int], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Int")
         intIndexer(indexer)
 
       case indexer: FloatIndexer =>
-        assert(tag.runtimeClass == classOf[Float])
+        assert(tag.runtimeClass == classOf[Float], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Float")
         floatIndexer(indexer)
 
       case indexer: LongIndexer =>
-        assert(tag.runtimeClass == classOf[Long])
+        assert(tag.runtimeClass == classOf[Long], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Long")
         longIndexer(indexer)
 
       case indexer: DoubleIndexer =>
-        assert(tag.runtimeClass == classOf[Double])
+        assert(tag.runtimeClass == classOf[Double], s"Declared type ${tag.runtimeClass.getSimpleName} is not compatible with Mat of Double")
         doubleIndexer(indexer)
     }
 

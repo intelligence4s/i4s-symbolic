@@ -51,6 +51,13 @@ class ImageSpec extends AnyWordSpec with Matchers {
       copy.get(149,149) shouldBe Scalar.White
     }
 
+    "transparently wrap a Mat to an Image" in {
+      val mat = new Mat(150, 150, MatTypes.makeType(Types.Cv8U, 3), Scalar.Red)
+
+      val image: Image = mat
+      image.get(0,0) shouldBe Scalar.Red
+    }
+
     "throw an exception for an incompatible Mat" in {
       val mat = new Mat(150,150,MatTypes.makeType(Types.Cv8S,3),Scalar.Red)
       assertThrows[AssertionError] {

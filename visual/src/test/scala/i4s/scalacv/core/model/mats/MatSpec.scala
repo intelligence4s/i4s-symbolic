@@ -1,15 +1,116 @@
 package i4s.scalacv.core.model.mats
 
 import i4s.scalacv.core.model.{Scalar, mats}
-import i4s.scalacv.core.types.Types
+import i4s.scalacv.core.types.{MatTypes, Types}
+import org.bytedeco.javacpp.indexer.{DoubleIndexer, FloatIndexer, UByteIndexer}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class MatSpec extends AnyWordSpec with Matchers {
-  "Mat[Byte]" should {
+  "Mat" should {
     import i4s.scalacv.core.model.mats.syntax._
 
-    "support a single dimenional array" in {
+    "wrap native Mat of UBytes with Mat[Int] constructor" in {
+      val matOfPixels = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv8U, 3), Scalar.Red)
+      val pixels = new Mat[Int](matOfPixels)
+      pixels.get(0) shouldBe Scalar.Red.v0
+      val indexer = matOfPixels.createIndexer().asInstanceOf[UByteIndexer]
+      indexer.put(0L, 128)
+      pixels.get(0) shouldBe 128
+    }
+
+    "wrap native 1 dim Mat of Doubles with Mat[Double] constructor" in {
+      val arrayOfDoubles = new org.bytedeco.opencv.opencv_core.Mat(Array(150), MatTypes.makeType(Types.Cv64F, 1), Scalar.White)
+      val doubleArray = new Mat[Double](arrayOfDoubles)
+      doubleArray.get(0) shouldBe Scalar.White.v0
+      val indexer = arrayOfDoubles.createIndexer().asInstanceOf[DoubleIndexer]
+      indexer.put(0L, 128d)
+      doubleArray.get(0) shouldBe 128
+    }
+
+    "wrap native 2 dim Mat of Doubles with Mat[Double] constructor" in {
+      val matOfDoubles = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv64F, 1), Scalar.White)
+      val doubles = new Mat[Double](matOfDoubles)
+      doubles.get(0, 0) shouldBe Scalar.White.v0
+      val indexer = matOfDoubles.createIndexer().asInstanceOf[DoubleIndexer]
+      indexer.put(0L, 0L, 128d)
+      doubles.get(0, 0) shouldBe 128
+    }
+
+    "wrap native 1 dim Mat of Float with Mat[Float] constructor" in {
+      val arrayOfFloats = new org.bytedeco.opencv.opencv_core.Mat(Array(150), MatTypes.makeType(Types.Cv32F, 1), Scalar.White)
+      val floatArray = new Mat[Float](arrayOfFloats)
+      floatArray.get(0) shouldBe Scalar.White.v0
+      val indexer = arrayOfFloats.createIndexer().asInstanceOf[FloatIndexer]
+      indexer.put(0L,128f)
+      floatArray.get(0) shouldBe 128
+    }
+
+    "wrap native 2 dim Mat of Float with Mat[Float] constructor" in {
+      val matOfFloats = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv32F, 1), Scalar.White)
+      val floats = new Mat[Float](matOfFloats)
+      floats.get(0,0) shouldBe Scalar.White.v0
+      val indexer = matOfFloats.createIndexer().asInstanceOf[FloatIndexer]
+      indexer.put(0L, 0L, 128f)
+      floats.get(0, 0) shouldBe 128
+    }
+
+    "copy native Mat of UBytes with Mat factory" in {
+      val matOfPixels = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv8U, 3), Scalar.Red)
+      val pixels = Mat[Int](matOfPixels)
+      pixels.get(0) shouldBe Scalar.Red.v0
+      val indexer = matOfPixels.createIndexer().asInstanceOf[UByteIndexer]
+      indexer.put(0L, 128)
+      pixels.get(0) shouldBe Scalar.Red.v0
+    }
+
+    "copy native 1 dim Mat of Doubles with Mat factory" in {
+      val arrayOfDoubles = new org.bytedeco.opencv.opencv_core.Mat(Array(150), MatTypes.makeType(Types.Cv64F, 1), Scalar.White)
+      val doubleArray = Mat[Double](arrayOfDoubles)
+      doubleArray.get(0) shouldBe Scalar.White.v0
+      val indexer = arrayOfDoubles.createIndexer().asInstanceOf[DoubleIndexer]
+      indexer.put(0L, 128d)
+      doubleArray.get(0) shouldBe Scalar.White.v0
+    }
+
+    "copy native 2 dim Mat of Doubles with Mat factory" in {
+      val matOfDoubles = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv64F, 1), Scalar.White)
+      val doubles = Mat[Double](matOfDoubles)
+      doubles.get(0, 0) shouldBe Scalar.White.v0
+      val indexer = matOfDoubles.createIndexer().asInstanceOf[DoubleIndexer]
+      indexer.put(0L, 0L, 128d)
+      doubles.get(0, 0) shouldBe Scalar.White.v0
+    }
+
+    "copy native 1 dim Mat of Float with Mat factory" in {
+      val arrayOfFloats = new org.bytedeco.opencv.opencv_core.Mat(Array(150), MatTypes.makeType(Types.Cv32F, 1), Scalar.White)
+      val floatArray = Mat[Float](arrayOfFloats)
+      floatArray.get(0) shouldBe Scalar.White.v0
+      val indexer = arrayOfFloats.createIndexer().asInstanceOf[FloatIndexer]
+      indexer.put(0L,128f)
+      floatArray.get(0) shouldBe Scalar.White.v0
+    }
+
+    "copy native 2 dim Mat of Float with Mat factory" in {
+      val matOfFloats = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv32F, 1), Scalar.White)
+      val floats = new Mat[Float](matOfFloats)
+      floats.get(0,0) shouldBe Scalar.White.v0
+      val indexer = matOfFloats.createIndexer().asInstanceOf[FloatIndexer]
+      indexer.put(0L, 0L, 128f)
+      floats.get(0, 0) shouldBe 128
+    }
+
+    "throw an when wrapping a native Mat with an incompatible type" in {
+      val wrapped = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv8U, 3), Scalar.Red)
+      assertThrows[AssertionError](new Mat[Float](wrapped))
+    }
+
+    "throw an exception when copying a native Mat with an incompatible type" in {
+      val wrapped = new org.bytedeco.opencv.opencv_core.Mat(150, 150, MatTypes.makeType(Types.Cv8U, 3), Scalar.Red)
+      assertThrows[AssertionError](Mat[Float](wrapped))
+    }
+
+    "support a 1 dim array" in {
       val mat = mats.Mat[Double](10, Scalar(0,0,0,0))
 
       val values = (1 to 10).map(_.toDouble)
@@ -29,7 +130,7 @@ class MatSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "support a two dimensional array" in {
+    "support a 2 dim matrix" in {
       val mat = mats.Mat[Double](10,10, Scalar(0,0,0,0))
 
       val values = 1 to 100 map (_.toDouble)
@@ -60,7 +161,7 @@ class MatSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "support a three dimentional array" in {
+    "support a 3 dim matrix" in {
       val mat = mats.Mat[Double](Scalar(0,0,0,0),2,10,10)
 
       val value = 1 to 200 map (_.toDouble)
@@ -90,27 +191,6 @@ class MatSpec extends AnyWordSpec with Matchers {
       assertThrows[IndexOutOfBoundsException](mat.get(2))
       assertThrows[IndexOutOfBoundsException](mat.get(1, 10))
       assertThrows[IndexOutOfBoundsException](println(mat.get(1,9,10)))
-    }
-
-    "support multichannel matrix of Byte Scalars" in {
-/*      val mat = Mat[Scalar4b](Some(3),Scalar(0,0,0,0),50, 50)
-
-      val values = 0 until 50 map(_.toByte) flatMap(row => 0 until 50 map(_.toByte) map(col => Scalar4b(-128,row,col,0)))
-      mat.putAll(values)
-
-      mat.getN(n = 100,0) shouldBe values.take(100)
-      mat.getN(n = 100,48) shouldBe values.takeRight(100)
-
-      mat.get(0,0) shouldBe values.head
-      mat.get(1,20) shouldBe values.drop(70).head
-      mat.get(20,1) shouldBe values.drop(20 * 50 + 1).head
-      mat.get(49,49) shouldBe values.last
-
-      assertThrows[IndexOutOfBoundsException](mat.get(50))
-      assertThrows[IndexOutOfBoundsException](mat.get(49,50))
-      assertThrows[IndexOutOfBoundsException](mat.getN(n = 50,49,40))
-*/
-
     }
   }
 }

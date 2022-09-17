@@ -45,10 +45,11 @@ object Mat {
     new Mat[T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels)),init))
 
   def apply[T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
-    new Mat[T](wrapped)
+    new Mat[T](wrapped.clone)
 
   def apply[T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.UMat, accessFlag: AccessFlag)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
-    new Mat[T](wrapped.getMat(accessFlag.id))
+    new Mat[T](wrapped.getMat(accessFlag.id).clone)
+
 }
 
 class Mat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T])

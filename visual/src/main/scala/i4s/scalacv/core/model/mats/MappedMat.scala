@@ -43,10 +43,10 @@ object MappedMat {
     new MappedMat[M,T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(m.depth),ch.getOrElse(m.channels)),init))
 
   def apply[M, T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit mm: MappedMatable[M, T], m: Matable[T], nl: NumberLike[T], tag: ClassTag[T], mag: ClassTag[M]): MappedMat[M,T] =
-    new MappedMat[M,T](wrapped)
+    new MappedMat[M,T](wrapped.clone)
 
   def apply[M, T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.UMat, accessFlag: AccessFlag)(implicit mm: MappedMatable[M, T], m: Matable[T], nl: NumberLike[T], tag: ClassTag[T], mag: ClassTag[M]): MappedMat[M,T] =
-    new MappedMat[M,T](wrapped.getMat(accessFlag.id))
+    new MappedMat[M,T](wrapped.getMat(accessFlag.id).clone)
 
  }
 

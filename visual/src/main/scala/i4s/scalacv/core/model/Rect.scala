@@ -8,7 +8,7 @@ object Rect {
 
   def apply(vals: Int*): Rect = {
     val vs: Array[Int] = vals.toArray.take(4).padTo(4,0)
-    new Rect(Point(vs(0),vs(1)),Point(vs(2),vs(3)))
+    new Rect(vs(0),vs(1),vs(2),vs(3))
   }
 
   import scala.language.implicitConversions

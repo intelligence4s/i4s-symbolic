@@ -9,8 +9,8 @@ import org.bytedeco.opencv.opencv_core
 import java.nio.IntBuffer
 import scala.reflect.ClassTag
 
-class BaseMat[T <: AnyVal : ClassTag](depth: Option[Type], channels: Int, dim1: Int, dims: Int*)(implicit matable: Matable[T])
-  extends org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(matable.depth),channels))
+class BaseMat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T])
+  extends org.bytedeco.opencv.opencv_core.Mat(wrapped.getPointer(0))
 {
   implicit val indexable: Indexable[T] = matable.indexer(this)
 

@@ -3,7 +3,7 @@ package i4s.scalacv.image
 import i4s.scalacv.image.constants.ColorConversionCodes.ColorConversionCode
 import i4s.scalacv.image.constants.ColorMaps.ColorMap
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.{Mat, UMat}
+import org.bytedeco.opencv.opencv_core.Mat
 
 object Colors extends Colors
 
@@ -12,7 +12,7 @@ trait Colors {
   implicit class ImageColor(image: Image) {
 
     def cvtColor(code: ColorConversionCode, dstCn: Int): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.cvtColor(image,dst,code.id,dstCn)
       dst
     }

@@ -44,13 +44,13 @@ trait Filters {
   implicit class ImageFilters(image: Image) {
 
    def medianBlur(ksize: Int): Image = {
-     val dst = new Image()
+     val dst = new Mat()
      opencv_imgproc.medianBlur(image,dst,ksize)
      dst
    }
 
     def gaussianBlur(ksize: Size, sigmaX: Double, sigmaY: Double /*=0*/ , borderType: BorderType /*=cv::BORDER_DEFAULT*/): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.GaussianBlur(image,dst,ksize,sigmaX,sigmaY,borderType.id)
       dst
     }
@@ -59,7 +59,7 @@ trait Filters {
       gaussianBlur(ksize,sigmaX,sigmaY = -1,BorderTypes.Default)
 
     def bilateralFilter(d: Int, sigmaColor: Double, sigmaSpace: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.bilateralFilter(image,dst,d,sigmaColor,sigmaSpace,borderType.id)
       dst
     }
@@ -68,7 +68,7 @@ trait Filters {
       bilateralFilter(d, sigmaColor, sigmaSpace, BorderTypes.Default)
 
     def boxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.boxFilter(image,dst,ddepth.id,ksize,anchor,normalize,borderType.id)
       dst
     }
@@ -77,7 +77,7 @@ trait Filters {
       boxFilter(ddepth,ksize,new Point(-1,-1),normalize = true,BorderTypes.Default)
 
     def sqrBoxFilter(ddepth: Type, ksize: Size, anchor: Point, normalize: Boolean, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.sqrBoxFilter(image,dst,ddepth.id,ksize,anchor,normalize,borderType.id)
       dst
     }
@@ -86,7 +86,7 @@ trait Filters {
       sqrBoxFilter(ddepth,ksize,new Point(-1,-1),normalize = true,BorderTypes.Default)
 
     def blur(ksize: Size, anchor: Point, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.blur(image,dst,ksize,anchor,borderType.id)
       dst
     }
@@ -94,7 +94,7 @@ trait Filters {
     def blur(ksize: Size): Image = blur(ksize,new Point(-1,-1),BorderTypes.Default)
 
     def filter2D(ddepth: Type, kernel: Mat, anchor: Point, delta: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.filter2D(image,dst,ddepth.id,kernel,anchor,delta,borderType.id)
       dst
     }
@@ -103,7 +103,7 @@ trait Filters {
       filter2D(ddepth,kernel,new Point(-1,-1),delta = 0,BorderTypes.Default)
 
     def sepFilter2D(ddepth: Type, kernelX: Mat, kernelY: Mat, anchor: Point, delta: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.sepFilter2D(image,dst,ddepth.id,kernelX,kernelY,anchor,delta,borderType.id)
       dst
     }
@@ -112,7 +112,7 @@ trait Filters {
       sepFilter2D(ddepth,kernelX,kernelY,new Point(-1,-1),0,BorderTypes.Default)
 
     def sobel(ddepth: Type, dx: Int, dy: Int, ksize: Int /*=3*/ , scale: Double /*=1*/ , delta: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.Sobel(image,dst,ddepth.id,dx,dy,ksize,scale,delta,borderType.id)
       dst
     }
@@ -121,8 +121,8 @@ trait Filters {
       sobel(ddepth,dx,dy,ksize = 3,scale = 1,delta = 0,BorderTypes.Default)
 
     def spatialGradient(ksize: Int, borderType: BorderType): (Image,Image) = {
-      val dx: Image = new Image()
-      val dy: Image = new Image()
+      val dx: Image = new Mat()
+      val dy: Image = new Mat()
       opencv_imgproc.spatialGradient(image,dx,dy,ksize,borderType.id)
       (dx,dy)
     }
@@ -131,7 +131,7 @@ trait Filters {
       spatialGradient(ksize = 3,BorderTypes.Default)
 
     def scharr(ddepth: Type, dx: Int, dy: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.Scharr(image,dst,ddepth.id,dx,dy,scale,delta,borderType.id)
       dst
     }
@@ -140,7 +140,7 @@ trait Filters {
       scharr(ddepth,dx,dy,scale = 1,delta = 0,BorderTypes.Default)
 
     def laplacian(ddepth: Type, ksize: Int, scale: Double, delta: Double, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.Laplacian(image,dst,ddepth.id,ksize,scale,delta,borderType.id)
       dst
     }
@@ -149,7 +149,7 @@ trait Filters {
       laplacian(ddepth,ksize = 1,scale = 1,delta = 0,BorderTypes.Default)
 
     def erode(kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.erode(image,dst,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
@@ -158,7 +158,7 @@ trait Filters {
       erode(kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     def dilate(kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.dilate(image,dst,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
@@ -167,7 +167,7 @@ trait Filters {
       dilate(kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     def morphologyEx(op: Int, kernel: Mat, anchor: Point, iterations: Int, borderType: BorderType, borderValue: Scalar): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.morphologyEx(image,dst,op,kernel,anchor,iterations,borderType.id,borderValue)
       dst
     }
@@ -176,7 +176,7 @@ trait Filters {
       morphologyEx(op,kernel,new Point(-1,-1),iterations = 1,BorderTypes.Constant,new Scalar(morphologyDefaultBorderValue))
 
     def pyrDown(dstsize: Size, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.pyrDown(image,dst,dstsize,borderType.id)
       dst
     }
@@ -184,7 +184,7 @@ trait Filters {
     def pyrDown(): Image = pyrDown(new Size(),BorderTypes.Default)
 
     def pyrUp(dstsize: Size, borderType: BorderType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.pyrUp(image,dst,dstsize,borderType.id)
       dst
     }
@@ -202,7 +202,7 @@ trait Filters {
 
 
     def pyrMeanShiftFiltering(sp: Double, sr: Double, maxlevel: Int, termCriteria: TermCriteria): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.pyrMeanShiftFiltering(image,dst,sp,sr,maxlevel,termCriteria)
       dst
     }

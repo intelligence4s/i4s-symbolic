@@ -30,7 +30,7 @@ class DrawingSpec extends AnyWordSpec with Matchers {
     import i4s.scalacv.image.ui.ViewMaster._
 
     "support filling a rectangle" in {
-      val image = new Image(300,300,3,Scalar.White)
+      val image = Image(300,300,3,Scalar.White)
 
       val red: Scalar = Scalar.Red
       val rectangle = Rect(Point(30,30),Point(270,270))
@@ -43,7 +43,7 @@ class DrawingSpec extends AnyWordSpec with Matchers {
     }
 
     "support drawing circles" in {
-      val image = new Image(150,150,3)
+      val image = Image(150,150,3)
       image.circle(Point(75,75),30,Scalar.Red)
 
       val imageWillClose = image.show("Burnin Ring-o-fire")

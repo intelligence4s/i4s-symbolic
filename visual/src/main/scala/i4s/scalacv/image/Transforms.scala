@@ -57,7 +57,7 @@ trait Transforms {
 
   implicit class ImageTransforms(image: Image) {
     def resize(dsize: Size, fx: Double, fy: Double, interpolation: InterpolationFlag): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.resize(image,dst,dsize,fx,fy,interpolation.id)
       dst
     }
@@ -66,7 +66,7 @@ trait Transforms {
 
     def warpAffine(matrix: Mat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image = {
       val iflags = flags.foldLeft(0)(_ | _.id)
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.warpAffine(image,dst,matrix,dsize,iflags,borderMode.id,borderValue)
       dst
     }
@@ -77,7 +77,7 @@ trait Transforms {
     def warpPerspective(matrix: Mat, dsize: Size, flags: Set[InterpolationFlag], borderMode: BorderType, borderValue: Scalar): Image =
     {
       val iflags = flags.foldLeft(0)(_ | _.id)
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.warpPerspective(image,dst,matrix,dsize,iflags,borderMode.id,borderValue)
       dst
     }
@@ -86,7 +86,7 @@ trait Transforms {
       warpPerspective(matrix,dsize,Set(InterpolationFlags.Linear),BorderTypes.Constant,new Scalar())
 
     def remap(map1: Mat, map2: Mat, interpolation: InterpolationFlag, borderMode: BorderType /*=cv::BORDER_CONSTANT*/, borderValue: Scalar): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.remap(image,dst,map1,map2,interpolation.id,borderMode.id,borderValue)
       dst
     }
@@ -95,7 +95,7 @@ trait Transforms {
       remap(map1,map2,interpolation,BorderTypes.Constant,new Scalar())
 
     def rectSubPixels(patchSize: Size, center: Point2f, patchType: Type): Image = {
-      val patch = new Image()
+      val patch = new Mat()
       opencv_imgproc.getRectSubPix(image,patchSize,center,patch,patchType.id)
       patch
     }
@@ -105,20 +105,20 @@ trait Transforms {
 
     def linearPolar(center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
       val iflags = flags.foldLeft(0)(_ | _.id)
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.linearPolar(image,dst,center,maxRadius,iflags)
       dst
     }
 
     def warpPolar(dsize: Size, center: Point2f, maxRadius: Double, flags: Set[InterpolationFlag]): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       val iflags = flags.foldLeft(0)(_ | _.id)
       opencv_imgproc.warpPolar(image,dst,dsize,center,maxRadius,iflags)
       dst
     }
 
     def integral(sdepth: Int): Image = {
-      val sum = new Image()
+      val sum = new Mat()
       opencv_imgproc.integral(image, sum, sdepth)
       sum
     }
@@ -146,19 +146,19 @@ trait Transforms {
 
     def threshold(thresh: Double, maxval: Double, thresholdType: Set[ThresholdType]): (Image,Double) = {
       val tflag = thresholdType.foldLeft(0)(_ | _.id)
-      val dst = new Image()
+      val dst = new Mat()
       val result = opencv_imgproc.threshold(image,dst,thresh,maxval,tflag)
       (dst,result)
     }
 
     def adaptiveThreshold(maxValue: Double, adaptiveMethod: ThresholdMethod, thresholdType: ThresholdType, blockSize: Int, constant: Double): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.adaptiveThreshold(image,dst,maxValue,adaptiveMethod.id,thresholdType.id,blockSize,constant)
       dst
     }
 
     def distanceTransformWithLabels(labels: Image, distanceType: DistanceType, maskSize: Int, labelType: DistanceLabelType): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.distanceTransformWithLabels(image,dst,labels,distanceType.id,maskSize,labelType.id)
       dst
     }
@@ -167,7 +167,7 @@ trait Transforms {
       distanceTransformWithLabels(labels,distanceType,maskSize,DistanceLabelTypes.ConnectedComponent)
 
     def distanceTransform(distanceType: DistanceType, maskSize: Int, dstType: Type): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.distanceTransform(image,dst,distanceType.id,maskSize,dstType.id)
       dst
     }
@@ -194,7 +194,7 @@ trait Transforms {
       floodFill(seedPoint, newVal, new Scalar(), new Scalar(), flags = 4)
 
     def blendLinear(src2: Image, weights1: Mat, weights2: Mat): Image = {
-      val dst = new Image()
+      val dst = new Mat()
       opencv_imgproc.blendLinear(image,src2,weights1,weights2,dst)
       dst
     }

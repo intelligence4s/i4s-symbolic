@@ -42,7 +42,7 @@ trait Shapes {
       opencv_imgproc.connectedComponentsWithAlgorithm(image,labels,connectivity,ltype.id,ccltype.id)
 
     def connectedComponents(connectivity: Int, ltype: Type): (Image,Int) = {
-      val labels = new Image()
+      val labels = new Mat()
       val result = opencv_imgproc.connectedComponents(image,labels,connectivity,ltype.id)
       (labels,result)
     }
@@ -51,7 +51,7 @@ trait Shapes {
       connectedComponents(connectivity = 8,ltype = Types.Cv32S)
 
     def connectedComponentsWithStatsWithAlgorithm(connectivity: Int, ltype: Type, ccltype: ConnectedComponentsAlgorithmsType): (Image,Mat,Mat,Int) = {
-      val labels = new Image()
+      val labels = new Mat()
       val stats = new Mat()
       val centroids = new Mat()
       val result = opencv_imgproc.connectedComponentsWithStatsWithAlgorithm(image,labels,stats,centroids,connectivity,ltype.id,ccltype.id)
@@ -59,7 +59,7 @@ trait Shapes {
     }
 
     def connectedComponentsWithStats(connectivity: Int, ltype: Type): (Image,Mat,Mat,Int) = {
-      val labels = new Image()
+      val labels = new Mat()
       val stats = new Mat()
       val centroids = new Mat()
       val result = opencv_imgproc.connectedComponentsWithStats(image,labels,stats,centroids,connectivity,ltype.id)

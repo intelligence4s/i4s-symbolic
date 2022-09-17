@@ -2,6 +2,8 @@ package i4s.scalacv.core.model
 
 import i4s.scalacv.core.model.Math.NumberLike
 
+import scala.reflect.ClassTag
+
 trait SizeLike[T <: AnyVal] {
   val width: T
   val height: T
@@ -19,6 +21,8 @@ trait SizeLike[T <: AnyVal] {
   def *(a: T)(implicit ev: NumberLike[T]): SizeLike[T] = construct(ev.multiply(width,a),ev.multiply(height,a))
 
   def /(a: T)(implicit ev: NumberLike[T]): SizeLike[T] = construct(ev.divide(width,a),ev.divide(height,a))
+
+  def asArray(implicit classTag: ClassTag[T]): Array[T] = Array(width,height)
 
   def canEqual(that: Any): Boolean = that.isInstanceOf[SizeLike[T]]
 

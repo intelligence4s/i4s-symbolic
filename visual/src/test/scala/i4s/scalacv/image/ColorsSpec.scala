@@ -2,6 +2,7 @@ package i4s.scalacv.image
 
 import i4s.scalacv.core.types.{MatTypes, Types}
 import i4s.scalacv.image.constants.{ColorConversionCodes, ColorMaps}
+import org.bytedeco.opencv.opencv_core.Mat
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -11,7 +12,7 @@ class ColorsSpec extends AnyWordSpec with Matchers {
     import Colors._
 
     "support color conversion" in {
-      val image = new Image(30,30,3)
+      val image = Image(30,30,3)
       val gray = image.cvtColor(ColorConversionCodes.BGR2Gray)
 
       image.channels shouldBe 3
@@ -24,7 +25,7 @@ class ColorsSpec extends AnyWordSpec with Matchers {
     }
 
     "support applying a color map" in {
-      val gray = new Image(30,30,1)
+      val gray = Image(30,30,1)
       val withColors = gray.applyColorMap(ColorMaps.Hot)
       println(withColors.description)
 

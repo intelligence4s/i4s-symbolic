@@ -1,54 +1,59 @@
 package i4s.scalacv.core.model.mats
 
+import i4s.scalacv.core.constants.AccessFlags.AccessFlag
 import i4s.scalacv.core.model.Scalar
+import i4s.scalacv.core.types.MatTypes
 import i4s.scalacv.core.types.Types.Type
 
 import scala.reflect.ClassTag
 
 object Mat {
-  def apply[T <: AnyVal](rows: Int)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,rows)
-  def apply[T <: AnyVal](rows: Int, init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,init,rows)
-  def apply[T <: AnyVal](rows: Int, depth: Option[Type], ch: Option[Int])(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,rows)
-  def apply[T <: AnyVal](rows: Int, depth: Option[Type], ch: Option[Int], init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,init,rows)
+  def apply[T <: AnyVal](rows: Int)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows),MatTypes.makeType(matable.depth,matable.channels)))
 
-  def apply[T <: AnyVal](rows: Int, cols: Int)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,rows,Seq(cols):_*)
-  def apply[T <: AnyVal](rows: Int, cols: Int, init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,init,rows,Seq(cols):_*)
-  def apply[T <: AnyVal](rows: Int, cols: Int, depth: Option[Type], ch: Option[Int])(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,rows,Seq(cols):_*)
-  def apply[T <: AnyVal](rows: Int, cols: Int, depth: Option[Type], ch: Option[Int], init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,init,rows,Seq(cols):_*)
+  def apply[T <: AnyVal](rows: Int, init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows),MatTypes.makeType(matable.depth,matable.channels),init))
 
-  def apply[T <: AnyVal](dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,dim1,dims:_*)
-  def apply[T <: AnyVal](init: Scalar,dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](None,init,dim1,dims:_*)
-  def apply[T <: AnyVal](depth: Option[Type], ch: Option[Int], dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,dim1,dims:_*)
-  def apply[T <: AnyVal](depth: Option[Type], ch: Option[Int], init: Scalar, dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] = new Mat[T](depth,ch,init,dim1,dims:_*)
+  def apply[T <: AnyVal](rows: Int, depth: Option[Type], ch: Option[Int])(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows),MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels))))
+
+  def apply[T <: AnyVal](rows: Int, depth: Option[Type], ch: Option[Int], init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows),MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels)),init))
+
+  def apply[T <: AnyVal](rows: Int, cols: Int)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows,cols),MatTypes.makeType(matable.depth,matable.channels)))
+
+  def apply[T <: AnyVal](rows: Int, cols: Int, init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows,cols),MatTypes.makeType(matable.depth,matable.channels),init))
+
+  def apply[T <: AnyVal](rows: Int, cols: Int, depth: Option[Type], ch: Option[Int])(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows,cols),MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels))))
+
+  def apply[T <: AnyVal](rows: Int, cols: Int, depth: Option[Type], ch: Option[Int], init: Scalar)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat(Array(rows,cols),MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels)),init))
+
+  def apply[T <: AnyVal](dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(matable.depth,matable.channels)))
+
+  def apply[T <: AnyVal](init: Scalar,dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(matable.depth,matable.channels),init))
+
+  def apply[T <: AnyVal](depth: Option[Type], ch: Option[Int], dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels))))
+
+  def apply[T <: AnyVal](depth: Option[Type], ch: Option[Int], init: Scalar, dim1: Int, dims: Int*)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](new org.bytedeco.opencv.opencv_core.Mat((dim1 +: dims).toArray,MatTypes.makeType(depth.getOrElse(matable.depth),ch.getOrElse(matable.channels)),init))
+
+  def apply[T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](wrapped)
+
+  def apply[T <: AnyVal](wrapped: org.bytedeco.opencv.opencv_core.UMat, accessFlag: AccessFlag)(implicit matable: Matable[T], tag: ClassTag[T]): Mat[T] =
+    new Mat[T](wrapped.getMat(accessFlag.id))
 }
 
-class Mat[T <: AnyVal : ClassTag](depth: Option[Type], channels: Int, dim1: Int, dims: Int*)(implicit matable: Matable[T])
-  extends BaseMat[T](depth,channels,dim1,dims:_*)
+class Mat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T])
+  extends BaseMat[T](wrapped)
 {
-  def this(depth: Option[Type], ch: Option[Int], r: Int)(implicit matable: Matable[T]) = this(depth,ch.getOrElse(matable.channels),r,Nil :_*)
-  def this(depth: Option[Type], ch: Option[Int], init: Scalar, r: Int)(implicit matable: Matable[T]) = {
-    this(depth, ch.getOrElse(matable.channels),r,Nil:_*)
-    put(init)
-  }
-
-  def this(depth: Option[Type], ch: Option[Int], d1: Int, ds: Int*)(implicit matable: Matable[T]) = this(depth,ch.getOrElse(matable.channels),d1,ds:_*)
-  def this(depth: Option[Type], ch: Option[Int], init: Scalar, d1: Int, ds: Int*)(implicit matable: Matable[T]) = {
-    this(depth,ch.getOrElse(matable.channels),d1,ds:_*)
-    put(init)
-  }
-
-  def this(depth: Option[Type], r: Int)(implicit matable: Matable[T]) = this(depth, matable.channels,r,Nil:_*)
-  def this(depth: Option[Type], init: Scalar, r: Int)(implicit matable: Matable[T]) = {
-    this(depth, matable.channels,r,Nil:_*)
-    put(init)
-  }
-
-  def this(depth: Option[Type], d1: Int, ds: Int*)(implicit matable: Matable[T]) = this(depth,matable.channels,d1,ds:_*)
-  def this(depth: Option[Type], init: Scalar, d1: Int, ds: Int*)(implicit matable: Matable[T]) = {
-    this(depth,matable.channels,d1,ds:_*)
-    put(init)
-  }
-
   def get(i: Int): T = matable.get(this,i)
   def get(i: Int, is: Int*): T = matable.get(this, i +: is:_*)
 

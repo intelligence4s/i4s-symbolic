@@ -5,6 +5,7 @@ import i4s.scalacv.core.model.Scalar
 import i4s.scalacv.core.types.MatTypes
 import i4s.scalacv.core.types.Types.Type
 
+import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
 object Mat {
@@ -60,6 +61,8 @@ class Mat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.Mat)(
 
   def getN(n: Int, i: Int): IndexedSeq[T] = matable.getN(this,Array(i),n)
   def getN(n: Int, i: Int, is: Int*): IndexedSeq[T] = matable.getN(this,i +: is,n)
+
+  def values: LazyList[T] = valueStream
 
   def put(i: Int, value: T): Unit = matable.put(this,Array(i),value)
   def put(i: Int, j: Int, value: T): Unit = matable.put(this,Array(i,j),value)

@@ -1,5 +1,6 @@
 package i4s.scalacv.image
 
+import com.google.common.hash.{HashCode, Hashing}
 import i4s.scalacv.core.constants.AccessFlags
 import i4s.scalacv.core.constants.AccessFlags.AccessFlag
 import i4s.scalacv.core.model.mats._

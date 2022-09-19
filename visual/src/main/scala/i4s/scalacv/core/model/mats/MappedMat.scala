@@ -60,6 +60,17 @@ class MappedMat[M : ClassTag, T <: AnyVal : ClassTag : NumberLike](wrapped: org.
   def getN(n: Int, i: Int): IndexedSeq[M] = mm.getMappedN(this,Array(i),n)
   def getN(n: Int, i: Int, is: Int*): IndexedSeq[M] = mm.getMappedN(this,i +: is,n)
 
+  def values: LazyList[M] = {
+    val topOffset = total()
+    val s = shape().toList
+
+    def elemAt(offset: Int): LazyList[M] =
+      if (offset < topOffset) mm.getMapped(this, toIndices(offset, Nil, s): _*) #:: elemAt(offset + 1)
+      else LazyList.empty[M]
+
+    elemAt(0)
+  }
+
   def put(i: Int, value: M): Unit = mm.putMapped(this,Array(i),value)
   def put(i: Int, j: Int, value: M): Unit = mm.putMapped(this,Array(i,j),value)
   def put(i: Int, j: Int, k: Int, value: M): Unit = mm.putMapped(this,Array(i,j,k),value)
@@ -90,5 +101,6 @@ class MappedMat[M : ClassTag, T <: AnyVal : ClassTag : NumberLike](wrapped: org.
   def putRaw(i: Int, j: Int, values: Seq[T]): Unit = m.putN(this, Array(i, j), values)
   def putRaw(indices: IndexedSeq[Int], values: Seq[T]): Unit = m.putN(this, indices, values)
 
+  def rawValues: LazyList[T] =  valueStream
 
 }

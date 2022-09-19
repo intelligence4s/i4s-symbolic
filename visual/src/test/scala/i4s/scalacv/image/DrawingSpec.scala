@@ -1,5 +1,6 @@
 package i4s.scalacv.image
 
+import com.google.common.hash.{HashCode, Hashing}
 import i4s.scalacv.core.constants.AccessFlags
 import i4s.scalacv.core.model.mats.BaseMat
 import i4s.scalacv.core.model.{Point, Rect, Scalar}
@@ -30,52 +31,36 @@ class DrawingSpec extends AnyWordSpec with Matchers {
     import i4s.scalacv.image.ui.ViewMaster._
 
     "support filling a rectangle" in {
+      val expectedHash = HashCode.fromString("481edfc4ecea1d71a842818435266bb7a43777eb6d2bdc0e4ec5e0c67c337756")
       val image = Image(300,300,3,Scalar.White)
 
       val red: Scalar = Scalar.Red
       val rectangle = Rect(Point(30,30),Point(270,270))
-
       image.rectangle(rectangle,red,LineTypes.Line4,-1,0)
-      image.write(new File("red-square.png"))
 
-      val closed = image.show("Red box")
-      Await.ready(closed,1.minute)
+      val hash = image.rawValues.foldLeft(Hashing.sha256.newHasher)(_.putInt(_)).hash
+      hash shouldBe expectedHash
+
+//      image.write(new File("red-square.png"))
+//      val closed = image.show("Red box")
+//      Await.ready(closed,1.minute)
     }
 
     "support drawing circles" in {
-      val image = Image(150,150,3)
+      val expected = HashCode.fromString("8b62391244665e3d57fa2d2425c54aa7f5418b1fbad6c4566146a62dd85833ae")
+      val image = Image(150,150,3,Scalar.Black)
       image.circle(Point(75,75),30,Scalar.Red)
 
-      val imageWillClose = image.show("Burnin Ring-o-fire")
-      val expectedWillClose = redCircleImage.show("I am your father")
-      val bothClosed = Future.sequence(List(imageWillClose,expectedWillClose))
-      Await.ready(bothClosed,1.minute)
+      val hash = image.rawValues.foldLeft(Hashing.sha256.newHasher)(_.putInt(_)).hash
+      hash shouldBe expected
 
-      //      image.write(new File("red-circle.png"))
+//      image.write(new File("red-circle.png"))
+//
+//      val imageWillClose = image.show("actual")
+//      val expectedWillClose = redCircleImage.show("expected")
+//      val bothClosed = Future.sequence(List(imageWillClose,expectedWillClose))
+//      Await.ready(bothClosed,1.minute)
 
-      val imageBuffer = Using.resource(new OpenCVFrameConverter.ToMat()) { openCVConverter =>
-        Using.resource(openCVConverter.convert(image))(_.image.head)
-      }
-
-      val expectedBuffer = Using.resource(new OpenCVFrameConverter.ToMat()) { openCVConverter =>
-        Using.resource(openCVConverter.convert(redCircleImage))(_.image.head)
-      }
-
-      val imageMat = image
-      val buffer: Buffer = image.createBuffer()
-
-      println(buffer.sizeOf[Byte])
-      println(buffer.lazyListOf[Byte].size)
-      println(expectedBuffer.lazyListOf[Byte].sum)
-
-      imageBuffer.lazyListOf[Byte].zip(expectedBuffer.lazyListOf[Byte])
-        .take(buffer.sizeOf[Byte])
-        .foreach { case (value,expected) =>
-          if (value != expected) {
-            println(s"$value is not $expected")
-          }
-          value shouldBe expected
-        }
     }
   }
 

@@ -7,6 +7,7 @@ import org.bytedeco.javacpp.IntPointer
 import org.bytedeco.opencv.opencv_core
 
 import java.nio.IntBuffer
+import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
 class BaseMat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.Mat)(implicit matable: Matable[T])
@@ -17,6 +18,33 @@ class BaseMat[T <: AnyVal : ClassTag](wrapped: org.bytedeco.opencv.opencv_core.M
   def matType: MatType = MatTypes(MatTypes.makeType(Types(depth()),channels()))
 
   def shape(): Seq[Int] = (0 until dims()).map(this.size)
+
+  protected def totalShape: List[Int] = channels() match {
+    case 1 => shape().toList
+    case _ => shape().toList :+ channels()
+  }
+
+  @tailrec
+  protected final def toIndices(offset: Int, is: List[Int], shape: List[Int]): List[Int] = {
+    if (shape.isEmpty) (offset :: is).reverse.tail
+    else {
+      val prod = shape.product
+      toIndices(offset % prod, (offset / prod) :: is, shape.tail)
+    }
+  }
+
+  protected def valueStream: LazyList[T] = {
+    val topOffset = total() * channels()
+
+    val s = totalShape
+
+    def elemAt(offset: Int): LazyList[T] =
+      if (offset < topOffset) matable.get(this, toIndices(offset, Nil, s): _*) #:: elemAt(offset + 1)
+      else LazyList.empty[T]
+
+    elemAt(0)
+  }
+
 
   // Disallow calls to underlaying Mat object that will cause side-effects...
   override def create(size: opencv_core.Size, `type`: Int): Unit =

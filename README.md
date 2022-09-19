@@ -12,6 +12,9 @@ This repo contains 3 subprojects -
 A quick primer on sbt projects that utilizes subprojects. You can read the documentation [here](https://www.scala-sbt.org/1.x/docs/Multi-Project.html). 
 The tldr; version for web development is: 
 ```
+
+$ brew install git-lfs # or install it on Windows
+
 $ sbt
 sbt:i4s-symbolic> project server
 sbt:i4s-symbolic-server> reStart # reStop will stop the server

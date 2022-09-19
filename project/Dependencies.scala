@@ -17,6 +17,8 @@ object Dependencies {
 
   lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
 
+//  lazy val javaCV = "org.bytedeco" % "javacv-platform" % "1.5.7"
+
   lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
 
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
@@ -28,7 +30,7 @@ object Dependencies {
   )
 
   lazy val nlpDependencies = {
-    val procVer = "8.4.6"
+    val procVer = "8.5.3-SNAPSHOT"
     Seq(
     "org.clulab" %% "processors-main" % procVer,
     "org.clulab" %% "processors-corenlp" % procVer,
@@ -51,5 +53,6 @@ object Dependencies {
   }
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.9" % Test
+  lazy val scalaV = "2.13.8"
 
 }

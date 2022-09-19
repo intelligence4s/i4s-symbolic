@@ -1,13 +1,15 @@
 package i4s.symbolic.web.pages
 
+import i4s.symbolic.web.components.SentenceGraph
 import i4s.symbolic.language.grammar.{TokenEdge, TokenGraph, TokenNode}
-import i4s.symbolic.web.components.{Banner, SentenceGraph}
+import i4s.symbolic.web.components.Banner
 import slinky.core.FunctionalComponent
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.web.html._
 import slinky.web.svg.{g, svg, className => svgClass}
+import i4s.symbolic.web.components.Banner
 
 @react object Grammar {
   import i4s.symbolic.web.model.syntax._
@@ -31,6 +33,7 @@ import slinky.web.svg.{g, svg, className => svgClass}
     TokenNode("Sansa", Some("Sansa"), Some("NNP"), 6, List.empty),
     TokenNode(".", Some("."), Some("."), 7, List.empty),
   )
+
 
   val graph = TokenGraph(tokenList)
 

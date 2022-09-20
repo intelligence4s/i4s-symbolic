@@ -15,7 +15,7 @@ fork := true
 libraryDependencies ++=
   neo4jDependencies ++
   Seq(
-    "org.bytedeco" % "javacv-platform" % "1.5.8-SNAPSHOT",
+    i4sOpenCV,
     "org.scala-lang" % "scala-reflect" % scalaV,
     scalaTest
   )

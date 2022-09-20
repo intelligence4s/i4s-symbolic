@@ -1,8 +1,7 @@
 package i4s.symbolic.visual
 
-import i4s.scalacv.core.types.MatTypes
-import i4s.scalacv.image.{Codecs, Image}
-import i4s.scalacv.image.constants._
+import i4s.opencv.image.{Codecs, Image}
+import i4s.opencv.image.constants._
 import i4s.symbolic.console.{CommandConfig, HasCommandConfigs}
 import org.bytedeco.opencv.opencv_core.{Mat, Size}
 
@@ -10,7 +9,7 @@ import java.io.File
 
 object VisualTestCC extends HasCommandConfigs {
   import Image._
-  import i4s.scalacv.image.Ops._
+  import i4s.opencv.image.Ops._
 
   override def configs(): List[CommandConfig] = List(
     CommandConfig("^(testcv)$".r, values => runCvTest(), "testcv")

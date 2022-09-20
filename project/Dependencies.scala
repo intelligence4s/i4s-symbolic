@@ -17,16 +17,14 @@ object Dependencies {
 
   lazy val akkaHttpJson = "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
 
-//  lazy val javaCV = "org.bytedeco" % "javacv-platform" % "1.5.7"
-
-  lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
+  lazy val i4sOpenCV = "io.github.intelligence4s" %% "i4s-opencv" % "0.1.0-SNAPSHOT"
 
   lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.6"
 
   lazy val neo4jDependencies = Seq(
   "org.neo4j.driver" % "neo4j-java-driver" % "4.3.4",
-  "io.github.neo4s" %% "neo4s-cypher-dsl" % "0.5.0-SNAPSHOT",
-  "io.github.neo4s" %% "neo4s-query-support" % "0.1.0-SNAPSHOT"
+  "io.github.neo4s" %% "neo4s-cypher-dsl" % "0.5.0",
+  "io.github.neo4s" %% "neo4s-query-support" % "0.1.2"
   )
 
   lazy val nlpDependencies = {
@@ -38,6 +36,8 @@ object Dependencies {
     "edu.stanford.nlp" % "stanford-corenlp" % "4.3.1" classifier "models"
     )
   }
+
+  lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.17.1"
 
   lazy val sangriaDependencies = {
     val sangriaAkkaHttpVersion = "0.0.2"

@@ -1,4 +1,4 @@
-# aletheia-web
+# symbolic-web
 ## Prerequisites
 The following node-based tools are utilized by the sbt web-pack plugin to manage the dependencies
 on React and other .js libraries we may wrap in the future.
